@@ -1,3 +1,0 @@
-# ignore object and compiled files
-**./obj/*.o
-**./bin/*

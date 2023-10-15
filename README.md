@@ -15,7 +15,7 @@ lmao fuck u (later)
 After installing SDL2 and SDL2_Image, execute the following commands
 ```bash
 git clone https://github.com/kotivas/Cnake
-cd cnake
+cd Cnake
 mkdir obj bin
 make
 ```

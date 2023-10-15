@@ -1,0 +1,21 @@
+# 🐍 Cnake
+The snake game written in C++ using SDL2 library
+
+inspired by [Google Snake Game](https://g.co/kgs/BTjXHz)
+
+## 📷 Screenshots from the game
+later
+
+## 🛠️ Compiling
+
+### 🪟 Windows
+lmao fuck u (later)
+
+### 🐧 Linux
+After installing SDL2 and SDL2_Image, execute the following commands
+```bash
+git clone https://github.com/kotivas/Cnake
+cd cnake
+make
+```
+The compiled executable file will be located in ``./bin/``

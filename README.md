@@ -16,6 +16,7 @@ After installing SDL2 and SDL2_Image, execute the following commands
 ```bash
 git clone https://github.com/kotivas/Cnake
 cd cnake
+mkdir obj bin
 make
 ```
 The compiled executable file will be located in ``./bin/``

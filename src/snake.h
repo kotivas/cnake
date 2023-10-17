@@ -4,36 +4,41 @@
 #include <iostream>
 
 #include "screen.h"
-#include "vector2.h"
+#include "vector2f.h"
 #include "config.h"
+#include "hitbox.h"
 
 class Snake {
 private:
     SDL_Texture* m_head;
     SDL_Texture* m_body;
-    SDL_Texture* m_tail;
-    Vector2 m_pos;
-    Vector2 m_currDirection;
-    Vector2 m_nextDirection;
+    SDL_Texture* m_tail;    
 
-    int m_speed; // pixels per frame
+    Vector2f m_position;
+    Vector2f m_direction;
 
-    int m_angle;
-public:
-    Snake(Screen* screen);
+    float m_speed; // pixels per frame
 
-    SDL_Texture* getTextureHead() const;
+    Hitbox m_hitbox;
 
-    Vector2 getPos() const;
+    float m_angle;
+public:    
+    Snake(Screen* screen, float width, float lenght, float speed);
+
     void setPos(int x, int y);
-
-    int getAngle() const;
     void setAngle(int angle);
 
-    void update();
+    void updatePosition();
+    void updateHitbox();
 
     void setDirection(int dirX, int dirY);
-    Vector2 getDirection() const;
+
+    SDL_Texture* getTextureHead() const;
+    Vector2f getPos() const;
+    float getAngle() const;
+    Vector2f getDirection() const;
+
+    Hitbox getHitbox();
 
     ~Snake();
 };

@@ -1,3 +1,7 @@
+/* Screen
+is responsible for show window and render
+*/
+
 
 #include "screen.h"
 

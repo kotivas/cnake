@@ -16,6 +16,7 @@ private:
 
     Vector2f m_position;
     Vector2f m_direction;
+    Vector2f m_counterVector;
 
     float m_speed; // pixels per frame
 

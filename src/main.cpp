@@ -37,35 +37,53 @@ bool init(){                                                           // catch 
     return true;
 }
 
+void handleKeyboardEvents(Snake* snake, const Uint8* isPressed){
+
+    if ( isPressed[ARROW_RIGHT]){
+        snake->setDirection(1, 0);
+        snake->setAngle(90);
+
+    } else if ( isPressed[ARROW_LEFT] ){
+        snake->setDirection(-1, 0);
+        snake->setAngle(-90);
+
+    } else if ( isPressed[ARROW_DOWN] ){
+        snake->setDirection(0, 1);
+        snake->setAngle(180);
+
+    } else if ( isPressed[ARROW_UP] ){
+        snake->setDirection(0, -1);
+        snake->setAngle(0);
+    }
+
+    if ( isPressed[ARROW_UP] && isPressed[ARROW_RIGHT] ){   
+        snake->setDirection(1, -1);
+        snake->setAngle(45);
+
+    } else if ( isPressed[ARROW_UP] && isPressed[ARROW_LEFT] ){
+        snake->setDirection(1, -1);
+        snake->setAngle(-45);
+
+    }  else if ( isPressed[ARROW_DOWN] && isPressed[ARROW_LEFT] ){
+        snake->setDirection(1, 1);
+        snake->setAngle(225);
+
+    }  else if ( isPressed[ARROW_DOWN] && isPressed[ARROW_RIGHT] ){
+        snake->setDirection(-1, 1);
+        snake->setAngle(135);
+    } 
+
+    if ( isPressed[ESC] ){
+        IsGame = false;
+    }
+}
+
 void handleEvents(SDL_Event event, Snake* snake) {                     // handle input
 	while (SDL_PollEvent(&event)){
 		switch(event.type){
 		case SDL_QUIT:
 			IsGame = false;
 			break;
-
-        case SDL_KEYDOWN: // key pressed down
-            switch (event.key.keysym.scancode){ 
-            case ARROW_RIGHT:
-                snake->setDirection(1, 0);
-                break;
-            case ARROW_LEFT:
-                snake->setDirection(-1, 0);
-                break;
-            case ARROW_DOWN:
-                snake->setDirection(0, 1);
-                break;
-            case ARROW_UP:
-                snake->setDirection(0, -1);
-                break;
-            case ESC:
-                IsGame = false;
-                break;
-            default:
-                std::cout <<  event.key.keysym.scancode << std::endl;
-                break;
-            }
-            break;
         }
     }
 }
@@ -106,14 +124,14 @@ void update(Screen* screen, Snake* snake, Apple* apple){               // update
     checkCollision(snake, apple);
 
     // ------------------= DEBUG =------------------
-    std::cout << "\n  Apple:" << std::endl;
-    std::cout << "x: " << apple->getPos().x << std::endl;
-    std::cout << "y: " << apple->getPos().y << std::endl;
+    // std::cout << "\n  Apple:" << std::endl;
+    // std::cout << "x: " << apple->getPos().x << std::endl;
+    // std::cout << "y: " << apple->getPos().y << std::endl;
 
-    std::cout << "  Snake:" << std::endl;
-    std::cout << "x: " << snake->getPos().x << std::endl;
-    std::cout << "y: " << snake->getPos().y << std::endl;
-    std::cout << "[" << snake->getDirection().x << "]" << "[" << snake->getDirection().y << "]" << std::endl;
+    // std::cout << "  Snake:" << std::endl;
+    // std::cout << "x: " << snake->getPos().x << std::endl;
+    // std::cout << "y: " << snake->getPos().y << std::endl;
+    // std::cout << "[" << snake->getDirection().x << "]" << "[" << snake->getDirection().y << "]" << std::endl;
 
     // ------------------= ----- =------------------
 }
@@ -166,6 +184,8 @@ int main(){
     //                      Screen*, width, lenght
 
     SDL_Event event;
+    const Uint8* keys = SDL_GetKeyboardState(NULL);
+
     SDL_Texture* field = screen->loadTexture("./assets/field48.png");
 
     while ( IsGame ){
@@ -173,6 +193,8 @@ int main(){
         frameStart = SDL_GetTicks();
 
         handleEvents(event, snake);
+
+        handleKeyboardEvents(snake, keys);
 
         update(screen, snake, apple);
 

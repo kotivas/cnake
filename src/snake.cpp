@@ -4,9 +4,11 @@
 
 #include "snake.h"
 
+#include <cmath> 
+
 Snake::Snake(Screen* screen, float width, float lenght, float speed)
 : m_head(nullptr), m_body(nullptr), m_tail(nullptr),
-m_position{200, 400},
+m_position{200, 400}, m_counterVector{0.0f, 0.0f},
 m_direction{0.0f, -1.0f}, m_angle(0.0f)
 {
     m_head = screen->loadTexture("./assets/head_up.png");
@@ -22,8 +24,22 @@ m_direction{0.0f, -1.0f}, m_angle(0.0f)
 }
 
 void Snake::updatePosition(){
-    m_position.x += m_speed * m_direction.x;
-    m_position.y += m_speed * m_direction.y;
+
+    m_counterVector = {0.0f, 0.0f};
+
+    if ( sqrt( (m_direction.x * m_direction.x) + (m_direction.y * m_direction.y) ) > m_speed ){
+        m_counterVector.x = sqrt( (m_direction.x * m_direction.x) + (m_direction.y * m_direction.y) ) - m_speed * m_speed;
+        m_counterVector.y = sqrt( (m_direction.x * m_direction.x) + (m_direction.y * m_direction.y) ) - m_speed * m_speed;
+    }
+
+    // std::cout << sqrt( (m_speed * m_speed) + (m_speed * m_speed) ) << std::endl;
+    // std::cout << "x:";
+    // std::cout << (m_speed * m_direction.x) - (m_counterVector.x * m_direction.x) << std::endl;
+    // std::cout << "y:";
+    // std::cout << (m_speed * m_direction.y) - (m_counterVector.y * m_direction.y) << std::endl;
+
+    m_position.x += (m_speed * m_direction.x) - (m_counterVector.x * m_direction.x);
+    m_position.y += (m_speed * m_direction.y) - (m_counterVector.y * m_direction.y);
 }
 
 void Snake::updateHitbox(){
@@ -42,22 +58,11 @@ void Snake::setDirection(int dirX, int dirY){
     if ( m_direction.y != (dirY * -1) ){
         m_direction.y = dirY;
     }
-
-    // if ( m_direction.x == -1 ){
-    //     setAngle( 90 * 3 );
-    // } else if ( m_direction.x == 1 ){
-    //     setAngle( 90 * 1 );
-    // }
-
-    // if ( m_direction.y == -1 ){
-    //     setAngle( 90 * 0 );
-    // } else if ( m_direction.y == 1 ){
-    //     setAngle( 90 * 2 );
-    // }
-
 }
 
 void Snake::setPos(int x, int y){
+    //m_counterVector.x = sqrt( (m_direction.x * m_direction.x) + (m_direction.y * m_direction.y) );
+
     m_direction.x = x;
     m_direction.y = y;
 }

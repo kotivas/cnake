@@ -1,15 +1,16 @@
 #include "vector2f.h"
 
 void Vector2f::normalize(){
-	float mag = sqrt(x*x+y*y);
-	if(mag > 0) {
-		x /= mag;
-		y /= mag;
+	float magnitude = sqrt(x*x+y*y);
+	if(magnitude > 0) {
+		x /= magnitude;
+		y /= magnitude;
 	}
 }
 
 float Vector2f::getAngle(){
 
+	// ебучая формула для нахождения угла
 
-	return 2.5f;
+	return 0.f;
 }

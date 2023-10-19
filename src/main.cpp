@@ -41,36 +41,36 @@ void handleKeyboardEvents(Snake* snake, const Uint8* isPressed){
 
     if ( isPressed[ARROW_RIGHT]){
         snake->setDirection(1, 0);
-        snake->setAngle(90);
+        // snake->setAngle(90);
 
     } else if ( isPressed[ARROW_LEFT] ){
         snake->setDirection(-1, 0);
-        snake->setAngle(-90);
+        // snake->setAngle(-90);
 
     } else if ( isPressed[ARROW_DOWN] ){
         snake->setDirection(0, 1);
-        snake->setAngle(180);
+        // snake->setAngle(180);
 
     } else if ( isPressed[ARROW_UP] ){
         snake->setDirection(0, -1);
-        snake->setAngle(0);
+        // snake->setAngle(0);
     }
 
     if ( isPressed[ARROW_UP] && isPressed[ARROW_RIGHT] ){   
         snake->setDirection(1, -1);
-        snake->setAngle(45);
+        // snake->setAngle(45);
 
     } else if ( isPressed[ARROW_UP] && isPressed[ARROW_LEFT] ){
         snake->setDirection(1, -1);
-        snake->setAngle(-45);
+        // snake->setAngle(-45);
 
     }  else if ( isPressed[ARROW_DOWN] && isPressed[ARROW_LEFT] ){
         snake->setDirection(1, 1);
-        snake->setAngle(225);
+        // snake->setAngle(225);
 
     }  else if ( isPressed[ARROW_DOWN] && isPressed[ARROW_RIGHT] ){
         snake->setDirection(-1, 1);
-        snake->setAngle(135);
+        // snake->setAngle(135);
     } 
 
     if ( isPressed[ESC] ){
@@ -178,7 +178,7 @@ int main(){
 
     Screen* screen = new Screen(TITLE, SCREEN_WIDTH, SCREEN_LENGHT);
     
-    Snake* snake = new Snake(screen, 35.0f, 35.0f, 4.0f);
+    Snake* snake = new Snake(screen, 35.0f, 35.0f, 2.0f);
     //                      Screen*, width, length, speed (px per frame)
     Apple* apple = new Apple(screen, 35.0f, 35.0f);
     //                      Screen*, width, lenght

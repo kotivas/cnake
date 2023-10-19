@@ -7,3 +7,9 @@ void Vector2f::normalize(){
 		y /= mag;
 	}
 }
+
+float Vector2f::getAngle(){
+
+
+	return 2.5f;
+}

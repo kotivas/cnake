@@ -12,6 +12,7 @@ struct Vector2f {
 	{}
 	
 	void normalize();
+	float getAngle();
 
 	float x, y;
 };

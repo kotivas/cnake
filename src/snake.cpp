@@ -27,19 +27,21 @@ void Snake::updatePosition(){
 
     m_counterVector = {0.0f, 0.0f};
 
-    if ( sqrt( (m_direction.x * m_direction.x) + (m_direction.y * m_direction.y) ) > m_speed ){
+    /*if ( sqrt( (m_direction.x * m_direction.x) + (m_direction.y * m_direction.y) ) > m_speed ){
         m_counterVector.x = sqrt( (m_direction.x * m_direction.x) + (m_direction.y * m_direction.y) ) - m_speed * m_speed;
         m_counterVector.y = sqrt( (m_direction.x * m_direction.x) + (m_direction.y * m_direction.y) ) - m_speed * m_speed;
-    }
+    }*/
 
     // std::cout << sqrt( (m_speed * m_speed) + (m_speed * m_speed) ) << std::endl;
     // std::cout << "x:";
     // std::cout << (m_speed * m_direction.x) - (m_counterVector.x * m_direction.x) << std::endl;
     // std::cout << "y:";
     // std::cout << (m_speed * m_direction.y) - (m_counterVector.y * m_direction.y) << std::endl;
-
-    m_position.x += (m_speed * m_direction.x) - (m_counterVector.x * m_direction.x);
-    m_position.y += (m_speed * m_direction.y) - (m_counterVector.y * m_direction.y);
+    m_counterVector = m_direction;
+    m_counterVector.normalize();
+    
+    m_position.x += m_speed * m_counterVector.x; // (m_speed * m_direction.x) - (m_counterVector.x * m_direction.x);
+    m_position.y += m_speed * m_counterVector.y;//(m_speed * m_direction.y) - (m_counterVector.y * m_direction.y);
 }
 
 void Snake::updateHitbox(){

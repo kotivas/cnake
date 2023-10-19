@@ -178,7 +178,7 @@ int main(){
 
     Screen* screen = new Screen(TITLE, SCREEN_WIDTH, SCREEN_LENGHT);
     
-    Snake* snake = new Snake(screen, 35.0f, 35.0f, 2.0f);
+    Snake* snake = new Snake(screen, 35.0f, 35.0f, 4.0f);
     //                      Screen*, width, length, speed (px per frame)
     Apple* apple = new Apple(screen, 35.0f, 35.0f);
     //                      Screen*, width, lenght

@@ -5,7 +5,6 @@
 
 #include "screen.h"
 #include "vector2f.h"
-#include "config.h"
 #include "hitbox.h"
 
 class Snake {
@@ -24,10 +23,9 @@ private:
 
     float m_angle;
 public:    
-    Snake(Screen* screen, float width, float lenght, float speed);
+    Snake(Screen* screen, float x, float y, float width, float lenght, float speed);
 
     void setPos(int x, int y);
-    void setAngle(int angle);
 
     void updatePosition();
     void updateHitbox();

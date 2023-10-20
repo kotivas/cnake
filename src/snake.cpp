@@ -1,15 +1,13 @@
 /* Snake entity
-
+snake object
 */
 
 #include "snake.h"
 
-Snake::Snake(Screen* screen, float width, float lenght, float speed)
-: m_head(nullptr), m_body(nullptr), m_tail(nullptr),
-m_position{200, 400}, m_counterVector{0.0f, 0.0f},
-m_direction{0.0f, -1.0f}, m_angle(0.0f)
+Snake::Snake(Screen* screen, float x, float y, float width, float lenght, float speed)
+: m_head(nullptr), m_body(nullptr), m_tail(nullptr), m_angle(0.0f)
 {
-    m_head = screen->loadTexture("./assets/head_up.png");
+    m_head = screen->loadTexture("./assets/head_down.png");
 
     if ( m_head == nullptr ){
         std::cout << SDL_GetError() << std::endl;
@@ -17,13 +15,13 @@ m_direction{0.0f, -1.0f}, m_angle(0.0f)
     
     m_speed = speed;
 
+    m_position = {x, y};
+
     m_hitbox = {m_position.x, m_position.y, width, lenght};
 
 }
 
 void Snake::updatePosition(){
-
-    //m_counterVector = {0.0f, 0.0f};
 
     m_counterVector = m_direction;
     m_counterVector.normalize();
@@ -34,10 +32,6 @@ void Snake::updatePosition(){
 
 void Snake::updateHitbox(){
     m_hitbox = { m_position.x, m_position.y, m_hitbox.width, m_hitbox.lenght };
-}
-
-void Snake::setAngle(int angle){
-    m_angle = angle;
 }
 
 void Snake::setDirection(int dirX, int dirY){

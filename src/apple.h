@@ -13,7 +13,7 @@ private:
 
     Hitbox m_hitbox;
 public:
-    Apple(Screen* screen, float width, float lenght);
+    Apple(Screen* screen, float x, float y, float width, float lenght);
     ~Apple();
 
     Vector2f getPos() const;

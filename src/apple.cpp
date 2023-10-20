@@ -4,10 +4,8 @@
 
 #include "apple.h"
 
-#include "config.h"
-
-Apple::Apple(Screen* screen, float width, float lenght)
-: m_texture( nullptr ), m_position{10, 520}
+Apple::Apple(Screen* screen, float x, float y, float width, float lenght)
+: m_texture( nullptr )
 {
     m_texture = screen->loadTexture("./assets/apple.png");
 
@@ -16,6 +14,8 @@ Apple::Apple(Screen* screen, float width, float lenght)
     }
 
     m_hitbox = { m_position.x, m_position.y, width, lenght };
+
+    m_position = {x, y};
 
 }
 

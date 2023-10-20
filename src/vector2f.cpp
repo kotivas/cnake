@@ -1,6 +1,6 @@
 #include "vector2f.h"
 
-void Vector2f::normalize(){
+void Vector2f::normalize(){            // normalize vector 
 	float magnitude = sqrt(x*x+y*y);
 	if(magnitude > 0) {
 		x /= magnitude;
@@ -8,9 +8,6 @@ void Vector2f::normalize(){
 	}
 }
 
-float Vector2f::getAngle(){
-
-	// ебучая формула для нахождения угла
-
-	return 0.f;
+float Vector2f::getAngle(){             // returns angle in degrees from x and y
+	return atan2( -x , y ) * ( 180 / M_PI );
 }

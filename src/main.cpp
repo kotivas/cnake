@@ -41,36 +41,28 @@ void handleKeyboardEvents(Snake* snake, const Uint8* isPressed){
 
     if ( isPressed[ARROW_RIGHT]){
         snake->setDirection(1, 0);
-        // snake->setAngle(90);
 
     } else if ( isPressed[ARROW_LEFT] ){
         snake->setDirection(-1, 0);
-        // snake->setAngle(-90);
 
     } else if ( isPressed[ARROW_DOWN] ){
         snake->setDirection(0, 1);
-        // snake->setAngle(180);
 
     } else if ( isPressed[ARROW_UP] ){
         snake->setDirection(0, -1);
-        // snake->setAngle(0);
     }
 
     if ( isPressed[ARROW_UP] && isPressed[ARROW_RIGHT] ){   
         snake->setDirection(1, -1);
-        // snake->setAngle(45);
 
     } else if ( isPressed[ARROW_UP] && isPressed[ARROW_LEFT] ){
         snake->setDirection(1, -1);
-        // snake->setAngle(-45);
 
     }  else if ( isPressed[ARROW_DOWN] && isPressed[ARROW_LEFT] ){
         snake->setDirection(1, 1);
-        // snake->setAngle(225);
 
     }  else if ( isPressed[ARROW_DOWN] && isPressed[ARROW_RIGHT] ){
         snake->setDirection(-1, 1);
-        // snake->setAngle(135);
     } 
 
     if ( isPressed[ESC] ){
@@ -97,20 +89,27 @@ bool isCollide( Hitbox hitbox1, Hitbox hitbox2 ){ // check for collision betwen 
 }
 
 void checkCollision(Snake* snake, Apple* apple){
+
+    // check for collision wirh border
     if ( isCollide( snake->getHitbox(), {0, 0, SCREEN_WIDTH, BORDER_SIZE} ) ||
         isCollide( snake->getHitbox(), {0, 0, BORDER_SIZE, SCREEN_LENGHT} ) ||
         isCollide( snake->getHitbox(), {0, SCREEN_LENGHT - BORDER_SIZE, SCREEN_WIDTH, 0} ) ||
         isCollide( snake->getHitbox(), {SCREEN_WIDTH - BORDER_SIZE, 0, 0, SCREEN_LENGHT} ) ) {
-        std::cout << "BORDER COLLIDED" << std::endl;
-    }
 
+        snake->setDirection(0.0f, 0.0f);
+    }
+    
+    // check for collision with apple
     if ( isCollide( snake->getHitbox(), apple->getHitbox() ) ){
           
         std::srand(std::time(nullptr));
 
-        apple->setPos((std::rand() % SCREEN_WIDTH), (std::rand() % SCREEN_LENGHT));
+        int random_x = ( BORDER_SIZE * 4 ) + std::rand() % ( SCREEN_WIDTH - BORDER_SIZE * 6 );
+        int random_y = ( BORDER_SIZE * 4 ) + std::rand() % ( SCREEN_LENGHT - BORDER_SIZE * 6 );
 
-        apple->updateHitbox();
+        apple->setPos(random_x, random_y);
+        
+        
     }    
 }
 
@@ -121,19 +120,9 @@ void update(Screen* screen, Snake* snake, Apple* apple){               // update
 
     screen->update();
 
-    checkCollision(snake, apple);
-
-    // ------------------= DEBUG =------------------
-    // std::cout << "\n  Apple:" << std::endl;
-    // std::cout << "x: " << apple->getPos().x << std::endl;
-    // std::cout << "y: " << apple->getPos().y << std::endl;
-
-    // std::cout << "  Snake:" << std::endl;
-    // std::cout << "x: " << snake->getPos().x << std::endl;
-    // std::cout << "y: " << snake->getPos().y << std::endl;
-    // std::cout << "[" << snake->getDirection().x << "]" << "[" << snake->getDirection().y << "]" << std::endl;
-
-    // ------------------= ----- =------------------
+    apple->updateHitbox();
+    
+    checkCollision(snake, apple);    
 }
 
 void render(Screen* screen, SDL_Texture* field, Snake* snake, Apple* apple){ // render objects
@@ -178,10 +167,12 @@ int main(){
 
     Screen* screen = new Screen(TITLE, SCREEN_WIDTH, SCREEN_LENGHT);
     
-    Snake* snake = new Snake(screen, 35.0f, 35.0f, 2.0f);
-    //                      Screen*, width, length, speed (px per frame)
-    Apple* apple = new Apple(screen, 35.0f, 35.0f);
-    //                      Screen*, width, lenght
+    Snake* snake = new Snake(screen, SCREEN_WIDTH/2, BORDER_SIZE*3, 35.0f, 35.0f, SNAKE_SPEED);
+    //                      Screen*, Xpos, Ypos width, length, speed (px per frame)
+    //snake->setDirection(1.0f, 0.0f);
+
+    Apple* apple = new Apple(screen, SCREEN_WIDTH/2, BORDER_SIZE*8, 35.0f, 35.0f);
+    //                      Screen*, Xpos, Ypos, width, lenght
 
     SDL_Event event;
     const Uint8* keys = SDL_GetKeyboardState(NULL);

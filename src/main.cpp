@@ -12,6 +12,8 @@
 
 #include "config.h"
 
+#include "snakesegment.h"
+
 bool IsGame = true; // Is game running?
 
 enum KEYS
@@ -80,12 +82,6 @@ void handleEvents(SDL_Event event, Snake* snake) {      // handle input
 }
 
 bool isCollide( Hitbox hitbox1, Hitbox hitbox2 ){ // check for collision betwen two objects
-    // if ( (hitbox1.x + hitbox1.width >= hitbox2.x) && (hitbox2.x + hitbox2.width >= hitbox1.x) &&
-    //      (hitbox1.y + hitbox1.lenght >= hitbox2.y) && (hitbox2.y + hitbox2.lenght >= hitbox1.y) ){
-    //     return true;
-    // }
-    // return false;
-
     return (hitbox1.x + hitbox1.width >= hitbox2.x) && (hitbox2.x + hitbox2.width >= hitbox1.x) &&
            (hitbox1.y + hitbox1.lenght >= hitbox2.y) && (hitbox2.y + hitbox2.lenght >= hitbox1.y);
 }
@@ -99,7 +95,6 @@ void checkCollision(Snake* snake, Apple* apple){
         isCollide( snake->getHitbox(), {0, SCREEN_LENGHT - BORDER_SIZE, SCREEN_WIDTH, 0} ) ||
         isCollide( snake->getHitbox(), {SCREEN_WIDTH - BORDER_SIZE, 0, 0, SCREEN_LENGHT} ) 
        ) {
-
         snake->setDirection(0.0f, 0.0f);
     }
     
@@ -108,19 +103,18 @@ void checkCollision(Snake* snake, Apple* apple){
           
         std::srand(std::time(nullptr));
 
-        int random_x = ( BORDER_SIZE * 4 ) + std::rand() % ( SCREEN_WIDTH - BORDER_SIZE * 6 );
-        int random_y = ( BORDER_SIZE * 4 ) + std::rand() % ( SCREEN_LENGHT - BORDER_SIZE * 6 );
+        int random_x = ( BORDER_SIZE * 4 ) + std::rand() % ( SCREEN_WIDTH - BORDER_SIZE * 8 );
+        int random_y = ( BORDER_SIZE * 4 ) + std::rand() % ( SCREEN_LENGHT - BORDER_SIZE * 8 );
 
         apple->setPos(random_x, random_y);
-        
         
     }    
 }
 
 void update(Screen* screen, Snake* snake, Apple* apple){               // update AKA tick
 
-    snake->updateHitbox();
     snake->updatePosition();
+    snake->updateHitbox();
 
     screen->update();
 
@@ -137,7 +131,14 @@ void render(Screen* screen, SDL_Texture* field, Snake* snake, Apple* apple){ // 
 
     screen->render(apple->getTexture(), apple->getPos().x, apple->getPos().y, TEXTURE_SIZE, TEXTURE_SIZE, 0);
 
-    screen->render(snake->getTextureHead(), snake->getPos().x, snake->getPos().y, TEXTURE_SIZE, TEXTURE_SIZE, snake->getAngle());
+    //screen->render(snake->getTextureHead(), snake->getPos().x, snake->getPos().y, TEXTURE_SIZE, TEXTURE_SIZE, snake->getAngle());
+    SnakeSegment* pIter = snake->getHead();
+
+    while ( pIter != nullptr ){
+        screen->render(pIter->texture, pIter->position.x, pIter->position.y, TEXTURE_SIZE, TEXTURE_SIZE, pIter->angle);
+        pIter = pIter->pNext;
+    }
+
     screen->update();
 }
 
@@ -145,9 +146,9 @@ void quit(Screen* screen, SDL_Texture* field, Snake* snake, Apple* apple){ // de
 
     SDL_DestroyTexture( field );
 
-    delete( screen );
-    delete( snake );
-    delete( apple );
+    delete screen;
+    delete snake;
+    delete apple;
 
     screen = nullptr;
     snake = nullptr;
@@ -159,7 +160,6 @@ void quit(Screen* screen, SDL_Texture* field, Snake* snake, Apple* apple){ // de
 }
 
 int main(){
-
     if ( !init() ){
         std::cout << "FAILED TO INIT\nExiting..." << std::endl;
         return 1;
@@ -167,9 +167,9 @@ int main(){
 
     Screen* screen = new Screen(TITLE, SCREEN_WIDTH, SCREEN_LENGHT);
     //                          title, screen_width, screen_lenght
-    Snake* snake = new Snake(screen, SCREEN_WIDTH/2, BORDER_SIZE*3, 35.0f, 35.0f, SNAKE_SPEED);
+    Snake* snake = new Snake(screen, SCREEN_WIDTH/2, BORDER_SIZE*3, 52.0f, 52.0f, SNAKE_SPEED);
     //                      Screen*, Xpos,           Ypos,          width, length, speed
-    Apple* apple = new Apple(screen, SCREEN_WIDTH/2, BORDER_SIZE*8, 35.0f, 35.0f);
+    Apple* apple = new Apple(screen, SCREEN_WIDTH/2, BORDER_SIZE*8, 32.0f, 32.0f);
     //                      Screen*, Xpos,           Ypos,          width, lenght
 
     const int       FRAME_DELAY = 1000 / FPS;  // MAX FRAME TIME
@@ -178,7 +178,7 @@ int main(){
 
     SDL_Event       event;
     const Uint8*    keysState = SDL_GetKeyboardState(NULL);
-    SDL_Texture*    field = screen->loadTexture("./assets/field48.png");
+    SDL_Texture*    field = screen->loadTexture("./assets/field.png");
 
     while ( IsGame ){
 

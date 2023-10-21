@@ -6,23 +6,22 @@
 #include <iostream>
 #include <ctime>
 
-#include "vector2f.h"
 #include "screen.h"
 #include "snake.h"
 #include "apple.h"
 
 #include "config.h"
 
+bool IsGame = true; // Is game running?
 
-bool IsGame = true;         // Is game running?
-
-enum KEYS{
+enum KEYS
+{
     ARROW_RIGHT = 79, ARROW_LEFT = 80,
     ARROW_DOWN = 81, ARROW_UP = 82,
     ESC = 41
 };
 
-bool init(){                                                           // catch init errors
+bool init(){       // catch init errors
 
     if ( SDL_Init(SDL_INIT_VIDEO) < 0 ) { 
 		std::cout << "SDL_Init failed to init. SDL_ERROR: " << SDL_GetError() << std::endl;
@@ -39,7 +38,7 @@ bool init(){                                                           // catch 
 
 void handleKeyboardEvents(Snake* snake, const Uint8* isPressed){
 
-    if ( isPressed[ARROW_RIGHT]){
+    if ( isPressed[ARROW_RIGHT] ){
         snake->setDirection(1, 0);
 
     } else if ( isPressed[ARROW_LEFT] ){
@@ -70,10 +69,10 @@ void handleKeyboardEvents(Snake* snake, const Uint8* isPressed){
     }
 }
 
-void handleEvents(SDL_Event event, Snake* snake) {                     // handle input
+void handleEvents(SDL_Event event, Snake* snake) {      // handle input
 	while (SDL_PollEvent(&event)){
 		switch(event.type){
-		case SDL_QUIT:
+		case SDL_QUIT:     // if close button pressed
 			IsGame = false;
 			break;
         }
@@ -81,20 +80,25 @@ void handleEvents(SDL_Event event, Snake* snake) {                     // handle
 }
 
 bool isCollide( Hitbox hitbox1, Hitbox hitbox2 ){ // check for collision betwen two objects
-    if ( (hitbox1.x + hitbox1.width >= hitbox2.x) && (hitbox2.x + hitbox2.width >= hitbox1.x) &&
-         (hitbox1.y + hitbox1.lenght >= hitbox2.y) && (hitbox2.y + hitbox2.lenght >= hitbox1.y) ){
-        return true;
-    }
-    return false;
+    // if ( (hitbox1.x + hitbox1.width >= hitbox2.x) && (hitbox2.x + hitbox2.width >= hitbox1.x) &&
+    //      (hitbox1.y + hitbox1.lenght >= hitbox2.y) && (hitbox2.y + hitbox2.lenght >= hitbox1.y) ){
+    //     return true;
+    // }
+    // return false;
+
+    return (hitbox1.x + hitbox1.width >= hitbox2.x) && (hitbox2.x + hitbox2.width >= hitbox1.x) &&
+           (hitbox1.y + hitbox1.lenght >= hitbox2.y) && (hitbox2.y + hitbox2.lenght >= hitbox1.y);
 }
 
 void checkCollision(Snake* snake, Apple* apple){
 
     // check for collision wirh border
-    if ( isCollide( snake->getHitbox(), {0, 0, SCREEN_WIDTH, BORDER_SIZE} ) ||
+    if (
+        isCollide( snake->getHitbox(), {0, 0, SCREEN_WIDTH, BORDER_SIZE} ) ||
         isCollide( snake->getHitbox(), {0, 0, BORDER_SIZE, SCREEN_LENGHT} ) ||
         isCollide( snake->getHitbox(), {0, SCREEN_LENGHT - BORDER_SIZE, SCREEN_WIDTH, 0} ) ||
-        isCollide( snake->getHitbox(), {SCREEN_WIDTH - BORDER_SIZE, 0, 0, SCREEN_LENGHT} ) ) {
+        isCollide( snake->getHitbox(), {SCREEN_WIDTH - BORDER_SIZE, 0, 0, SCREEN_LENGHT} ) 
+       ) {
 
         snake->setDirection(0.0f, 0.0f);
     }
@@ -141,9 +145,9 @@ void quit(Screen* screen, SDL_Texture* field, Snake* snake, Apple* apple){ // de
 
     SDL_DestroyTexture( field );
 
-    delete(screen);
-    delete(snake);
-    delete(apple);
+    delete( screen );
+    delete( snake );
+    delete( apple );
 
     screen = nullptr;
     snake = nullptr;
@@ -160,38 +164,35 @@ int main(){
         std::cout << "FAILED TO INIT\nExiting..." << std::endl;
         return 1;
     }
-    const int FRAME_DELAY = 1000 / FPS;
-
-    Uint32 frameStart;
-    int deltaTime;
 
     Screen* screen = new Screen(TITLE, SCREEN_WIDTH, SCREEN_LENGHT);
-    
+    //                          title, screen_width, screen_lenght
     Snake* snake = new Snake(screen, SCREEN_WIDTH/2, BORDER_SIZE*3, 35.0f, 35.0f, SNAKE_SPEED);
-    //                      Screen*, Xpos, Ypos width, length, speed (px per frame)
-    //snake->setDirection(1.0f, 0.0f);
-
+    //                      Screen*, Xpos,           Ypos,          width, length, speed
     Apple* apple = new Apple(screen, SCREEN_WIDTH/2, BORDER_SIZE*8, 35.0f, 35.0f);
-    //                      Screen*, Xpos, Ypos, width, lenght
+    //                      Screen*, Xpos,           Ypos,          width, lenght
 
-    SDL_Event event;
-    const Uint8* keys = SDL_GetKeyboardState(NULL);
+    const int       FRAME_DELAY = 1000 / FPS;  // MAX FRAME TIME
+    Uint32          frameStart;
+    int             deltaTime;
 
-    SDL_Texture* field = screen->loadTexture("./assets/field48.png");
+    SDL_Event       event;
+    const Uint8*    keysState = SDL_GetKeyboardState(NULL);
+    SDL_Texture*    field = screen->loadTexture("./assets/field48.png");
 
     while ( IsGame ){
 
-        frameStart = SDL_GetTicks();
+        frameStart = SDL_GetTicks(); // get start frame ticks
 
         handleEvents(event, snake);
 
-        handleKeyboardEvents(snake, keys);
+        handleKeyboardEvents(snake, keysState);
 
         update(screen, snake, apple);
 
         render(screen, field, snake, apple);
 
-        deltaTime = SDL_GetTicks() - frameStart;
+        deltaTime = SDL_GetTicks() - frameStart; // get frame time
 
         if ( FRAME_DELAY > deltaTime ){
             SDL_Delay( FRAME_DELAY - deltaTime );

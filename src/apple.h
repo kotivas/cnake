@@ -8,21 +8,18 @@
 
 class Apple {
 private:
-    SDL_Texture* m_texture;
-    Vector2f m_position;
-
-    Hitbox m_hitbox;
+    SDL_Texture*    m_texture;
+    Vector2f        m_position;
+    Hitbox          m_hitbox;
 public:
     Apple(Screen* screen, float x, float y, float width, float lenght);
+
+    
+    void            setPos(int x, int y);
+    void            updateHitbox();
+    SDL_Texture*    getTexture() const;
+    Vector2f        getPos() const;
+    Hitbox          getHitbox();
+
     ~Apple();
-
-    Vector2f getPos() const;
-    void setPos(int x, int y);
-
-    void updateHitbox();
-
-    SDL_Texture* getTexture() const;
-
-    Hitbox getHitbox();
-
 };

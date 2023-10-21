@@ -9,35 +9,31 @@
 
 class Snake {
 private:
-    SDL_Texture* m_head;
-    SDL_Texture* m_body;
-    SDL_Texture* m_tail;    
+    SDL_Texture*    m_head;
+    SDL_Texture*    m_body;
+    SDL_Texture*    m_tail;   
 
-    Vector2f m_position;
-    Vector2f m_direction;
-    Vector2f m_counterVector;
+    Vector2f        m_position;
+    Vector2f        m_direction;
+    Vector2f        m_counterVector;
 
-    float m_speed; // pixels per frame
-
-    Hitbox m_hitbox;
-
-    float m_angle;
+    float           m_speed; // pixels per frame
+    Hitbox          m_hitbox;
+    float           m_angle;
 public:    
     Snake(Screen* screen, float x, float y, float width, float lenght, float speed);
 
-    void setPos(int x, int y);
+    void            setPos(int x, int y);
+    void            updatePosition();
+    void            updateHitbox();
+    void            setDirection(int dirX, int dirY);
 
-    void updatePosition();
-    void updateHitbox();
+    SDL_Texture*    getTextureHead() const;
+    Vector2f        getPos() const;
+    float           getAngle() const;
+    Vector2f        getDirection() const;
 
-    void setDirection(int dirX, int dirY);
-
-    SDL_Texture* getTextureHead() const;
-    Vector2f getPos() const;
-    float getAngle() const;
-    Vector2f getDirection() const;
-
-    Hitbox getHitbox();
+    Hitbox          getHitbox();
 
     ~Snake();
 };

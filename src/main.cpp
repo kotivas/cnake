@@ -46,10 +46,10 @@ void handleEvents(SDL_Event event, Snake* snake) {      // handle input
                     case SDLK_LEFT:
                         snake->setDirection(-1, 0);
                         break;
-                    case SDLK_UP:
+                    case SDLK_DOWN:
                         snake->setDirection(0, 1);
                         break;
-                    case SDLK_DOWN:
+                    case SDLK_UP:
                         snake->setDirection(0, -1);
                         break;
                     case SDLK_ESCAPE:

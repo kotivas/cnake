@@ -5,15 +5,15 @@ snake object
 #include "snake.h"
 
 Snake::Snake(Screen* screen, float x, float y, float width, float lenght, float speed)
-: m_pHead(nullptr), m_pTail(nullptr), m_bodyTexture(nullptr), m_score(0), m_segments(2)
+: m_pHead(nullptr), m_pTail(nullptr), m_bodyTexture(nullptr), m_score(0), m_segments(3)
 {
+
+    m_bodyTexture = screen->loadTexture("./assets/body_vertical.png");
 
     for (int i = 0; i < m_segments; i++)
     {
         addSegment();
     }
-    
-    m_bodyTexture = screen->loadTexture("./assets/body_vertical.png");
 
     m_pTail->texture = screen->loadTexture("./assets/tail_up.png");
 
@@ -39,31 +39,29 @@ void Snake::updatePosition(){
     m_pHead->position.x += m_speed * m_pHead->direction.x; 
     m_pHead->position.y += m_speed * m_pHead->direction.y;
 
-    int i = 1;
-    for (SnakeSegment* pIter = m_pHead->pNext; pIter != nullptr; pIter = pIter->pNext){
-        pIter->position.x = m_pHead->position.x - ( 48 * i ) * m_pHead->direction.x;
-        pIter->position.y = m_pHead->position.y - ( 48 * i ) * m_pHead->direction.y;
-        pIter->angle = m_pHead->angle;
+    if ( int( m_pHead->position.x ) % 64 == 0 && int( m_pHead->position.y ) % 64 == 0 ){
+        m_pHead->direction = m_pHead->buffdirection;
+    }
 
-        i++;
+    for (SnakeSegment* pIter = m_pHead; pIter->pNext != nullptr; pIter = pIter->pNext){
+
+        // 💀💀💀
+        
     }
 }
 
 void Snake::addSegment(){
 
-    SnakeSegment* pNewSegment = new SnakeSegment( 1 );
+    SnakeSegment* pNewSegment = new SnakeSegment();
 
     if (m_pHead == nullptr){
         m_pTail = pNewSegment;
         m_pHead = pNewSegment;
     } else {
-        m_pTail->pNext = pNewSegment; //  m_pTail->SetNext(pNewPlayer);
-        m_pTail = m_pTail->pNext; // m_pTail = m_pTail->GetNext();
+        m_pTail->pNext = pNewSegment;
+        m_pTail = m_pTail->pNext;
     }
-
     pNewSegment->texture = m_bodyTexture;
-
-    std::cout << pNewSegment->texture << std::endl;
 
 }
 
@@ -75,13 +73,13 @@ void Snake::updateHitbox(){
 void Snake::setDirection(int dirX, int dirY){
 
     if ( m_pHead->direction.x != (dirX * -1) ){
-         m_pHead->direction.x = dirX;
+         m_pHead->buffdirection.x = dirX;
     }
     if ( m_pHead->direction.y != (dirY * -1)  ){
-        m_pHead->direction.y = dirY;
+        m_pHead->buffdirection.y = dirY;
     }
 
-    m_pHead->angle = m_pHead->direction.getAngle();
+    m_pHead->angle = m_pHead->buffdirection.getAngle();
 
 }
 
@@ -127,7 +125,6 @@ Vector2f Snake::getDirection() const{
 Hitbox Snake::getHitbox(){
     return m_pHead->hitbox;
 }
-
 
 int Snake::getLenght() const{
     return m_segments;

@@ -16,13 +16,6 @@
 
 bool IsGame = true; // Is game running?
 
-enum KEYS
-{
-    ARROW_RIGHT = 79, ARROW_LEFT = 80,
-    ARROW_DOWN = 81, ARROW_UP = 82,
-    ESC = 41
-};
-
 bool init(){       // catch init errors
 
     if ( SDL_Init(SDL_INIT_VIDEO) < 0 ) { 
@@ -38,49 +31,34 @@ bool init(){       // catch init errors
     return true;
 }
 
-void handleKeyboardEvents(Snake* snake, const Uint8* isPressed){
-
-    if ( isPressed[ARROW_RIGHT] ){
-        snake->setDirection(1, 0);
-
-    } else if ( isPressed[ARROW_LEFT] ){
-        snake->setDirection(-1, 0);
-
-    } else if ( isPressed[ARROW_DOWN] ){
-        snake->setDirection(0, 1);
-
-    } else if ( isPressed[ARROW_UP] ){
-        snake->setDirection(0, -1);
-    }
-
-    if ( isPressed[ARROW_UP] && isPressed[ARROW_RIGHT] ){   
-        snake->setDirection(1, -1);
-
-    } else if ( isPressed[ARROW_UP] && isPressed[ARROW_LEFT] ){
-        snake->setDirection(1, -1);
-
-    }  else if ( isPressed[ARROW_DOWN] && isPressed[ARROW_LEFT] ){
-        snake->setDirection(1, 1);
-
-    }  else if ( isPressed[ARROW_DOWN] && isPressed[ARROW_RIGHT] ){
-        snake->setDirection(-1, 1);
-    } 
-
-    if ( isPressed[ESC] ){
-        IsGame = false;
-    }
-}
-
 void handleEvents(SDL_Event event, Snake* snake) {      // handle input
-	while (SDL_PollEvent(&event)){
+	while (SDL_PollEvent(&event)){  
 		switch(event.type){
-		case SDL_QUIT:     // if close button pressed
-			IsGame = false;
-			break;
+		    case SDL_QUIT:     // if close button pressed
+			    IsGame = false;
+			    break;
+
+            case SDL_KEYDOWN: // if key pressed down
+                switch ( event.key.keysym.sym ){ // get key code
+                    case SDLK_RIGHT:
+                        snake->setDirection(1, 0);
+                        break;
+                    case SDLK_LEFT:
+                        snake->setDirection(-1, 0);
+                        break;
+                    case SDLK_UP:
+                        snake->setDirection(0, 1);
+                        break;
+                    case SDLK_DOWN:
+                        snake->setDirection(0, -1);
+                        break;
+                    case SDLK_ESCAPE:
+                        IsGame = false;
+                        break;
+                }
         }
     }
 }
-
 bool isCollide( Hitbox hitbox1, Hitbox hitbox2 ){ // check for collision betwen two objects
     return (hitbox1.x + hitbox1.width >= hitbox2.x) && (hitbox2.x + hitbox2.width >= hitbox1.x) &&
            (hitbox1.y + hitbox1.lenght >= hitbox2.y) && (hitbox2.y + hitbox2.lenght >= hitbox1.y);
@@ -119,7 +97,7 @@ void update(Screen* screen, Snake* snake, Apple* apple){               // update
     screen->update();
 
     apple->updateHitbox();
-    
+                    
     checkCollision(snake, apple);    
 }
 
@@ -167,9 +145,9 @@ int main(){
 
     Screen* screen = new Screen(TITLE, SCREEN_WIDTH, SCREEN_LENGHT);
     //                          title, screen_width, screen_lenght
-    Snake* snake = new Snake(screen, SCREEN_WIDTH/2, BORDER_SIZE*3, 52.0f, 52.0f, SNAKE_SPEED);
+    Snake* snake = new Snake(screen, SCREEN_WIDTH/2, BORDER_SIZE*3, 64.0f, 64.0f, SNAKE_SPEED);
     //                      Screen*, Xpos,           Ypos,          width, length, speed
-    Apple* apple = new Apple(screen, SCREEN_WIDTH/2, BORDER_SIZE*8, 32.0f, 32.0f);
+    Apple* apple = new Apple(screen, SCREEN_WIDTH/2, BORDER_SIZE*8, 64.0f, 64.0f);
     //                      Screen*, Xpos,           Ypos,          width, lenght
 
     const int       FRAME_DELAY = 1000 / FPS;  // MAX FRAME TIME
@@ -177,7 +155,6 @@ int main(){
     int             deltaTime;
 
     SDL_Event       event;
-    const Uint8*    keysState = SDL_GetKeyboardState(NULL);
     SDL_Texture*    field = screen->loadTexture("./assets/field.png");
 
     while ( IsGame ){
@@ -185,8 +162,6 @@ int main(){
         frameStart = SDL_GetTicks(); // get start frame ticks
 
         handleEvents(event, snake);
-
-        handleKeyboardEvents(snake, keysState);
 
         update(screen, snake, apple);
 

@@ -12,7 +12,7 @@ Snake::Snake(Screen* screen, float x, float y, float width, float lenght, float 
 
     for (int i = 0; i < m_segments; i++)
     {
-        addSegment();
+        addSegment(i);
     }
 
     m_pTail->texture = screen->loadTexture("./assets/tail_up.png");
@@ -35,22 +35,40 @@ Snake::Snake(Screen* screen, float x, float y, float width, float lenght, float 
 void Snake::updatePosition(){
 
     m_pHead->direction.normalize();
-    
-    m_pHead->position.x += m_speed * m_pHead->direction.x; 
+
+    m_pHead->position.x += m_speed * m_pHead->direction.x;
     m_pHead->position.y += m_speed * m_pHead->direction.y;
 
-    if ( int( m_pHead->position.x ) % 64 == 0 && int( m_pHead->position.y ) % 64 == 0 ){
-        m_pHead->direction = m_pHead->buffdirection;
-    }
+    // if ( int( m_pHead->position.x ) % 48 == 0 && int( m_pHead->position.y ) % 48 == 0 &&
+    //         ( m_pHead->direction.x != m_pHead->buffdirection.x || m_pHead->direction.y != m_pHead->buffdirection.y) ){
+        
+    //     m_pHead->direction = m_pHead->buffdirection;
+
+    //     // m_pHead->pNext->buffdirection = m_pHead->direction;
+    //     // m_pHead->pNext->buffposition = m_pHead->position;
+    // }
 
     for (SnakeSegment* pIter = m_pHead; pIter->pNext != nullptr; pIter = pIter->pNext){
 
-        // 💀💀💀
-        
+        if ( int( pIter->position.x ) % 48 == 0 && int( pIter->position.y ) % 48 == 0 &&
+            ( pIter->direction.x != pIter->buffdirection.x || pIter->direction.y != pIter->buffdirection.y) ){
+
+            pIter->direction = pIter->buffdirection;
+
+            pIter->pNext->buffdirection = pIter->direction;
+            pIter->pNext->buffposition = pIter->position;
+        }
+
+        if ( pIter->pNext->position.x == pIter->pNext->buffposition.x && pIter->pNext->position.y == pIter->pNext->buffposition.y ){
+            pIter->pNext->direction = pIter->pNext->buffdirection;
+            pIter->pNext->buffposition = {0, 0};
+        }
+
+        pIter->pNext->position.x += m_speed * pIter->pNext->direction.x; 
+        pIter->pNext->position.y += m_speed * pIter->pNext->direction.y;
     }
 }
-
-void Snake::addSegment(){
+void Snake::addSegment(int index){
 
     SnakeSegment* pNewSegment = new SnakeSegment();
 
@@ -63,6 +81,8 @@ void Snake::addSegment(){
     }
     pNewSegment->texture = m_bodyTexture;
 
+    pNewSegment->position.x = 480;
+    pNewSegment->position.y = 144 - (48 * index );
 }
 
 
@@ -70,13 +90,10 @@ void Snake::updateHitbox(){
     m_pHead->hitbox = { m_pHead->position.x, m_pHead->position.y, m_pHead->hitbox.width, m_pHead->hitbox.lenght };
 }
 
-void Snake::setDirection(int dirX, int dirY){
+void Snake::setDirection(Vector2f direction){
 
-    if ( m_pHead->direction.x != (dirX * -1) ){
-         m_pHead->buffdirection.x = dirX;
-    }
-    if ( m_pHead->direction.y != (dirY * -1)  ){
-        m_pHead->buffdirection.y = dirY;
+    if ( m_pHead->direction.y != (direction.y * -1) || m_pHead->direction.x != (direction.x * -1) ){
+        m_pHead->buffdirection = direction;
     }
 
     m_pHead->angle = m_pHead->buffdirection.getAngle();

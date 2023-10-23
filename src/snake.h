@@ -31,9 +31,9 @@ public:
     void            setPos(int x, int y);
     void            updatePosition();
     void            updateHitbox();
-    void            setDirection(int dirX, int dirY);
+    void            setDirection(Vector2f direction);
 
-    void            addSegment();
+    void            addSegment(int index);
     void            removeSegment();
 
     SDL_Texture*    getTextureHead() const;

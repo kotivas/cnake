@@ -41,16 +41,16 @@ void handleEvents(SDL_Event event, Snake* snake) {      // handle input
             case SDL_KEYDOWN: // if key pressed down
                 switch ( event.key.keysym.sym ){ // get key code
                     case SDLK_RIGHT:
-                        snake->setDirection(1, 0);
+                        snake->setDirection( {1, 0} );
                         break;
                     case SDLK_LEFT:
-                        snake->setDirection(-1, 0);
+                        snake->setDirection( {-1, 0} );
                         break;
                     case SDLK_DOWN:
-                        snake->setDirection(0, 1);
+                        snake->setDirection( {0, 1});
                         break;
                     case SDLK_UP:
-                        snake->setDirection(0, -1);
+                        snake->setDirection( {0, -1} );
                         break;
                     case SDLK_ESCAPE:
                         IsGame = false;
@@ -73,19 +73,19 @@ void checkCollision(Snake* snake, Apple* apple){
         isCollide( snake->getHitbox(), {0, SCREEN_LENGHT - BORDER_SIZE, SCREEN_WIDTH, 0} ) ||
         isCollide( snake->getHitbox(), {SCREEN_WIDTH - BORDER_SIZE, 0, 0, SCREEN_LENGHT} ) 
        ) {
-        snake->setDirection(0.0f, 0.0f);
+        snake->setDirection( {0.0f, 0.0f} );
     }
     
     // check for collision with apple
-    if ( isCollide( snake->getHitbox(), apple->getHitbox() ) ){
+    // if ( isCollide( snake->getHitbox(), apple->getHitbox() ) ){
+    if ( snake->getPos().x == apple->getPos().x && snake->getPos().y == apple->getPos().y ){
           
         std::srand(std::time(nullptr));
 
-        int random_x = ( BORDER_SIZE * 4 ) + std::rand() % ( SCREEN_WIDTH - BORDER_SIZE * 8 );
-        int random_y = ( BORDER_SIZE * 4 ) + std::rand() % ( SCREEN_LENGHT - BORDER_SIZE * 8 );
+        int random_x = BORDER_SIZE*2 + std::rand() % (SCREEN_WIDTH / GRID_SIZE) - BORDER_SIZE*2;//BORDER_SIZE - std::rand() % ( (SCREEN_WIDTH  / GRID_SIZE)  + BORDER_SIZE * 4);
+        int random_y = BORDER_SIZE*2 + std::rand() % (SCREEN_LENGHT / GRID_SIZE) - BORDER_SIZE*2; //BORDER_SIZE - std::rand() % ( (SCREEN_LENGHT  / GRID_SIZE) + BORDER_SIZE * 4 );
 
-        apple->setPos(random_x, random_y);
-        
+        apple->setPos(random_x * GRID_SIZE, random_y * GRID_SIZE);
     }    
 }
 
@@ -109,7 +109,6 @@ void render(Screen* screen, SDL_Texture* field, Snake* snake, Apple* apple){ // 
 
     screen->render(apple->getTexture(), apple->getPos().x, apple->getPos().y, TEXTURE_SIZE, TEXTURE_SIZE, 0);
 
-    //screen->render(snake->getTextureHead(), snake->getPos().x, snake->getPos().y, TEXTURE_SIZE, TEXTURE_SIZE, snake->getAngle());
     SnakeSegment* pIter = snake->getHead();
 
     while ( pIter != nullptr ){
@@ -145,9 +144,9 @@ int main(){
 
     Screen* screen = new Screen(TITLE, SCREEN_WIDTH, SCREEN_LENGHT);
     //                          title, screen_width, screen_lenght
-    Snake* snake = new Snake(screen, SCREEN_WIDTH/2, BORDER_SIZE*3, 64.0f, 64.0f, SNAKE_SPEED);
+    Snake* snake = new Snake(screen, SCREEN_WIDTH/2, BORDER_SIZE*3, 32.0f, 32.0f, SNAKE_SPEED);
     //                      Screen*, Xpos,           Ypos,          width, length, speed
-    Apple* apple = new Apple(screen, SCREEN_WIDTH/2, BORDER_SIZE*8, 64.0f, 64.0f);
+    Apple* apple = new Apple(screen, SCREEN_WIDTH/2, BORDER_SIZE*8, 48.0f, 48.0f);
     //                      Screen*, Xpos,           Ypos,          width, lenght
 
     const int       FRAME_DELAY = 1000 / FPS;  // MAX FRAME TIME

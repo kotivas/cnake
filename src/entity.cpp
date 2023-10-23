@@ -1,0 +1,3 @@
+/*
+generalized entity object
+*/

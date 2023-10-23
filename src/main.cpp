@@ -60,8 +60,9 @@ void handleEvents(SDL_Event event, Snake* snake) {      // handle input
     }
 }
 bool isCollide( Hitbox hitbox1, Hitbox hitbox2 ){ // check for collision betwen two objects
-    return (hitbox1.x + hitbox1.width >= hitbox2.x) && (hitbox2.x + hitbox2.width >= hitbox1.x) &&
-           (hitbox1.y + hitbox1.lenght >= hitbox2.y) && (hitbox2.y + hitbox2.lenght >= hitbox1.y);
+    // return (hitbox1.x + hitbox1.width >= hitbox2.x) && (hitbox2.x + hitbox2.width >= hitbox1.x) &&
+    //        (hitbox1.y + hitbox1.lenght >= hitbox2.y) && (hitbox2.y + hitbox2.lenght >= hitbox1.y);
+    return ( hitbox1.x == hitbox2.x && hitbox1.y == hitbox2.y);
 }
 
 void checkCollision(Snake* snake, Apple* apple){
@@ -78,8 +79,8 @@ void checkCollision(Snake* snake, Apple* apple){
     
     // check for collision with apple
     // if ( isCollide( snake->getHitbox(), apple->getHitbox() ) ){
-    if ( snake->getPos().x == apple->getPos().x && snake->getPos().y == apple->getPos().y ){
-          
+    if ( isCollide( snake->getHitbox(), apple->getHitbox() ) ){
+
         std::srand(std::time(nullptr));
 
         int random_x = BORDER_SIZE*2 + std::rand() % (SCREEN_WIDTH / GRID_SIZE) - BORDER_SIZE*2;//BORDER_SIZE - std::rand() % ( (SCREEN_WIDTH  / GRID_SIZE)  + BORDER_SIZE * 4);

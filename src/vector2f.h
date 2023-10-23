@@ -10,7 +10,6 @@ struct Vector2f {
 	:x(p_x), y(p_y)
 	{}
 	
-	void normalize();
 	float getAngle();
 
 	float x, y;

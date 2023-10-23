@@ -15,13 +15,10 @@ private:
     SnakeSegment*       m_pTail;
 
     SDL_Texture*        m_bodyTexture;
-
-    //Vector2f        m_position;
-    //Vector2f        m_direction;
+    SDL_Texture*        m_headTexture;
+    SDL_Texture*        m_tailTexture;
 
     float           m_speed; // pixels per frame
-    //Hitbox          m_hitbox;
-    //float           m_angle;
     int             m_score;
     int             m_segments;
 
@@ -33,19 +30,16 @@ public:
     void            updateHitbox();
     void            setDirection(Vector2f direction);
 
-    void            addSegment(int index);
+    void            addSegment(Vector2f position);
     void            removeSegment();
 
-    SDL_Texture*    getTextureHead() const;
-    Vector2f        getPos() const;
-    float           getAngle() const;
-    Vector2f        getDirection() const;
-    int             getLenght() const;
+    //Vector2f        getPos() const;
+    //float           getAngle() const;
+    //Vector2f        getDirection() const;
 
     Hitbox          getHitbox();
 
     SnakeSegment*   getHead();
-    
 
     ~Snake();
 };

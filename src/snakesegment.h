@@ -19,5 +19,4 @@ struct SnakeSegment {
 	Hitbox 			hitbox;
 
 	Vector2f 		buffdirection;
-	Vector2f        buffposition;
 };

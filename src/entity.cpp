@@ -1,3 +1,3 @@
 /*
-generalized entity object
+generalized entity
 */

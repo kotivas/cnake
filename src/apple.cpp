@@ -29,11 +29,11 @@ Apple::~Apple(){
     m_texture = nullptr;
 }
 
-Vector2f Apple::getPos() const{
+Vector2f Apple::getPosition() const{
     return m_position;
 }
 
-void Apple::setPos(int x, int y){
+void Apple::setPosition(int x, int y){
     m_position.x = x;
     m_position.y = y;
 }

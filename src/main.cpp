@@ -1,5 +1,12 @@
 /* Snake Game by kotivas
-
+TODO: рефакторинг
+TODO: звук
+TODO: возможность менять размер поля?
+TODO: анимашки
+TODO: менюшка
+TODO: класс game
+TODO: error collector?
+TODO: удлинение змейки
 */
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -14,6 +21,7 @@
 
 #include "snakesegment.h"
 
+// FIXME: в классе game/app, перенести в него соблюдая ООП
 bool IsGame = true; // Is game running?
 
 bool init(){       // catch init errors
@@ -59,10 +67,11 @@ void handleEvents(SDL_Event event, Snake* snake) {      // handle input
         }
     }
 }
+// FIXME: переделать коллизию
 bool isCollide( Hitbox hitbox1, Hitbox hitbox2 ){ // check for collision betwen two objects
-    // return (hitbox1.x + hitbox1.width >= hitbox2.x) && (hitbox2.x + hitbox2.width >= hitbox1.x) &&
-    //        (hitbox1.y + hitbox1.lenght >= hitbox2.y) && (hitbox2.y + hitbox2.lenght >= hitbox1.y);
-    return ( hitbox1.x == hitbox2.x && hitbox1.y == hitbox2.y);
+    return (hitbox1.x + hitbox1.width >= hitbox2.x) && (hitbox2.x + hitbox2.width >= hitbox1.x) &&
+           (hitbox1.y + hitbox1.lenght >= hitbox2.y) && (hitbox2.y + hitbox2.lenght >= hitbox1.y);
+    // return ( hitbox1.x == hitbox2.x && hitbox1.y == hitbox2.y);
 }
 
 void checkCollision(Snake* snake, Apple* apple){
@@ -76,7 +85,7 @@ void checkCollision(Snake* snake, Apple* apple){
        ) {
         snake->setDirection( {0.0f, 0.0f} );
     }
-    
+
     // check for collision with apple
     // if ( isCollide( snake->getHitbox(), apple->getHitbox() ) ){
     if ( isCollide( snake->getHitbox(), apple->getHitbox() ) ){
@@ -86,7 +95,7 @@ void checkCollision(Snake* snake, Apple* apple){
         int random_x = BORDER_SIZE*2 + std::rand() % (SCREEN_WIDTH / GRID_SIZE) - BORDER_SIZE*2;//BORDER_SIZE - std::rand() % ( (SCREEN_WIDTH  / GRID_SIZE)  + BORDER_SIZE * 4);
         int random_y = BORDER_SIZE*2 + std::rand() % (SCREEN_LENGHT / GRID_SIZE) - BORDER_SIZE*2; //BORDER_SIZE - std::rand() % ( (SCREEN_LENGHT  / GRID_SIZE) + BORDER_SIZE * 4 );
 
-        apple->setPos(random_x * GRID_SIZE, random_y * GRID_SIZE);
+        apple->setPosition(random_x * GRID_SIZE, random_y * GRID_SIZE);
     }    
 }
 
@@ -102,13 +111,14 @@ void update(Screen* screen, Snake* snake, Apple* apple){               // update
     checkCollision(snake, apple);    
 }
 
+// FIXME: переделать мб рендер
 void render(Screen* screen, SDL_Texture* field, Snake* snake, Apple* apple){ // render objects
 
     screen->clear();
 
     screen->render(field, 0, 0, SCREEN_WIDTH, SCREEN_LENGHT, 0);
 
-    screen->render(apple->getTexture(), apple->getPos().x, apple->getPos().y, TEXTURE_SIZE, TEXTURE_SIZE, 0);
+    screen->render(apple->getTexture(), apple->getPosition().x, apple->getPosition().y, TEXTURE_SIZE, TEXTURE_SIZE, 0);
 
     SnakeSegment* pIter = snake->getHead();
 

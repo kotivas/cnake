@@ -13,12 +13,13 @@ private:
     Hitbox          m_hitbox;
 public:
     Apple(Screen* screen, float x, float y, float width, float lenght);
-
     
-    void            setPos(int x, int y);
-    void            updateHitbox();
+    void            setPosition(int x, int y);
+    Vector2f        getPosition() const;
+
     SDL_Texture*    getTexture() const;
-    Vector2f        getPos() const;
+
+    void            updateHitbox();    
     Hitbox          getHitbox();
 
     ~Apple();

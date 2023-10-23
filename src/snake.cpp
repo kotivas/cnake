@@ -4,24 +4,24 @@ snake object
 
 #include "snake.h"
 #include "config.h"
+// TODO: убрать подключение конфига отсюда
 
 Snake::Snake(Screen* screen, float x, float y, float width, float lenght, float speed)
 : m_pHead(nullptr), m_pTail(nullptr), m_score(0), m_segments(3),
 m_bodyTexture(nullptr), m_headTexture(nullptr), m_tailTexture(nullptr)
 {
-
+    // FIXME: вынести загрузку текстур в main?
     m_bodyTexture = screen->loadTexture("./assets/body_vertical.png");
     m_tailTexture = screen->loadTexture("./assets/tail_up.png");
     m_headTexture = screen->loadTexture("./assets/head_down.png");
 
+    if ( m_bodyTexture == nullptr || m_tailTexture == nullptr || m_headTexture == nullptr ){
+        std::cout << "UNABLE TO LOAD TEXTURE: " << SDL_GetError() << std::endl;
+    }
+
     for (int i = 0; i < m_segments; i++){
         addSegment( { x, y} );
     } 
-
-    if ( m_pHead->texture == nullptr || m_bodyTexture == nullptr || m_pTail->texture == nullptr ){
-        std::cout << "UNABLE TO SET TEXTURE" << std::endl;
-        std::cout << SDL_GetError() << std::endl;
-    }
     
     m_pHead->hitbox = {m_pHead->position.x, m_pHead->position.y, width, lenght};   
     m_speed = speed;
@@ -29,6 +29,8 @@ m_bodyTexture(nullptr), m_headTexture(nullptr), m_tailTexture(nullptr)
 }
 
 void Snake::updatePosition(){
+
+    // FIXME: передвижение только на той который сейчас, а не на следующей
 
     m_pTail->texture = m_tailTexture;
     m_pHead->texture = m_headTexture;
@@ -48,7 +50,9 @@ void Snake::updatePosition(){
         }
     }
 }
-void Snake::addSegment(Vector2f position){ // SPAWN SEGMENT
+
+// FIXME: переименовать в spawn segment
+void Snake::addSegment(Vector2f position){ 
 
     SnakeSegment* pNewSegment = new SnakeSegment();
 

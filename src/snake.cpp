@@ -3,7 +3,7 @@
 // TODO: убрать подключение конфига отсюда
 
 Snake::Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture,
-             SDL_Texture* tailTexure,float x, float y, float speed)
+             SDL_Texture* tailTexure, float x, float y, float speed)
 : m_pHead(nullptr), m_pTail(nullptr), m_segments(2),
   m_bodyTexture(bodyTexture), m_headTexture(headTexture),
   m_tailTexture(tailTexure), m_speed(speed)
@@ -27,6 +27,13 @@ void Snake::updatePosition(){
         if ( int( pIter->position.x ) % GRID_SIZE == 0 && int( pIter->position.y ) % GRID_SIZE == 0){
             if ( pIter->pNext != nullptr ){
                 pIter->pNext->buffdirection = pIter->direction;
+
+                if ( m_pHead->position.x == pIter->position.x &&
+                     m_pHead->position.y == pIter->position.y &&
+                     m_pHead != pIter  ){
+                        //
+                }
+                
             }
             pIter->direction = pIter->buffdirection;
             pIter->angle = pIter->direction.getAngle();
@@ -43,6 +50,19 @@ void Snake::updatePosition(){
     }
 }
 
+// void Snake::reset(){
+//     while ( m_pHead != nullptr ){   
+//         removeSegment();
+//     }
+
+//     for (int i = 0; i < m_segments; i++){
+//         addSegment( {96, 96 } );
+//         std::cout << i << std::endl;
+//     } 
+
+//     std::cout << "reset" << std::endl;
+
+// }
 
 void Snake::addScore(){
     // add new segment from the end

@@ -12,6 +12,7 @@ October 2023 */
 - - плавное добавления сегментов - мб брать угол предыдущего сегмента и юзать его при спавне
 - - поедание яблока
 - - идл анимации?
+- перезапуск
 - менюшка
 - класс game?
 */
@@ -96,7 +97,6 @@ void checkCollision(Snake* snake, Apple* apple){
          snake->getPosition().y > (SCREEN_LENGHT - BORDER_SIZE*2) ||
          snake->getPosition().y < BORDER_SIZE
          ){
-        // do smth
     }
 
     // check for collision with apple

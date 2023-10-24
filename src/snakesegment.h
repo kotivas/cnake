@@ -1,9 +1,6 @@
 #pragma once
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-
 #include "vector2f.h"
-#include "hitbox.h"
 
 struct SnakeSegment {
 	SnakeSegment()
@@ -16,7 +13,6 @@ struct SnakeSegment {
 	SDL_Texture* 	texture;
 	float 			angle;
 	Vector2f 		direction;
-	Hitbox 			hitbox;
 
 	Vector2f 		buffdirection;
 };

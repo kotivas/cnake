@@ -37,6 +37,7 @@ SDL_Texture* Screen::loadTexture(const char* path){
         texture = SDL_CreateTextureFromSurface( m_render, loadedSurface );
 
         if ( texture == nullptr ){
+            std::cout << "UNABLE TO LOAD TEXTURE: ";
             std::cout << SDL_GetError() << std::endl;
         }
 
@@ -47,7 +48,7 @@ SDL_Texture* Screen::loadTexture(const char* path){
     return texture;
 }
 
-void Screen::render(SDL_Texture* texture, int x, int y, int w, int h, int angle){
+void Screen::render(SDL_Texture* texture, Vector2f position, int w, int h, int angle){
 	SDL_Rect src; 
 	src.x = 0;
 	src.y = 0;
@@ -57,8 +58,8 @@ void Screen::render(SDL_Texture* texture, int x, int y, int w, int h, int angle)
     SDL_QueryTexture(texture, NULL, NULL, &src.w, &src.h);
 
     SDL_Rect dst;
-	dst.x = x;
-	dst.y = y;
+	dst.x = position.x;
+	dst.y = position.y;
 	dst.w = w;//src.w;
 	dst.h = h;//src.h;
 

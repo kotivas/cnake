@@ -1,13 +1,18 @@
-/* Snake Game by kotivas
-TODO: рефакторинг
-TODO: звук
-TODO: возможность менять размер поля?
-TODO: анимашки
-TODO: менюшка
-TODO: класс game
-TODO: error collector?
-TODO: удлинение змейки
+/* Cnake by kotivas
+snake game with using SDL2 library
+DISTRIBUTED WITH GNU PUBLIC LICENSE
+October 2023 */
+
+/* TODO:
+- рефакторинг
+- звук
+- возможность менять размер поля?
+- анимации
+- менюшка
+- класс game?
 */
+
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <iostream>
@@ -18,8 +23,6 @@ TODO: удлинение змейки
 #include "apple.h"
 
 #include "config.h"
-
-#include "snakesegment.h"
 
 // FIXME: в классе game/app, перенести в него соблюдая ООП
 bool IsGame = true; // Is game running?
@@ -39,7 +42,8 @@ bool init(){       // catch init errors
     return true;
 }
 
-void handleEvents(SDL_Event event, Snake* snake) {      // handle input
+// handle window events
+void handleEvents(SDL_Event event, Snake* snake) {
 	while (SDL_PollEvent(&event)){  
 		switch(event.type){
 		    case SDL_QUIT:     // if close button pressed
@@ -67,33 +71,29 @@ void handleEvents(SDL_Event event, Snake* snake) {      // handle input
         }
     }
 }
-// FIXME: переделать коллизию
-bool isCollide( Hitbox hitbox1, Hitbox hitbox2 ){ // check for collision betwen two objects
-    return (hitbox1.x + hitbox1.width >= hitbox2.x) && (hitbox2.x + hitbox2.width >= hitbox1.x) &&
-           (hitbox1.y + hitbox1.lenght >= hitbox2.y) && (hitbox2.y + hitbox2.lenght >= hitbox1.y);
-    // return ( hitbox1.x == hitbox2.x && hitbox1.y == hitbox2.y);
-}
 
+// check for collision between snake, apple and walls
 void checkCollision(Snake* snake, Apple* apple){
 
-    // check for collision wirh border
-    if (
-        isCollide( snake->getHitbox(), {0, 0, SCREEN_WIDTH, BORDER_SIZE} ) ||
-        isCollide( snake->getHitbox(), {0, 0, BORDER_SIZE, SCREEN_LENGHT} ) ||
-        isCollide( snake->getHitbox(), {0, SCREEN_LENGHT - BORDER_SIZE, SCREEN_WIDTH, 0} ) ||
-        isCollide( snake->getHitbox(), {SCREEN_WIDTH - BORDER_SIZE, 0, 0, SCREEN_LENGHT} ) 
-       ) {
-        snake->setDirection( {0.0f, 0.0f} );
+    // check for collsion with border
+    if ( snake->getPosition().x > (SCREEN_WIDTH - BORDER_SIZE*2) ||
+         snake->getPosition().x < BORDER_SIZE ||
+         snake->getPosition().y > (SCREEN_LENGHT - BORDER_SIZE*2) ||
+         snake->getPosition().y < BORDER_SIZE
+         ){
+        // do smth
     }
 
     // check for collision with apple
-    // if ( isCollide( snake->getHitbox(), apple->getHitbox() ) ){
-    if ( isCollide( snake->getHitbox(), apple->getHitbox() ) ){
+    if ( snake->getPosition().y == apple->getPosition().y &&
+         snake->getPosition().x == apple->getPosition().x ){
+        
+        snake->addScore();
 
         std::srand(std::time(nullptr));
 
-        int random_x = BORDER_SIZE*2 + std::rand() % (SCREEN_WIDTH / GRID_SIZE) - BORDER_SIZE*2;//BORDER_SIZE - std::rand() % ( (SCREEN_WIDTH  / GRID_SIZE)  + BORDER_SIZE * 4);
-        int random_y = BORDER_SIZE*2 + std::rand() % (SCREEN_LENGHT / GRID_SIZE) - BORDER_SIZE*2; //BORDER_SIZE - std::rand() % ( (SCREEN_LENGHT  / GRID_SIZE) + BORDER_SIZE * 4 );
+        int random_x = ( BORDER_SIZE + std::rand() % ( SCREEN_WIDTH - BORDER_SIZE*2 ) ) / GRID_SIZE;
+        int random_y = ( BORDER_SIZE + std::rand() % ( SCREEN_LENGHT - BORDER_SIZE*2 ) ) / GRID_SIZE;
 
         apple->setPosition(random_x * GRID_SIZE, random_y * GRID_SIZE);
     }    
@@ -102,28 +102,24 @@ void checkCollision(Snake* snake, Apple* apple){
 void update(Screen* screen, Snake* snake, Apple* apple){               // update AKA tick
 
     snake->updatePosition();
-    snake->updateHitbox();
 
     screen->update();
 
-    apple->updateHitbox();
-                    
     checkCollision(snake, apple);    
 }
 
-// FIXME: переделать мб рендер
-void render(Screen* screen, SDL_Texture* field, Snake* snake, Apple* apple){ // render objects
+void render(Screen* screen, SDL_Texture* fieldTexture, Snake* snake, Apple* apple){ // render objects
 
     screen->clear();
 
-    screen->render(field, 0, 0, SCREEN_WIDTH, SCREEN_LENGHT, 0);
+    screen->render(fieldTexture, {0.f, 0.f}, SCREEN_WIDTH, SCREEN_LENGHT, 0.f);
 
-    screen->render(apple->getTexture(), apple->getPosition().x, apple->getPosition().y, TEXTURE_SIZE, TEXTURE_SIZE, 0);
+    screen->render(apple->getTexture(), apple->getPosition(), TEXTURE_SIZE, TEXTURE_SIZE, 0.f);
 
     SnakeSegment* pIter = snake->getHead();
 
     while ( pIter != nullptr ){
-        screen->render(pIter->texture, pIter->position.x, pIter->position.y, TEXTURE_SIZE, TEXTURE_SIZE, pIter->angle);
+        screen->render(pIter->texture, pIter->position, TEXTURE_SIZE, TEXTURE_SIZE, pIter->angle);
         pIter = pIter->pNext;
     }
 
@@ -148,43 +144,62 @@ void quit(Screen* screen, SDL_Texture* field, Snake* snake, Apple* apple){ // de
 }
 
 int main(){
+
     if ( !init() ){
         std::cout << "FAILED TO INIT\nExiting..." << std::endl;
         return 1;
     }
-
-    Screen* screen = new Screen(TITLE, SCREEN_WIDTH, SCREEN_LENGHT);
-    //                          title, screen_width, screen_lenght
-    Snake* snake = new Snake(screen, SCREEN_WIDTH/2, BORDER_SIZE*3, 32.0f, 32.0f, SNAKE_SPEED);
-    //                      Screen*, Xpos,           Ypos,          width, length, speed
-    Apple* apple = new Apple(screen, SCREEN_WIDTH/2, BORDER_SIZE*8, 48.0f, 48.0f);
-    //                      Screen*, Xpos,           Ypos,          width, lenght
-
-    const int       FRAME_DELAY = 1000 / FPS;  // MAX FRAME TIME
+    
+    // maximum frame time
+    const int       FRAME_DELAY = 1000 / FPS;
     Uint32          frameStart;
+    // number of ticks occupied by the frame
     int             deltaTime;
 
     SDL_Event       event;
-    SDL_Texture*    field = screen->loadTexture("./assets/field.png");
+
+    // textures
+    SDL_Texture*    fieldTexture;
+    SDL_Texture*    appleTexture;
+    SDL_Texture*    headTexture;
+    SDL_Texture*    bodyTexture;
+    SDL_Texture*    tailTexture;
+
+    Screen* screen = new Screen(TITLE, SCREEN_WIDTH, SCREEN_LENGHT);
+    //                          title, screen width, screen lenght
+
+    fieldTexture = screen->loadTexture("./assets/field.png");
+    appleTexture = screen->loadTexture("./assets/apple.png");
+
+    headTexture = screen->loadTexture("./assets/head_down.png");
+    bodyTexture = screen->loadTexture("./assets/body_vertical.png");
+    tailTexture = screen->loadTexture("./assets/tail_up.png");
+
+    Snake* snake = new Snake( headTexture, bodyTexture, tailTexture,
+    //                        headTexture, bodyTexture, tailTexture
+                              SCREEN_WIDTH/2, BORDER_SIZE*3, SNAKE_SPEED);
+    //                        Xpos,           Ypos,          Speed
+
+    Apple* apple = new Apple(appleTexture ,SCREEN_WIDTH/2, BORDER_SIZE*8);
+    //                       texture       Xpos,           Ypos,      
+
+
 
     while ( IsGame ){
 
         frameStart = SDL_GetTicks(); // get start frame ticks
 
         handleEvents(event, snake);
-
         update(screen, snake, apple);
-
-        render(screen, field, snake, apple);
+        render(screen, fieldTexture, snake, apple);
 
         deltaTime = SDL_GetTicks() - frameStart; // get frame time
-
         if ( FRAME_DELAY > deltaTime ){
             SDL_Delay( FRAME_DELAY - deltaTime );
         }
     } 
 
-    quit(screen, field, snake, apple);
+    quit(screen, fieldTexture, snake, apple);
 
     return 0;
 }

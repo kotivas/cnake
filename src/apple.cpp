@@ -1,26 +1,12 @@
-/* Apple entity
-
-*/
-
 #include "apple.h"
 
-Apple::Apple(Screen* screen, float x, float y, float width, float lenght)
+Apple::Apple(SDL_Texture* texture, float x, float y)
 : m_texture( nullptr )
 {
-    m_texture = screen->loadTexture("./assets/apple.png");
-
-    if ( m_texture == nullptr ){
-        std::cout << SDL_GetError() << std::endl;
-    }
-
-    m_hitbox = { m_position.x, m_position.y, width, lenght };
-
     m_position = {x, y};
 
-}
+    m_texture = texture;
 
-void Apple::updateHitbox(){
-    m_hitbox = { m_position.x, m_position.y, m_hitbox.width, m_hitbox.lenght };
 }
 
 Apple::~Apple(){
@@ -40,8 +26,4 @@ void Apple::setPosition(int x, int y){
 
 SDL_Texture* Apple::getTexture() const{
     return m_texture;
-}
-
-Hitbox Apple::getHitbox(){
-    return m_hitbox;
 }

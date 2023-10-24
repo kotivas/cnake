@@ -6,13 +6,11 @@ class Apple {
 private:
     SDL_Texture*    m_texture;
     Vector2f        m_position;
-    // Hitbox          m_hitbox;
 public:
     Apple(SDL_Texture* texture, float x, float y);
     
     void            setPosition(int x, int y);
     Vector2f        getPosition() const;
-
     SDL_Texture*    getTexture() const;
 
     ~Apple();

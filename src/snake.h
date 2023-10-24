@@ -3,6 +3,8 @@
 #include "vector2f.h"
 #include "snakesegment.h"
 
+#include <iostream>
+
 class Snake {
 private:
     SnakeSegment*       m_pHead;
@@ -14,7 +16,6 @@ private:
 
     float           m_speed; // pixels per frame
     int             m_segments;
-    int             m_score;
 
     void            addSegment(Vector2f position);
     void            removeSegment();    
@@ -23,7 +24,6 @@ public:
     Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture,
           SDL_Texture* tailTexure,float x, float y, float speed);
 
-    void            setPosition(int x, int y);
     void            updatePosition();
     void            setDirection(Vector2f direction);
 
@@ -31,7 +31,6 @@ public:
     SnakeSegment*   getHead();
 
     void            addScore();
-    int             getScore() const;
 
     ~Snake();
 };

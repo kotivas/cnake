@@ -8,26 +8,41 @@ October 2023 */
 - звук
 - возможность менять размер поля?
 - анимации
+- - плавный поворот
+- - плавное добавления сегментов - мб брать угол предыдущего сегмента и юзать его при спавне
+- - поедание яблока
+- - идл анимации?
 - менюшка
 - класс game?
 */
-
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <iostream>
 #include <ctime>
 
-#include "screen.h"
+#include "renderwindow.h"
 #include "snake.h"
 #include "apple.h"
-
 #include "config.h"
 
 // FIXME: в классе game/app, перенести в него соблюдая ООП
-bool IsGame = true; // Is game running?
+// is game running?
+bool    IsGame = true;
+// catch init errors
+bool    init();
+// handle window events
+void    handleEvents(SDL_Event event, Snake* snake);
+// check for collision between snake, apple and walls
+void    checkCollision(Snake* snake, Apple* apple);
+// update all
+void    update(RenderWindow* screen, Snake* snake, Apple* apple);
+// render objects
+void    render(RenderWindow* screen, SDL_Texture* fieldTexture, Snake* snake, Apple* apple);
+// destructor
+void    quit(RenderWindow* screen, SDL_Texture* field, Snake* snake, Apple* apple);
 
-bool init(){       // catch init errors
+bool init(){ 
 
     if ( SDL_Init(SDL_INIT_VIDEO) < 0 ) { 
 		std::cout << "SDL_Init failed to init. SDL_ERROR: " << SDL_GetError() << std::endl;
@@ -42,7 +57,7 @@ bool init(){       // catch init errors
     return true;
 }
 
-// handle window events
+
 void handleEvents(SDL_Event event, Snake* snake) {
 	while (SDL_PollEvent(&event)){  
 		switch(event.type){
@@ -99,42 +114,42 @@ void checkCollision(Snake* snake, Apple* apple){
     }    
 }
 
-void update(Screen* screen, Snake* snake, Apple* apple){               // update AKA tick
+void update(RenderWindow* window, Snake* snake, Apple* apple){
 
     snake->updatePosition();
 
-    screen->update();
+    window->update();
 
     checkCollision(snake, apple);    
 }
 
-void render(Screen* screen, SDL_Texture* fieldTexture, Snake* snake, Apple* apple){ // render objects
+void render(RenderWindow* window, SDL_Texture* fieldTexture, Snake* snake, Apple* apple){
 
-    screen->clear();
+    window->clear();
 
-    screen->render(fieldTexture, {0.f, 0.f}, SCREEN_WIDTH, SCREEN_LENGHT, 0.f);
+    window->render(fieldTexture, {0.f, 0.f}, SCREEN_WIDTH, SCREEN_LENGHT, 0.f);
 
-    screen->render(apple->getTexture(), apple->getPosition(), TEXTURE_SIZE, TEXTURE_SIZE, 0.f);
+    window->render(apple->getTexture(), apple->getPosition(), TEXTURE_SIZE, TEXTURE_SIZE, 0.f);
 
     SnakeSegment* pIter = snake->getHead();
 
     while ( pIter != nullptr ){
-        screen->render(pIter->texture, pIter->position, TEXTURE_SIZE, TEXTURE_SIZE, pIter->angle);
+        window->render(pIter->texture, pIter->position, TEXTURE_SIZE, TEXTURE_SIZE, pIter->angle);
         pIter = pIter->pNext;
     }
 
-    screen->update();
+    window->update();
 }
 
-void quit(Screen* screen, SDL_Texture* field, Snake* snake, Apple* apple){ // destructor
+void quit(RenderWindow* window, SDL_Texture* field, Snake* snake, Apple* apple){
 
     SDL_DestroyTexture( field );
 
-    delete screen;
+    delete window;
     delete snake;
     delete apple;
 
-    screen = nullptr;
+    window = nullptr;
     snake = nullptr;
     field = nullptr;
     apple = nullptr;
@@ -165,15 +180,15 @@ int main(){
     SDL_Texture*    bodyTexture;
     SDL_Texture*    tailTexture;
 
-    Screen* screen = new Screen(TITLE, SCREEN_WIDTH, SCREEN_LENGHT);
+    RenderWindow* window = new RenderWindow(TITLE, SCREEN_WIDTH, SCREEN_LENGHT);
     //                          title, screen width, screen lenght
 
-    fieldTexture = screen->loadTexture("./assets/field.png");
-    appleTexture = screen->loadTexture("./assets/apple.png");
+    fieldTexture = window->loadTexture("./assets/field.png");
+    appleTexture = window->loadTexture("./assets/apple.png");
 
-    headTexture = screen->loadTexture("./assets/head_down.png");
-    bodyTexture = screen->loadTexture("./assets/body_vertical.png");
-    tailTexture = screen->loadTexture("./assets/tail_up.png");
+    headTexture = window->loadTexture("./assets/head_down.png");
+    bodyTexture = window->loadTexture("./assets/body_vertical.png");
+    tailTexture = window->loadTexture("./assets/tail_up.png");
 
     Snake* snake = new Snake( headTexture, bodyTexture, tailTexture,
     //                        headTexture, bodyTexture, tailTexture
@@ -190,8 +205,8 @@ int main(){
         frameStart = SDL_GetTicks(); // get start frame ticks
 
         handleEvents(event, snake);
-        update(screen, snake, apple);
-        render(screen, fieldTexture, snake, apple);
+        update(window, snake, apple);
+        render(window, fieldTexture, snake, apple);
 
         deltaTime = SDL_GetTicks() - frameStart; // get frame time
         if ( FRAME_DELAY > deltaTime ){
@@ -199,7 +214,7 @@ int main(){
         }
     } 
 
-    quit(screen, fieldTexture, snake, apple);
+    quit(window, fieldTexture, snake, apple);
 
     return 0;
 }

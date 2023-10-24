@@ -4,8 +4,7 @@
 
 struct SnakeSegment {
 	SnakeSegment()
-	: position{0.0f, 0.0f}, pNext(nullptr),
-	angle{0}, direction{0.0f, 0.0f}
+	: pNext(nullptr), angle{0.f}
 	{}
 
 	Vector2f 		position;
@@ -15,4 +14,5 @@ struct SnakeSegment {
 	Vector2f 		direction;
 
 	Vector2f 		buffdirection;
+
 };

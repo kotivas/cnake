@@ -9,7 +9,7 @@ later
 ## 🛠️ Compiling
 
 ### 🪟 Windows
-lmao fuck u (later)
+later
 
 ### 🐧 Linux
 After installing SDL2 and SDL2_Image, execute the following commands

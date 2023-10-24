@@ -4,26 +4,19 @@
 
 Snake::Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture,
              SDL_Texture* tailTexure,float x, float y, float speed)
-: m_pHead(nullptr), m_pTail(nullptr), m_score(0), m_segments(2),
-m_bodyTexture(nullptr), m_headTexture(nullptr), m_tailTexture(nullptr)
-{
-
-
-    m_headTexture = headTexture;
-    m_bodyTexture = bodyTexture;
-    m_tailTexture = tailTexure;
-
+: m_pHead(nullptr), m_pTail(nullptr), m_segments(2),
+  m_bodyTexture(bodyTexture), m_headTexture(headTexture),
+  m_tailTexture(tailTexure), m_speed(speed)
+{   
     for (int i = 0; i < m_segments; i++){
-        addSegment( { x, y} );
+        addSegment( { x, y } );
     } 
-    
-    m_speed = speed;
-
 }
 
 void Snake::updatePosition(){
 
     // FIXME: передвижение только на той который сейчас, а не на следующей
+    // FIXME: пофиксить спавн
 
     for (SnakeSegment* pIter = m_pHead; pIter != nullptr; pIter = pIter->pNext){
 
@@ -54,25 +47,19 @@ void Snake::updatePosition(){
 void Snake::addScore(){
     // add new segment from the end
     addSegment( m_pTail->position );
-    m_score++;
-}
-
-int Snake::getScore() const{
-    return m_score;
 }
 
 // add new segment
 void Snake::addSegment(Vector2f position){ 
 
     SnakeSegment* pNewSegment = new SnakeSegment();
-    //
+
     if (m_pHead == nullptr){
         m_pTail = pNewSegment;
         m_pHead = pNewSegment;
     } else {
         m_pTail->pNext = pNewSegment;
         m_pTail = m_pTail->pNext;
-        pNewSegment->direction = m_pTail->direction;
     }
     pNewSegment->texture = m_bodyTexture;
     pNewSegment->position = position;
@@ -82,12 +69,6 @@ void Snake::setDirection(Vector2f direction){
     if ( m_pHead->direction.y != (direction.y * -1) || m_pHead->direction.x != (direction.x * -1) ){
         m_pHead->buffdirection = direction;
     }
-}
-
-// FIXME: убрать??
-void Snake::setPosition(int x, int y){
-    m_pHead->direction.x = x;
-    m_pHead->direction.y = y;
 }
 
 // delete segment from beginning

@@ -2,30 +2,26 @@
 is responsible for show window, render things and load textures
 */
 
-#include "screen.h"
+#include "renderwindow.h"
 
-Screen::Screen(const char* TITLE, const unsigned short SCREEN_WIDTH, const unsigned short SCREEN_LENGHT)
+RenderWindow::RenderWindow(const char* TITLE, const unsigned short SCREEN_WIDTH, const unsigned short SCREEN_LENGHT)
 : m_screen(nullptr), m_render(nullptr)
 {
     m_screen = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_LENGHT, SDL_WINDOW_SHOWN);
-
 	if (m_screen == nullptr){
-		std::cout << "screen failed to init. Error: " << SDL_GetError() << std::endl;
+		std::cout << "Window failed to init. Error: " << SDL_GetError() << std::endl;
 	}
 
-	m_render = SDL_CreateRenderer(m_screen, -1, SDL_RENDERER_ACCELERATED);
-
-
-    SDL_SetHint(SDL_HINT_RENDER_DRIVER, "direct3d11");
-    // AntiAliasing
-    SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" );
-
+    m_render = SDL_CreateRenderer(m_screen, -1, SDL_RENDERER_ACCELERATED);
     if (m_render == nullptr){
         std::cout << "Render failed to init. Error: " << SDL_GetError() << std::endl;
     }
+
+    // AntiAliasing
+    SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" );
 }
 
-SDL_Texture* Screen::loadTexture(const char* path){
+SDL_Texture* RenderWindow::loadTexture(const char* path){
     SDL_Texture* texture = nullptr;
 
     SDL_Surface* loadedSurface = IMG_Load( path ); 
@@ -48,7 +44,7 @@ SDL_Texture* Screen::loadTexture(const char* path){
     return texture;
 }
 
-void Screen::render(SDL_Texture* texture, Vector2f position, int w, int h, int angle){
+void RenderWindow::render(SDL_Texture* texture, Vector2f position, int w, int h, int angle){
 	SDL_Rect src; 
 	src.x = 0;
 	src.y = 0;
@@ -66,18 +62,18 @@ void Screen::render(SDL_Texture* texture, Vector2f position, int w, int h, int a
     SDL_RenderCopyEx( m_render, texture, &src, &dst, angle, NULL, SDL_FLIP_NONE);
 }
 
-void Screen::clear(){
+void RenderWindow::clear(){
     SDL_RenderClear( m_render );
 }
 
-void Screen::update(){
+void RenderWindow::update(){
     SDL_RenderPresent( m_render );
 }
 
-Screen::~Screen(){
+RenderWindow::~RenderWindow(){
     SDL_DestroyRenderer( m_render );
     SDL_DestroyWindow( m_screen );
 
     m_render = nullptr;
-    m_render = nullptr;
+    m_screen = nullptr;
 }

@@ -2,9 +2,7 @@ TARGET = ./bin/snake
 
 CC = g++
 
-CVER = -std=c++20
-
-CFLAG = -Wall
+CFLAG = -g -Wall
 LIBS = -lSDL2 -lSDL2_image
 
 PREF_SRC = ./src/

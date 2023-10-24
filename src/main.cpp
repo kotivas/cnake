@@ -3,7 +3,8 @@ snake game with using SDL2 library
 DISTRIBUTED WITH GNU PUBLIC LICENSE
 October 2023 */
 
-/* TODO:
+/* --------------------------------
+TODO:
 - рефакторинг
 - звук
 - возможность менять размер поля?
@@ -15,7 +16,7 @@ October 2023 */
 - перезапуск
 - менюшка
 - класс game?
-*/
+----------------------------------- */
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>

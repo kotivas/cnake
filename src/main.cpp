@@ -143,7 +143,6 @@ void render(RenderWindow* window, SDL_Texture* fieldTexture, Snake* snake, Apple
     //             texture,      width,        height,        position
     window->render(fieldTexture, SCREEN_WIDTH, SCREEN_LENGHT, {0.f, 0.f});
 
-
     std::string text = "cnake";
     window->render(font, text, {164, 242, 89}, ( text.length() * 24 ) , BORDER_SIZE, {BORDER_SIZE, 4});    
     //             font, text,  color RGB      width,                   height,       Bposition     

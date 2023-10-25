@@ -13,7 +13,6 @@ TODO:
 - - плавное добавления сегментов - мб брать угол предыдущего сегмента и юзать его при спавне
 - - поедание яблока
 - - идл анимации?
-- перезапуск
 - менюшка
 - класс game?
 ----------------------------------- */
@@ -28,9 +27,8 @@ TODO:
 #include "apple.h"
 #include "config.h"
 
-// FIXME: в классе game/app, перенести в него соблюдая ООП
-// is game running?
-bool    IsGame = true;
+// is game running? 
+bool    IsGame = true; // FIXME: ооп?
 // catch init errors
 bool    init();
 // handle window events
@@ -76,13 +74,16 @@ void handleEvents(SDL_Event event, Snake* snake) {
                         snake->setDirection( {-1, 0} );
                         break;
                     case SDLK_DOWN:
-                        snake->setDirection( {0, 1});
+                        snake->setDirection( {0, 1} );
                         break;
                     case SDLK_UP:
                         snake->setDirection( {0, -1} );
                         break;
                     case SDLK_ESCAPE:
                         IsGame = false;
+                        break;
+                    case SDLK_SPACE:
+                        snake->reset();
                         break;
                 }
         }
@@ -98,6 +99,7 @@ void checkCollision(Snake* snake, Apple* apple){
          snake->getPosition().y > (SCREEN_LENGHT - BORDER_SIZE*2) ||
          snake->getPosition().y < BORDER_SIZE
          ){
+            snake->reset();
     }
 
     // check for collision with apple
@@ -115,6 +117,7 @@ void checkCollision(Snake* snake, Apple* apple){
     }    
 }
 
+// FIXME: убрать?
 void update(RenderWindow* window, Snake* snake, Apple* apple){
 
     snake->updatePosition();
@@ -187,19 +190,19 @@ int main(){
     fieldTexture = window->loadTexture("./assets/field.png");
     appleTexture = window->loadTexture("./assets/apple.png");
 
-    headTexture = window->loadTexture("./assets/head_down.png");
-    bodyTexture = window->loadTexture("./assets/body_vertical.png");
-    tailTexture = window->loadTexture("./assets/tail_up.png");
+    headTexture = window->loadTexture("./assets/head.png");
+    bodyTexture = window->loadTexture("./assets/body.png");
+    tailTexture = window->loadTexture("./assets/tail.png");
 
     Snake* snake = new Snake( headTexture, bodyTexture, tailTexture,
     //                        headTexture, bodyTexture, tailTexture
-                              SCREEN_WIDTH/2, BORDER_SIZE*3, SNAKE_SPEED);
-    //                        Xpos,           Ypos,          Speed
+                              SCREEN_WIDTH/2, BORDER_SIZE*3, SNAKE_SPEED,
+    //                        Xpos,           Ypos,          Speed                              
+                              { 0, 1 },  2);
+    //                        direction, segments 
 
     Apple* apple = new Apple(appleTexture ,SCREEN_WIDTH/2, BORDER_SIZE*8);
     //                       texture       Xpos,           Ypos,      
-
-
 
     while ( IsGame ){
 

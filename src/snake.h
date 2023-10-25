@@ -15,14 +15,19 @@ private:
     SDL_Texture*        m_tailTexture;
 
     float           m_speed; // pixels per frame
-    int             m_segments;
+
+    int             m_initSegments;
+    Vector2f        m_initPosition;
+    Vector2f        m_initDirection;
 
     void            addSegment(Vector2f position);
-    void            removeSegment();    
+    void            removeSegment();
+    void            updateTextures();    
 
 public:    
     Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture,
-          SDL_Texture* tailTexure,float x, float y, float speed);
+          SDL_Texture* tailTexure,float x, float y, float speed,
+          Vector2f direction, int segments);
 
     void            updatePosition();
     void            setDirection(Vector2f direction);
@@ -31,6 +36,8 @@ public:
     SnakeSegment*   getHead();
 
     void            addScore();
+
+    void reset();
 
     ~Snake();
 };

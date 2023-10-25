@@ -18,7 +18,7 @@ RenderWindow::RenderWindow(const char* TITLE, const unsigned short SCREEN_WIDTH,
     }
 
     // AntiAliasing
-    SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" );
+    // SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" );
 }
 
 SDL_Texture* RenderWindow::loadTexture(const char* path){

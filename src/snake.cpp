@@ -3,14 +3,18 @@
 // TODO: убрать подключение конфига отсюда
 
 Snake::Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture,
-             SDL_Texture* tailTexure, float x, float y, float speed)
-: m_pHead(nullptr), m_pTail(nullptr), m_segments(2),
-  m_bodyTexture(bodyTexture), m_headTexture(headTexture),
-  m_tailTexture(tailTexure), m_speed(speed)
+             SDL_Texture* tailTexure, float x, float y, float speed,
+             Vector2f direction, int segments)
+: m_pHead(nullptr), m_pTail(nullptr), m_bodyTexture(bodyTexture),
+ m_headTexture(headTexture), m_tailTexture(tailTexure), m_speed(speed),
+ m_initSegments( segments ), m_initPosition{ x, y }, m_initDirection{ direction }
 {   
-    for (int i = 0; i < m_segments; i++){
-        addSegment( { x, y } );
+    for (int i = 0; i < m_initSegments; i++){
+        addSegment( { m_initPosition.x, m_initPosition.y } );
     } 
+
+    m_pHead->buffdirection = m_initDirection; // initial direction of the snake
+
 }
 
 void Snake::updatePosition(){
@@ -28,41 +32,48 @@ void Snake::updatePosition(){
             if ( pIter->pNext != nullptr ){
                 pIter->pNext->buffdirection = pIter->direction;
 
-                if ( m_pHead->position.x == pIter->position.x &&
-                     m_pHead->position.y == pIter->position.y &&
-                     m_pHead != pIter  ){
-                        //
-                }
-                
+            if ( m_pHead->position.x == pIter->position.x &&
+                m_pHead->position.y == pIter->position.y &&
+                m_pHead != pIter  ){
+                reset();
+                break;
+            }
             }
             pIter->direction = pIter->buffdirection;
             pIter->angle = pIter->direction.getAngle();
         }
 
-        // maybe move this to the another func
+        updateTextures();
+    }
+}
+
+void Snake::updateTextures(){
+    for (SnakeSegment* pIter = m_pHead; pIter != nullptr; pIter = pIter->pNext){
         if ( pIter == m_pTail ){
             pIter->texture = m_tailTexture;
         } else if ( pIter == m_pHead ){
             pIter->texture = m_headTexture;
         } else if ( pIter != nullptr ){
             pIter->texture = m_bodyTexture;
-        }
+        }        
     }
 }
 
-// void Snake::reset(){
-//     while ( m_pHead != nullptr ){   
-//         removeSegment();
-//     }
+void Snake::reset(){
 
-//     for (int i = 0; i < m_segments; i++){
-//         addSegment( {96, 96 } );
-//         std::cout << i << std::endl;
-//     } 
+    while ( m_pHead != nullptr ){   
+        removeSegment();
+    }
 
-//     std::cout << "reset" << std::endl;
+    for (int i = 0; i < m_initSegments; i++){
+        addSegment( { m_initPosition.x, m_initPosition.y } );
+    }
 
-// }
+    m_pHead->buffdirection = m_initDirection;
+
+    std::cout << "reseted" << std::endl;
+
+}
 
 void Snake::addScore(){
     // add new segment from the end
@@ -97,7 +108,6 @@ void Snake::removeSegment(){
         SnakeSegment* pRemove = m_pHead;
         m_pHead = m_pHead->pNext;
 
-        SDL_DestroyTexture(pRemove->texture);
         delete pRemove;
     }
 }
@@ -116,5 +126,9 @@ Snake::~Snake(){
     while ( m_pHead != nullptr ){   
         removeSegment();
     }
+
+    SDL_DestroyTexture( m_headTexture );
+    SDL_DestroyTexture( m_bodyTexture );
+    SDL_DestroyTexture( m_tailTexture );
 }
 

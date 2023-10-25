@@ -1,8 +1,10 @@
 #include "apple.h"
 
 Apple::Apple(SDL_Texture* texture, float x, float y)
-: m_texture( texture ), m_position{x, y}
-{}
+: m_texture( texture ), m_initPosition{x, y}
+{
+    m_position = m_initPosition;
+}
 
 Vector2f Apple::getPosition() const{
     return m_position;
@@ -11,6 +13,10 @@ Vector2f Apple::getPosition() const{
 void Apple::setPosition(int x, int y){
     m_position.x = x;
     m_position.y = y;
+}
+
+void Apple::reset(){
+    m_position = m_initPosition;
 }
 
 SDL_Texture* Apple::getTexture() const{

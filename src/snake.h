@@ -26,10 +26,10 @@ private:
 
 public:    
     Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture,
-          SDL_Texture* tailTexure,float x, float y, float speed,
+          SDL_Texture* tailTexure, float x, float y, float speed,
           Vector2f direction, int segments);
 
-    void            updatePosition();
+    void            updatePosition( const short GRID_SIZE );
     void            setDirection(Vector2f direction);
 
     Vector2f        getPosition() const;

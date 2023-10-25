@@ -6,8 +6,6 @@ October 2023 */
 /* --------------------------------
 TODO:
 - рефакторинг
-- звук
-- возможность менять размер поля?
 - анимации
 - - плавный поворот
 - - плавное добавления сегментов - мб брать угол предыдущего сегмента и юзать его при спавне
@@ -15,12 +13,18 @@ TODO:
 - - идл анимации?
 - менюшка
 - класс game?
+TODO: TO FINISH
+- возможность менять размер поля?
+- звук
+- пофиксить движение
+- сделать плавный поворот
 ----------------------------------- */
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <iostream>
 #include <ctime>
+#include <string>
 
 #include "renderwindow.h"
 #include "snake.h"
@@ -54,9 +58,13 @@ bool init(){
         return false;
     }
 
+    if ( TTF_Init() < 0 ){
+        std::cout << "TTF_init failed to init. Error: " << SDL_GetError() << std::endl;
+        return false;
+    }
+
     return true;
 }
-
 
 void handleEvents(SDL_Event event, Snake* snake) {
 	while (SDL_PollEvent(&event)){  
@@ -108,6 +116,8 @@ void checkCollision(Snake* snake, Apple* apple){
         
         snake->addScore();
 
+        // FIXME: баг со спавном яблока в змейке
+
         std::srand(std::time(nullptr));
 
         int random_x = ( BORDER_SIZE + std::rand() % ( SCREEN_WIDTH - BORDER_SIZE*2 ) ) / GRID_SIZE;
@@ -120,25 +130,32 @@ void checkCollision(Snake* snake, Apple* apple){
 // FIXME: убрать?
 void update(RenderWindow* window, Snake* snake, Apple* apple){
 
-    snake->updatePosition();
+    snake->updatePosition( GRID_SIZE );
 
     window->update();
 
     checkCollision(snake, apple);    
 }
 
-void render(RenderWindow* window, SDL_Texture* fieldTexture, Snake* snake, Apple* apple){
+void render(RenderWindow* window, SDL_Texture* fieldTexture, Snake* snake, Apple* apple, TTF_Font* font){
 
     window->clear();
+    //             texture,      width,        height,        position
+    window->render(fieldTexture, SCREEN_WIDTH, SCREEN_LENGHT, {0.f, 0.f});
 
-    window->render(fieldTexture, {0.f, 0.f}, SCREEN_WIDTH, SCREEN_LENGHT, 0.f);
 
-    window->render(apple->getTexture(), apple->getPosition(), TEXTURE_SIZE, TEXTURE_SIZE, 0.f);
+    std::string text = "cnake";
+    window->render(font, text, {164, 242, 89}, ( text.length() * 24 ) , BORDER_SIZE, {BORDER_SIZE, 4});    
+    //             font, text,  color RGB      width,                   height,       Bposition     
+
+    //             texture,             width,        height,       position
+    window->render(apple->getTexture(), TEXTURE_SIZE, TEXTURE_SIZE, apple->getPosition());
 
     SnakeSegment* pIter = snake->getHead();
 
     while ( pIter != nullptr ){
-        window->render(pIter->texture, pIter->position, TEXTURE_SIZE, TEXTURE_SIZE, pIter->angle);
+        //             texture,        width,        height,       position,        angle
+        window->render(pIter->texture, TEXTURE_SIZE, TEXTURE_SIZE, pIter->position, pIter->angle);
         pIter = pIter->pNext;
     }
 
@@ -172,20 +189,22 @@ int main(){
     // maximum frame time
     const int       FRAME_DELAY = 1000 / FPS;
     Uint32          frameStart;
-    // number of ticks occupied by the frame
     int             deltaTime;
 
     SDL_Event       event;
 
-    // textures
+    // assets
     SDL_Texture*    fieldTexture;
     SDL_Texture*    appleTexture;
     SDL_Texture*    headTexture;
     SDL_Texture*    bodyTexture;
     SDL_Texture*    tailTexture;
+    TTF_Font* font;
 
-    RenderWindow* window = new RenderWindow(TITLE, SCREEN_WIDTH, SCREEN_LENGHT);
-    //                          title, screen width, screen lenght
+    RenderWindow* window = new RenderWindow("CNAKE", SCREEN_WIDTH, SCREEN_LENGHT);
+    //                                       title,  screen width, screen lenght
+
+    font = window->loadFont("./assets/fff-forward.ttf", 24);
 
     fieldTexture = window->loadTexture("./assets/field.png");
     appleTexture = window->loadTexture("./assets/apple.png");
@@ -196,7 +215,7 @@ int main(){
 
     Snake* snake = new Snake( headTexture, bodyTexture, tailTexture,
     //                        headTexture, bodyTexture, tailTexture
-                              SCREEN_WIDTH/2, BORDER_SIZE*3, SNAKE_SPEED,
+                              SCREEN_WIDTH/2, BORDER_SIZE*3, 3.0f,
     //                        Xpos,           Ypos,          Speed                              
                               { 0, 1 },  2);
     //                        direction, segments 
@@ -210,7 +229,7 @@ int main(){
 
         handleEvents(event, snake);
         update(window, snake, apple);
-        render(window, fieldTexture, snake, apple);
+        render(window, fieldTexture, snake, apple, font);
 
         deltaTime = SDL_GetTicks() - frameStart; // get frame time
         if ( FRAME_DELAY > deltaTime ){

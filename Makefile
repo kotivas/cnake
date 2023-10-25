@@ -3,7 +3,7 @@ TARGET = ./bin/snake
 CC = g++
 
 CFLAG = -g -Wall
-LIBS = -lSDL2 -lSDL2_image
+LIBS = -lSDL2 -lSDL2_image -lSDL2_ttf
 
 PREF_SRC = ./src/
 PREF_OBJ = ./obj/

@@ -1,5 +1,5 @@
 #include "snake.h"
-#include "config.h"
+
 // TODO: убрать подключение конфига отсюда
 
 Snake::Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture,
@@ -7,7 +7,7 @@ Snake::Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture,
              Vector2f direction, int segments)
 : m_pHead(nullptr), m_pTail(nullptr), m_bodyTexture(bodyTexture),
  m_headTexture(headTexture), m_tailTexture(tailTexure), m_speed(speed),
- m_initSegments( segments ), m_initPosition{ x, y }, m_initDirection{ direction }
+ m_initSegments(segments), m_initPosition{x, y}, m_initDirection{direction}
 {   
     for (int i = 0; i < m_initSegments; i++){
         addSegment( { m_initPosition.x, m_initPosition.y } );
@@ -17,10 +17,9 @@ Snake::Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture,
 
 }
 
-void Snake::updatePosition(){
+void Snake::updatePosition( const short GRID_SIZE ){
 
     // FIXME: передвижение только на той который сейчас, а не на следующей
-    // FIXME: пофиксить спавн
 
     for (SnakeSegment* pIter = m_pHead; pIter != nullptr; pIter = pIter->pNext){
 
@@ -32,9 +31,9 @@ void Snake::updatePosition(){
             if ( pIter->pNext != nullptr ){
                 pIter->pNext->buffdirection = pIter->direction;
 
-            if ( m_pHead->position.x == pIter->position.x &&
-                m_pHead->position.y == pIter->position.y &&
-                m_pHead != pIter  ){
+            if ( m_pHead->position.x == pIter->position.x && m_pHead->position.y == pIter->position.y &&
+                m_pHead != pIter ){
+                // if snake collides itself
                 reset();
                 break;
             }

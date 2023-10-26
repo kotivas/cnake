@@ -42,7 +42,7 @@ void    checkCollision(Snake* snake, Apple* apple);
 // update all
 void    update(RenderWindow* screen, Snake* snake, Apple* apple);
 // render objects
-void    render(RenderWindow* screen, SDL_Texture* fieldTexture, Snake* snake, Apple* apple);
+void    render(RenderWindow* window, SDL_Texture* fieldTexture, Snake* snake, Apple* apple, TTF_Font* font);
 // destructor
 void    quit(RenderWindow* screen, SDL_Texture* field, Snake* snake, Apple* apple);
 
@@ -144,8 +144,8 @@ void render(RenderWindow* window, SDL_Texture* fieldTexture, Snake* snake, Apple
     window->render(fieldTexture, SCREEN_WIDTH, SCREEN_LENGHT, {0.f, 0.f});
 
     std::string text = "cnake";
-    window->render(font, text, {164, 242, 89}, ( text.length() * 24 ) , BORDER_SIZE, {BORDER_SIZE, 4});    
-    //             font, text,  color RGB      width,                   height,       Bposition     
+    //             font, text,  color RGB      width,                   height,       position       
+    window->render(font, text, {164, 242, 89}, ( text.length() * 24 ) , BORDER_SIZE, {BORDER_SIZE, 4});
 
     //             texture,             width,        height,       position
     window->render(apple->getTexture(), TEXTURE_SIZE, TEXTURE_SIZE, apple->getPosition());
@@ -200,7 +200,7 @@ int main(){
     SDL_Texture*    tailTexture;
     TTF_Font* font;
 
-    RenderWindow* window = new RenderWindow("CNAKE", SCREEN_WIDTH, SCREEN_LENGHT);
+    RenderWindow* window = new RenderWindow("CNAKE (dev build)", SCREEN_WIDTH, SCREEN_LENGHT);
     //                                       title,  screen width, screen lenght
 
     font = window->loadFont("./assets/fff-forward.ttf", 24);

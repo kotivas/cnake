@@ -75,8 +75,6 @@ void RenderWindow::render(SDL_Texture* texture, int w, int h, Vector2f position,
     SDL_RenderCopyEx( m_renderer, texture, &src, &dst, angle, NULL, SDL_FLIP_NONE);
 }
 
-// FIXME: maybe combine this two renders, and add to loadFont converter into a texture
-
 // render a text
 void RenderWindow::render(TTF_Font* font, std::string text, SDL_Color color, int w, int h, Vector2f position){
 

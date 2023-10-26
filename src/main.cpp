@@ -17,7 +17,7 @@ TODO: TO FINISH
 - возможность менять размер поля?
 - звук
 - пофиксить движение
-- сделать плавный поворот
+- закрыть угол при повороте
 ----------------------------------- */
 
 #include <SDL2/SDL.h>
@@ -143,15 +143,15 @@ void render(RenderWindow* window, SDL_Texture* fieldTexture, Snake* snake, Apple
     //             texture,      width,        height,        position
     window->render(fieldTexture, SCREEN_WIDTH, SCREEN_LENGHT, {0.f, 0.f});
 
-    std::string text = "cnake";
-    //             font, text,  color RGB      width,                   height,       position       
-    window->render(font, text, {164, 242, 89}, ( text.length() * 24 ) , BORDER_SIZE, {BORDER_SIZE, 4});
+    window->render(apple->getTexture(), TEXTURE_SIZE, TEXTURE_SIZE, {BORDER_SIZE, 0} );
+
+    //             font, text,               color RGB   width, height,      position       
+    window->render(font, snake->getScore(), {75, 105, 47}, 48, BORDER_SIZE, {BORDER_SIZE*2, 4});
 
     //             texture,             width,        height,       position
     window->render(apple->getTexture(), TEXTURE_SIZE, TEXTURE_SIZE, apple->getPosition());
 
     SnakeSegment* pIter = snake->getHead();
-
     while ( pIter != nullptr ){
         //             texture,        width,        height,       position,        angle
         window->render(pIter->texture, TEXTURE_SIZE, TEXTURE_SIZE, pIter->position, pIter->angle);

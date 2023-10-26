@@ -16,6 +16,8 @@ private:
 
     float           m_speed; // pixels per frame
 
+    int             m_score;
+
     int             m_initSegments;
     Vector2f        m_initPosition;
     Vector2f        m_initDirection;
@@ -36,7 +38,8 @@ public:
     SnakeSegment*   getHead();
 
     void            addScore();
-
+    std::string             getScore() const;
+ 
     void reset();
 
     ~Snake();

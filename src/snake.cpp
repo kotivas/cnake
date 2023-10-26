@@ -7,7 +7,7 @@ Snake::Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture,
              Vector2f direction, int segments)
 : m_pHead(nullptr), m_pTail(nullptr), m_bodyTexture(bodyTexture),
  m_headTexture(headTexture), m_tailTexture(tailTexure), m_speed(speed),
- m_initSegments(segments), m_initPosition{x, y}, m_initDirection{direction}
+ m_initSegments(segments), m_initPosition{x, y}, m_initDirection{direction}, m_score(98)
 {   
     for (int i = 0; i < m_initSegments; i++){
         addSegment( { m_initPosition.x, m_initPosition.y } );
@@ -70,6 +70,8 @@ void Snake::reset(){
 
     m_pHead->buffdirection = m_initDirection;
 
+    m_score = 0;
+
     std::cout << "reseted" << std::endl;
 
 }
@@ -77,6 +79,18 @@ void Snake::reset(){
 void Snake::addScore(){
     // add new segment from the end
     addSegment( m_pTail->position );
+
+    m_score++;
+}
+
+std::string Snake::getScore() const{
+    if ( m_score == 0 ){
+        return "00";
+    } else if (  m_score <= 9 ){
+        return "0" + std::to_string(  m_score );
+    } else {
+        return std::to_string( m_score );
+    }
 }
 
 // add new segment

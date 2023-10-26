@@ -18,13 +18,12 @@ TODO:
 - система частиц (снег, листья и т.п)
 TODO: TO FINISH
 - пофиксить движение - не надо?
-- отзывчевее движенине
-
-двойной буфер
-голова стабилизируется
-квадраты где голова прошла
-отдельно голова
+- отзывчевее движенин
+- - голова отдельно, стабилизация
 тело не двигается?
+
+
+Ост плюс стабильная нормальная графика мб ещё экран u ded, Max score :
 ----------------------------------- */
 
 #include <SDL2/SDL.h>
@@ -152,7 +151,7 @@ void render(RenderWindow* window, SDL_Texture* fieldTexture, Snake* snake, Apple
     window->render(apple->getTexture(), TEXTURE_SIZE, TEXTURE_SIZE, {BORDER_SIZE, 0} );
 
     //             font, text,               color RGB   width, height,      position       
-    window->render(font, snake->getScore(), {75, 105, 47}, 90, BORDER_SIZE, {BORDER_SIZE*2, 4});
+    window->render(font, snake->getScore(), {75, 105, 47}, 90, BORDER_SIZE, {BORDER_SIZE*2, 0});
 
     //             texture,             width,        height,       position
     window->render(apple->getTexture(), TEXTURE_SIZE, TEXTURE_SIZE, apple->getPosition());
@@ -204,12 +203,12 @@ int main(){
     SDL_Texture*    headTexture;
     SDL_Texture*    bodyTexture;
     SDL_Texture*    tailTexture;
-    TTF_Font* font;
+    TTF_Font*       font;
 
     RenderWindow* window = new RenderWindow("CNAKE (dev build)", SCREEN_WIDTH, SCREEN_LENGHT);
     //                                       title,  screen width, screen lenght
 
-    font = window->loadFont("./assets/fff-forward.ttf", 24);
+    font = window->loadFont("./assets/atariclassic.ttf", 24);
 
     fieldTexture = window->loadTexture("./assets/field.png");
     appleTexture = window->loadTexture("./assets/apple.png");
@@ -222,7 +221,7 @@ int main(){
     //                        headTexture, bodyTexture, tailTexture
                               SCREEN_WIDTH/2, BORDER_SIZE*3, 3.0f,
     //                        Xpos,           Ypos,          Speed                              
-                              { 0, 1 },  2);
+                              { 0, 0 },  2);
     //                        direction, segments 
 
     Apple* apple = new Apple(appleTexture ,SCREEN_WIDTH/2, BORDER_SIZE*8);

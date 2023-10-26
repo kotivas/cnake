@@ -17,9 +17,11 @@ Snake::Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture,
 
 }
 
-void Snake::updatePosition( const short GRID_SIZE ){
+void Snake::updatePosition( int grid_size ){ // FIXME: переписать
 
     // FIXME: передвижение только на той который сейчас, а не на следующей
+
+    // если direction != buffdirection (или pnext-direction), изменение на текстурку поворта
 
     for (SnakeSegment* pIter = m_pHead; pIter != nullptr; pIter = pIter->pNext){
 
@@ -27,7 +29,7 @@ void Snake::updatePosition( const short GRID_SIZE ){
         pIter->position.x += m_speed * pIter->direction.x; 
         pIter->position.y += m_speed * pIter->direction.y;   
 
-        if ( int( pIter->position.x ) % GRID_SIZE == 0 && int( pIter->position.y ) % GRID_SIZE == 0){
+        if ( int( pIter->position.x ) % grid_size == 0 && int( pIter->position.y ) % grid_size == 0){
             if ( pIter->pNext != nullptr ){
                 pIter->pNext->buffdirection = pIter->direction;
 
@@ -36,13 +38,12 @@ void Snake::updatePosition( const short GRID_SIZE ){
                 // if snake collides itself
                 reset();
                 break;
-            }
+                }
             }
             pIter->direction = pIter->buffdirection;
             pIter->angle = pIter->direction.getAngle();
         }
-
-        updateTextures();
+    updateTextures();
     }
 }
 

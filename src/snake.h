@@ -7,12 +7,12 @@
 
 class Snake {
 private:
-    SnakeSegment*       m_pHead;
-    SnakeSegment*       m_pTail;
+    SnakeSegment*   m_pHead;
+    SnakeSegment*   m_pTail;
 
-    SDL_Texture*        m_bodyTexture;
-    SDL_Texture*        m_headTexture;
-    SDL_Texture*        m_tailTexture;
+    SDL_Texture*    m_bodyTexture;
+    SDL_Texture*    m_headTexture;
+    SDL_Texture*    m_tailTexture;
 
     float           m_speed; // pixels per frame
 
@@ -31,14 +31,14 @@ public:
           SDL_Texture* tailTexure, float x, float y, float speed,
           Vector2f direction, int segments);
 
-    void            updatePosition( const short GRID_SIZE );
+    void            updatePosition( int GRID_SIZE );
     void            setDirection(Vector2f direction);
 
     Vector2f        getPosition() const;
     SnakeSegment*   getHead();
 
     void            addScore();
-    std::string             getScore() const;
+    std::string     getScore() const;
  
     void reset();
 

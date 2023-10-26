@@ -24,24 +24,12 @@ RenderWindow::RenderWindow(std::string title, int screen_width, int screen_lengh
 SDL_Texture* RenderWindow::loadTexture(std::string path){
     SDL_Texture* pNewTexture = nullptr;
 
-    SDL_Surface* loadedSurface = IMG_Load( path.c_str() ); 
+	pNewTexture = IMG_LoadTexture( m_renderer, path.c_str() );
 
-    if ( loadedSurface == nullptr ){
-        std::cout << IMG_GetError() << std::endl;
-    } else {
-        //Create texture from surface pixels
-        pNewTexture = SDL_CreateTextureFromSurface( m_renderer, loadedSurface );
+	if ( pNewTexture == nullptr )
+		std::cout << "Failed to load texture. Error: " << SDL_GetError() << std::endl;
 
-        if ( pNewTexture == nullptr ){
-            std::cout << "UNABLE TO LOAD TEXTURE: ";
-            std::cout << SDL_GetError() << std::endl;
-        }
-
-        //Get rid of old loaded surface
-        SDL_FreeSurface( loadedSurface );
-    }
-
-    return pNewTexture;
+	return pNewTexture;
 }
 
 TTF_Font* RenderWindow::loadFont(std::string path, int size){
@@ -49,7 +37,7 @@ TTF_Font* RenderWindow::loadFont(std::string path, int size){
     TTF_Font* pNewFont = TTF_OpenFont(path.c_str(), size);
 
     if ( !pNewFont ){
-        std::cout << "UNABLE TO LOAD FONT: ";
+        std::cout << "Failed to load font. Error: ";
         std::cout << SDL_GetError() << std::endl;
     }
 

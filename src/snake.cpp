@@ -81,9 +81,11 @@ void Snake::addScore(){
 
 std::string Snake::getScore() const{
     if ( m_score == 0 ){
-        return "00";
+        return "000";
     } else if (  m_score <= 9 ){
-        return "0" + std::to_string(  m_score );
+        return "00" + std::to_string(  m_score );
+    } else if ( m_score <= 99 ){ 
+        return "0" + std::to_string( m_score );
     } else {
         return std::to_string( m_score );
     }

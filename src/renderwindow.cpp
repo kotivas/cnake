@@ -4,10 +4,10 @@ is responsible for show window, render things and load textures
 
 #include "renderwindow.h"
 
-RenderWindow::RenderWindow(std::string title, const unsigned short SCREEN_WIDTH, const unsigned short SCREEN_LENGHT)
+RenderWindow::RenderWindow(std::string title, int screen_width, int screen_lenght)
 : m_screen(nullptr), m_renderer(nullptr)
 {
-    m_screen = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_LENGHT, SDL_WINDOW_SHOWN);
+    m_screen = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen_width, screen_lenght, SDL_WINDOW_SHOWN);
 	if (m_screen == nullptr){
 		std::cout << "Window failed to init. Error: " << SDL_GetError() << std::endl;
 	}

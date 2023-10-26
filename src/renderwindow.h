@@ -12,7 +12,7 @@ private:
     SDL_Window*     m_screen;
     SDL_Renderer*   m_renderer;
 public:
-    RenderWindow(std::string title, const unsigned short SCREEN_WIDTH, const unsigned short SCREEN_LENGHT);
+    RenderWindow(std::string title, int screen_width, int screen_lenght);
 
     void            render(SDL_Texture* texture, int w, int h, Vector2f position, float angle = 0);
     void            render(TTF_Font* font, std::string text, SDL_Color color, int w, int h, Vector2f position);

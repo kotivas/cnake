@@ -13,9 +13,10 @@ TODO:
 - - идл анимации?
 - менюшка
 - класс game?
-TODO: TO FINISH
-- возможность менять размер поля?
+- возможность менять размер поля
 - звук
+- система частиц (снег, листья и т.п)
+TODO: TO FINISH
 - пофиксить движение
 - закрыть угол при повороте
 ----------------------------------- */
@@ -127,7 +128,6 @@ void checkCollision(Snake* snake, Apple* apple){
     }    
 }
 
-// FIXME: убрать?
 void update(RenderWindow* window, Snake* snake, Apple* apple){
 
     snake->updatePosition( GRID_SIZE );
@@ -146,7 +146,7 @@ void render(RenderWindow* window, SDL_Texture* fieldTexture, Snake* snake, Apple
     window->render(apple->getTexture(), TEXTURE_SIZE, TEXTURE_SIZE, {BORDER_SIZE, 0} );
 
     //             font, text,               color RGB   width, height,      position       
-    window->render(font, snake->getScore(), {75, 105, 47}, 48, BORDER_SIZE, {BORDER_SIZE*2, 4});
+    window->render(font, snake->getScore(), {75, 105, 47}, 90, BORDER_SIZE, {BORDER_SIZE*2, 4});
 
     //             texture,             width,        height,       position
     window->render(apple->getTexture(), TEXTURE_SIZE, TEXTURE_SIZE, apple->getPosition());

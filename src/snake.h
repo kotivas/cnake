@@ -16,7 +16,7 @@ private:
 
     float           m_speed; // pixels per frame
 
-    int             m_score;
+    Uint8           m_score; // max 255
 
     int             m_initSegments;
     Vector2f        m_initPosition;

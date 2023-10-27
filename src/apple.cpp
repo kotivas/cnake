@@ -1,4 +1,4 @@
-#include "apple.h"
+#include "apple.hpp"
 
 Apple::Apple(SDL_Texture* texture, float x, float y)
 : m_texture( texture ), m_initPosition{x, y}

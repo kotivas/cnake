@@ -1,4 +1,4 @@
-#include "snake.h"
+#include "snake.hpp"
 
 // TODO: убрать подключение конфига отсюда
 

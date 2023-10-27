@@ -6,9 +6,9 @@
 #include <ctime>
 #include <string>
 
-#include "renderwindow.h"
-#include "snake.h"
-#include "apple.h"
+#include "renderwindow.hpp"
+#include "snake.hpp"
+#include "apple.hpp"
 
 #include "config.h"
 

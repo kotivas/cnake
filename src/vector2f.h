@@ -1,7 +1,8 @@
-#include <cmath>
+#include "math.h"
 #pragma once
 
 struct Vector2f {
+
 	Vector2f()
 	:x(0.0f), y(0.0f)
 	{}
@@ -10,8 +11,10 @@ struct Vector2f {
 	:x(p_x), y(p_y)
 	{}
 	
-	float getAngle();
+	// returns float angle in degrees from x and y
+	inline float getAngle(){
+		return atan2( -x , y ) * ( 180 / M_PI );
+	}
 
 	float x, y;
 };
-

@@ -2,7 +2,7 @@
 is responsible for show window, render things and load textures
 */
 
-#include "renderwindow.h"
+#include "renderwindow.hpp"
 
 RenderWindow::RenderWindow(std::string title, int screen_width, int screen_lenght)
 : m_screen(nullptr), m_renderer(nullptr)

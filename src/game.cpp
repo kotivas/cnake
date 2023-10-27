@@ -8,8 +8,6 @@ Game::Game()
 
     initAssets();
 
-    m_font = m_window->loadFont("./assets/atariclassic.ttf", 24);
-
     Snake* m_snake = new Snake( m_headTexture, m_bodyTexture, m_tailTexture,
     //                        headTexture, bodyTexture, tailTexture
                               SCREEN_WIDTH/2, BORDER_SIZE*3, 3.0f,
@@ -22,8 +20,11 @@ Game::Game()
 }
 
 inline void Game::initAssets(){
+    m_font = m_window->loadFont("./assets/atariclassic.ttf", 24);
+
     m_fieldTexture = m_window->loadTexture("./assets/field.png");
     m_appleTexture = m_window->loadTexture("./assets/apple.png");
+
     m_headTexture = m_window->loadTexture("./assets/head.png");
     m_bodyTexture = m_window->loadTexture("./assets/body.png");
     m_tailTexture = m_window->loadTexture("./assets/tail.png");

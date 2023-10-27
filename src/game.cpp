@@ -3,22 +3,22 @@
 Game::Game()
 : m_isRunning(true)
 {
-    RenderWindow* m_window = new RenderWindow("CNAKE (dev build)", SCREEN_WIDTH, SCREEN_LENGHT);
+    m_window = new RenderWindow("CNAKE (dev build)", SCREEN_WIDTH, SCREEN_LENGHT);
     //                                       title,  screen width, screen lenght
-
     initAssets();
 
-    Snake* m_snake = new Snake( m_headTexture, m_bodyTexture, m_tailTexture,
+    m_snake = new Snake( m_headTexture, m_bodyTexture, m_tailTexture,
     //                        headTexture, bodyTexture, tailTexture
                               SCREEN_WIDTH/2, BORDER_SIZE*3, 3.0f,
     //                        Xpos,           Ypos,          Speed                              
                               { 0, 0 },  2);
     //                        direction, segments 
 
-    Apple* m_apple = new Apple( m_appleTexture ,SCREEN_WIDTH/2, BORDER_SIZE*8 );
+    m_apple = new Apple( m_appleTexture ,SCREEN_WIDTH/2, BORDER_SIZE*8 );
     //                       texture       Xpos,           Ypos,      
 }
 
+// loading assets
 inline void Game::initAssets(){
     m_font = m_window->loadFont("./assets/atariclassic.ttf", 24);
 
@@ -30,10 +30,12 @@ inline void Game::initAssets(){
     m_tailTexture = m_window->loadTexture("./assets/tail.png");
 }
 
+// return bool game status
 bool Game::isRunning() const{
     return m_isRunning;
 }
 
+// handle sdl2 events
 void Game::handleEvents(){
 	while (SDL_PollEvent(&m_event)){  
 		switch(m_event.type){
@@ -65,6 +67,7 @@ void Game::handleEvents(){
     }
 }
 
+// check for collisions and some logic
 void Game::checkCollision(){
     // check for collsion with border
     if ( m_snake->getPosition().x > (SCREEN_WIDTH - BORDER_SIZE*2) ||
@@ -92,6 +95,7 @@ void Game::checkCollision(){
     }    
 }
 
+// update all game objects
 void Game::update(){
 
     handleEvents();
@@ -105,6 +109,7 @@ void Game::update(){
     render();
 }
 
+// render all objects
 void Game::render(){
     m_window->clear();
     //               texture,      width,        height,        position
@@ -126,6 +131,7 @@ void Game::render(){
     m_window->update();
 }
 
+// destructor
 Game::~Game(){
 
     SDL_DestroyTexture( m_fieldTexture );

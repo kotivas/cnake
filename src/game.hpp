@@ -38,7 +38,5 @@ public:
     void            update();
     void            render();
 
-    inline void     loadAssets();
-
     ~Game();
 };

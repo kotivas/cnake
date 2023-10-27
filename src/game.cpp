@@ -25,7 +25,17 @@ Game::Game()
 {
     m_window = new RenderWindow("CNAKE (dev build)", SCREEN_WIDTH, SCREEN_LENGHT);
     //                                       title,  screen width, screen lenght
-    loadAssets();
+
+    /* --------------------=LOADING ASSETS=--------------------- */
+    m_font = m_window->loadFont("./assets/atariclassic.ttf", 24);
+
+    m_fieldTexture = m_window->loadTexture("./assets/field.png");
+    m_appleTexture = m_window->loadTexture("./assets/apple.png");
+
+    m_headTexture = m_window->loadTexture("./assets/head.png");
+    m_bodyTexture = m_window->loadTexture("./assets/body.png");
+    m_tailTexture = m_window->loadTexture("./assets/tail.png");
+    /* --------------------------------------------------------- */
 
     m_snake = new Snake( m_headTexture, m_bodyTexture, m_tailTexture,
                               GRID_SIZE*3, GRID_SIZE*7, 3.0f,
@@ -35,18 +45,6 @@ Game::Game()
 
     m_apple = new Apple( m_appleTexture , GRID_SIZE*12, GRID_SIZE*7 );
     //                       texture       Xpos,           Ypos,      
-}
-
-// loading assets
-inline void Game::loadAssets(){
-    m_font = m_window->loadFont("./assets/atariclassic.ttf", 24);
-
-    m_fieldTexture = m_window->loadTexture("./assets/field.png");
-    m_appleTexture = m_window->loadTexture("./assets/apple.png");
-
-    m_headTexture = m_window->loadTexture("./assets/head.png");
-    m_bodyTexture = m_window->loadTexture("./assets/body.png");
-    m_tailTexture = m_window->loadTexture("./assets/tail.png");
 }
 
 // return bool game status

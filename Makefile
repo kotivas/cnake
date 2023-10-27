@@ -17,7 +17,7 @@ $(TARGET) : $(OBJ)
 	@echo "Done!"
 
 $(PREF_OBJ)%.o : $(PREF_SRC)%.cpp
-	$(CC) $(CVER) -c $< -o $@
+	$(CC) $(CVER) -c $< -o $@ $(CFLAG)
 
 clean :
 	rm $(TARGET) $(PREF_OBJ)*.o

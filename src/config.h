@@ -1,8 +1,9 @@
 #pragma once
-/* -----CONFIG FILE----- */
-inline const Uint16             SCREEN_WIDTH = 960;
-inline const Uint16             SCREEN_LENGHT = 720;
-inline const Uint8              TEXTURE_SIZE = 48;
-inline const Uint8              BORDER_SIZE = 48;
-inline const Uint8              GRID_SIZE = 48;
-inline const Uint8              FPS = 60;
+/* ----------------=CONFIG FILE=----------------- */
+inline const int             SCREEN_WIDTH = 960;
+inline const int             SCREEN_LENGHT = 720;
+inline const int              TEXTURE_SIZE = 48;
+inline const int              BORDER_SIZE = 48;
+inline const int              GRID_SIZE = 48;
+inline const int              FPS = 60;
+/* -----------------------------------------------*/

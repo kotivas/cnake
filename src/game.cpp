@@ -1,25 +1,44 @@
 #include "game.hpp"
+/* --------------------------------
+TODO:
+- рефакторинг
+- анимации
+- - плавный поворот
+- - плавное добавления сегментов - мб брать угол предыдущего сегмента и юзать его при спавне
+- - поедание яблока
+- - идл анимации?
+- класс game?
+- возможность менять размер поля
+- иконка
+- система частиц (снег, листья и т.п)
+TODO: TO FINISH
+- пофиксить движение
+- отзывчевее движенин
+- - голова отдельно, стабилизация
+тело не двигается?
+- звук
+- менюшка - экран смерти, рекорд
+----------------------------------- */
 
 Game::Game()
 : m_isRunning(true)
 {
     m_window = new RenderWindow("CNAKE (dev build)", SCREEN_WIDTH, SCREEN_LENGHT);
     //                                       title,  screen width, screen lenght
-    initAssets();
+    loadAssets();
 
     m_snake = new Snake( m_headTexture, m_bodyTexture, m_tailTexture,
-    //                        headTexture, bodyTexture, tailTexture
-                              SCREEN_WIDTH/2, BORDER_SIZE*3, 3.0f,
+                              GRID_SIZE*3, GRID_SIZE*7, 3.0f,
     //                        Xpos,           Ypos,          Speed                              
-                              { 0, 0 },  2);
+                              { 1, 0 },  2);
     //                        direction, segments 
 
-    m_apple = new Apple( m_appleTexture ,SCREEN_WIDTH/2, BORDER_SIZE*8 );
+    m_apple = new Apple( m_appleTexture , GRID_SIZE*12, GRID_SIZE*7 );
     //                       texture       Xpos,           Ypos,      
 }
 
 // loading assets
-inline void Game::initAssets(){
+inline void Game::loadAssets(){
     m_font = m_window->loadFont("./assets/atariclassic.ttf", 24);
 
     m_fieldTexture = m_window->loadTexture("./assets/field.png");
@@ -44,15 +63,19 @@ void Game::handleEvents(){
 			    break;
             case SDL_KEYDOWN: // if key pressed down
                 switch ( m_event.key.keysym.sym ){ // get key code
-                    case SDLK_RIGHT:
+                    case SDLK_RIGHT: // d or arrow right
+                    case SDLK_d:
                         m_snake->setDirection( {1, 0} );
                         break;
+                    case SDLK_a: // a or arrow left
                     case SDLK_LEFT:
                         m_snake->setDirection( {-1, 0} );
                         break;
+                    case SDLK_s: // s or arrow down
                     case SDLK_DOWN:
                         m_snake->setDirection( {0, 1} );
                         break;
+                    case SDLK_w: // w or arrow up
                     case SDLK_UP:
                         m_snake->setDirection( {0, -1} );
                         break;

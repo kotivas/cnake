@@ -1,4 +1,3 @@
-#include "math.h"
 #pragma once
 
 struct Vector2f {
@@ -10,11 +9,16 @@ struct Vector2f {
 	Vector2f(float p_x, float p_y)
 	:x(p_x), y(p_y)
 	{}
-	
-	// returns float angle in degrees from x and y
-	inline float getAngle(){
-		return atan2( -x , y ) * ( 180 / M_PI );
-	}
 
-	float x, y;
+	float 		getAngle();
+	void		normalize();
+
+	bool 		operator==(const Vector2f& c) const;
+	bool 		operator!=(const Vector2f& c) const;
+
+	// Vector2f    operator+(const Vector2f& c) const;
+	// Vector2f    operator-(const Vector2f& c) const;
+
+	float 		x;
+	float 		y;
 };

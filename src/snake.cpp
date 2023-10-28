@@ -1,7 +1,5 @@
 #include "snake.hpp"
 
-// TODO: убрать подключение конфига отсюда
-
 Snake::Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture,
              SDL_Texture* tailTexure, float x, float y, float speed,
              Vector2f direction, int segments)
@@ -19,11 +17,8 @@ Snake::Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture,
 
 }
 
+// 💀💀💀
 void Snake::updatePosition( int grid_size ){ // FIXME: переписать
-
-    // FIXME: передвижение только на той который сейчас, а не на следующей
-
-    // если direction != buffdirection (или pnext-direction), изменение на текстурку поворта
 
     for (SnakeSegment* pIter = m_pHead; pIter != nullptr; pIter = pIter->pNext){
 
@@ -61,6 +56,7 @@ void Snake::updateTextures(){
     }
 }
 
+// reset snake position and lenght
 void Snake::reset(){
 
     while ( m_pHead != nullptr ){   
@@ -82,6 +78,7 @@ void Snake::addScore(){
     m_score++;
 }
 
+// get formatted score string
 std::string Snake::getScore() const{
     if ( m_score == 0 ){
         return "000";
@@ -136,6 +133,7 @@ SnakeSegment* Snake::getHead(){
     return m_pHead;
 }
 
+// destructor
 Snake::~Snake(){
     while ( m_pHead != nullptr ){   
         removeSegment();

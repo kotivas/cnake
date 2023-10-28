@@ -1,4 +1,4 @@
-TARGET = ./bin/snake
+TARGET = ./bin/cnake
 
 CC = g++
 

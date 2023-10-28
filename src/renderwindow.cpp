@@ -9,12 +9,12 @@ RenderWindow::RenderWindow(std::string title, int screen_width, int screen_lengh
 {
     m_screen = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen_width, screen_lenght, SDL_WINDOW_SHOWN);
 	if (m_screen == nullptr){
-		std::cout << "Window failed to init. Error: " << SDL_GetError() << std::endl;
+		std::cout << "Failed to create window. Error: " << SDL_GetError() << std::endl;
 	}
 
     m_renderer = SDL_CreateRenderer(m_screen, -1, SDL_RENDERER_ACCELERATED);
     if (m_renderer == nullptr){
-        std::cout << "Render failed to init. Error: " << SDL_GetError() << std::endl;
+        std::cout << "Failed to create renderer. Error: " << SDL_GetError() << std::endl;
     }
 
     // AntiAliasing
@@ -27,7 +27,7 @@ SDL_Texture* RenderWindow::loadTexture(std::string path){
 	pNewTexture = IMG_LoadTexture( m_renderer, path.c_str() );
 
 	if ( pNewTexture == nullptr )
-		std::cout << "Failed to load texture. Error: " << SDL_GetError() << std::endl;
+		std::cout << "Failed to load texture. Error: "<< SDL_GetError() << std::endl;
 
 	return pNewTexture;
 }
@@ -37,8 +37,7 @@ TTF_Font* RenderWindow::loadFont(std::string path, int size){
     TTF_Font* pNewFont = TTF_OpenFont(path.c_str(), size);
 
     if ( !pNewFont ){
-        std::cout << "Failed to load font. Error: ";
-        std::cout << SDL_GetError() << std::endl;
+        std::cout << "Failed to load font. Error: " << SDL_GetError() << std::endl;
     }
 
     return pNewFont;

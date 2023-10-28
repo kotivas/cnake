@@ -28,15 +28,15 @@ private:
     SDL_Texture*    m_tailTexture; 
     TTF_Font*       m_font;
 
+    void            checkCollision();    
+    void            handleEvents();
+    void            render();    
+
 public:
     Game();
 
     bool            isRunning() const;
-
-    void            handleEvents();
-    void            checkCollision();
     void            update();
-    void            render();
 
     ~Game();
 };

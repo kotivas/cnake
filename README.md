@@ -15,8 +15,6 @@ git clone https://github.com/kotivas/Cnake
 cd cnake
 mkdir obj bin
 make
-
-
 ```
 The compiled executable file will be located in ``./bin/``
 

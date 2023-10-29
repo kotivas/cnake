@@ -95,7 +95,7 @@ void Game::spawnFood(){
 }
 
 // check for collisions and some logic
-void Game::checkCollision(){ // FIXME: refactoring/redo
+void Game::checkCollision(){ // OPTIMIZE
     // check for collision snake with itself
     SnakeSegment* pIter = m_snake->getHead()->pNext;
     while ( pIter != nullptr ){

@@ -12,22 +12,7 @@ TODO:
 - система частиц (снег, листья и т.п)
 TODO: TO FINISH
 - пофиксить движение
-- отзывчевее движенин
-- - голова отдельно, стабилизация
-тело не двигается?  
-- звук
 - менюшка - экран смерти, рекорд
-------------------------------------------------------------------------------------------------------------------------------
-Голова может поварачивать вокруг точки тела (шеи)
-
-В ранних поворотах, голова начинает вращаться сразу, но достигает 90° только когда шея выровнена по сетке,
-поскольку тело змеи от шеи до хвоста продолжает двигаться в том же направлении.
-
-Для поздних повортах почти тоже самое. Кончик головы (рот) проходит пересечение, но не шея.
-Таким образом, голова может быстро поворачиваться на 90°, когда шея достигает пересечения.
-
-Анимация глаз и языка змеи также помогает отвлечь вас от вращения головы.
-(глаза сохраняют постоянное направление, несмотря на вращение головы, а язык привлекает ваше внимание к точке впереди головы).
 ----------------------------------- */
 
 Game::Game()
@@ -45,10 +30,15 @@ Game::Game()
     m_headTexture = m_window->loadTexture("./assets/head.png");
     m_bodyTexture = m_window->loadTexture("./assets/body.png");
     m_tailTexture = m_window->loadTexture("./assets/tail.png");
+    m_angledTexture = m_window->loadTexture("./assets/rotate.png");
+
+    m_turnSound = m_window->loadSound("./assets/turn.wav");
+    m_eatSound = m_window->loadSound("./assets/eat.wav");
+    m_hitSound = m_window->loadSound("./assets/hit.wav");
     /* --------------------------------------------------------- */
 
-    m_snake = new Snake( m_headTexture, m_bodyTexture, m_tailTexture,
-                              GRID_SIZE*3, GRID_SIZE*7, 3.0f,
+    m_snake = new Snake( m_headTexture, m_bodyTexture, m_tailTexture, m_angledTexture,
+                              GRID_SIZE*3, GRID_SIZE*7, 4.0f,
     //                        Xpos,           Ypos,          Speed                              
                               { 1, 0 },  2);
     //                        direction, segments 
@@ -73,56 +63,86 @@ void Game::handleEvents(){
                 switch ( m_event.key.keysym.sym ){ // get key code
                     case SDLK_RIGHT: // d or arrow right
                     case SDLK_d:
-                        m_snake->setDirection( {1, 0} );
+                        m_snake->setDirection(1, 0);
+                        Mix_PlayChannel( -1, m_turnSound, 0 );
                         break;
                     case SDLK_a: // a or arrow left
                     case SDLK_LEFT:
-                        m_snake->setDirection( {-1, 0} );
+                        m_snake->setDirection(-1, 0);
+                        Mix_PlayChannel( -1, m_turnSound, 0 );
                         break;
                     case SDLK_s: // s or arrow down
                     case SDLK_DOWN:
-                        m_snake->setDirection( {0, 1} );
+                        m_snake->setDirection(0, 1);
+                        Mix_PlayChannel( -1, m_turnSound, 0 );
                         break;
                     case SDLK_w: // w or arrow up
                     case SDLK_UP:
-                        m_snake->setDirection( {0, -1} );
+                        m_snake->setDirection(0, -1);
+                        Mix_PlayChannel( -1, m_turnSound, 0 );
                         break;
                     case SDLK_ESCAPE:
                         m_isRunning = false;
                         break;
                     case SDLK_SPACE:
                         m_snake->reset();
+                        Mix_PlayChannel( -1, m_hitSound, 0 );
                         break;
                 }
         }
     }
 }
 
-// check for collisions and some logic
-void Game::checkCollision(){
-    // check for collsion with border
-    if ( m_snake->getPosition().x > (SCREEN_WIDTH - BORDER_SIZE*2) ||
-         m_snake->getPosition().x < BORDER_SIZE ||
-         m_snake->getPosition().y > (SCREEN_LENGHT - BORDER_SIZE*2) ||
-         m_snake->getPosition().y < BORDER_SIZE
-         ){
-            m_snake->reset();
-    }
+// reset al game
+void Game::reset(){
+    m_apple->reset();
+    m_snake->reset();
+}
 
-    // check for collision with apple
-    if ( m_snake->getPosition().y == m_apple->getPosition().y &&
-         m_snake->getPosition().x == m_apple->getPosition().x ){
+// random food spawn
+void Game::spawnFood(){
+    std::srand(std::time(nullptr));
+
+    int random_x = ( BORDER_SIZE + std::rand() % ( SCREEN_WIDTH - BORDER_SIZE*2 ) ) / GRID_SIZE;
+    int random_y = ( BORDER_SIZE + std::rand() % ( SCREEN_LENGHT - BORDER_SIZE*2 ) ) / GRID_SIZE;
+
+    m_apple->setPosition(random_x * GRID_SIZE, random_y * GRID_SIZE);
+}
+
+// check for collisions and some logic
+void Game::checkCollision(){ // FIXME: refactoring/redo
+    // check for collision snake with itself
+    SnakeSegment* pIter = m_snake->getHead()->pNext;
+    while ( pIter != nullptr ){
+        if ( m_snake->getHead()->position == pIter->position){
+
+            if ( pIter->pNext != nullptr ){ // скип если это хвост (костыль)
+                Mix_PlayChannel( -1, m_hitSound, 0 ); // play hit sound
+                reset();           
+            }
+        }
+        if ( pIter->position == m_apple->getPosition() ){
+            spawnFood();
+        }
+        pIter = pIter->pNext;
+    }
+    // check for collsion with border
+    if ( m_snake->getHead()->position.x > (SCREEN_WIDTH - BORDER_SIZE*2) ||
+         m_snake->getHead()->position.x < BORDER_SIZE ||
+         m_snake->getHead()->position.y > (SCREEN_LENGHT - BORDER_SIZE*2) ||
+         m_snake->getHead()->position.y < BORDER_SIZE
+         ){
+            Mix_PlayChannel( -1, m_hitSound, 0 ); // play hit sound
+            reset();
+    }
+    // check for collision snake with apple
+    if ( m_snake->getHead()->position == m_apple->getPosition() ){
         
         m_snake->addScore();
 
-        // FIXME: баг со спавном яблока в змейке
+        Mix_PlayChannel( -1, m_eatSound, 0 ); // play eat sound
 
-        std::srand(std::time(nullptr));
-
-        int random_x = ( BORDER_SIZE + std::rand() % ( SCREEN_WIDTH - BORDER_SIZE*2 ) ) / GRID_SIZE;
-        int random_y = ( BORDER_SIZE + std::rand() % ( SCREEN_LENGHT - BORDER_SIZE*2 ) ) / GRID_SIZE;
-
-        m_apple->setPosition(random_x * GRID_SIZE, random_y * GRID_SIZE);
+        spawnFood();
     }    
 }
 
@@ -152,12 +172,16 @@ void Game::render(){
     //               texture,               width,        height,       position
     m_window->render(m_apple->getTexture(), TEXTURE_SIZE, TEXTURE_SIZE, m_apple->getPosition());
 
-    SnakeSegment* pIter = m_snake->getHead();
+    // render body
+    SnakeSegment* pIter = m_snake->getHead()->pNext;
     while ( pIter != nullptr ){
         //               texture,        width,        height,       position,        angle
         m_window->render(pIter->texture, TEXTURE_SIZE, TEXTURE_SIZE, pIter->position, pIter->angle);
         pIter = pIter->pNext;
     }
+
+    // render head
+    m_window->render(m_snake->getHead()->texture, TEXTURE_SIZE, TEXTURE_SIZE, m_snake->getHead()->position, m_snake->getHead()->angle);
 
     m_window->update();
 }
@@ -166,6 +190,10 @@ void Game::render(){
 Game::~Game(){
 
     SDL_DestroyTexture( m_fieldTexture );
+
+    Mix_FreeChunk( m_eatSound );
+    Mix_FreeChunk( m_turnSound );
+    Mix_FreeChunk( m_hitSound );
 
     delete m_window;
     delete m_snake;

@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 
 #include <iostream>
 #include <string>
@@ -21,6 +22,7 @@ public:
     void            clear();
     SDL_Texture*    loadTexture(std::string path);
     TTF_Font*       loadFont(std::string path, int size);
+    Mix_Chunk*      loadSound(std::string path);
 
     ~RenderWindow();
 };

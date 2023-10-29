@@ -15,7 +15,7 @@ struct Vector2f {
 
 	bool 		operator==(const Vector2f& c) const;
 	bool 		operator!=(const Vector2f& c) const;
-
+	
 	// Vector2f    operator+(const Vector2f& c) const;
 	// Vector2f    operator-(const Vector2f& c) const;
 

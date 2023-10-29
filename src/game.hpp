@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 
 #include <iostream>
 #include <ctime>
@@ -23,14 +24,25 @@ private:
 
     SDL_Texture*    m_fieldTexture;
     SDL_Texture*    m_appleTexture;
+
+    Mix_Chunk*      m_turnSound;
+    Mix_Chunk*      m_eatSound;
+    Mix_Chunk*      m_hitSound;
+
     SDL_Texture*    m_headTexture;
     SDL_Texture*    m_bodyTexture;
     SDL_Texture*    m_tailTexture; 
+    SDL_Texture*    m_angledTexture;
+
     TTF_Font*       m_font;
 
     void            checkCollision();    
     void            handleEvents();
     void            render();    
+
+    void            reset();
+
+    void            spawnFood();
 
 public:
     Game();

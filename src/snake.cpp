@@ -1,58 +1,91 @@
 #include "snake.hpp"
 
 Snake::Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture,
-             SDL_Texture* tailTexure, float x, float y, float speed,
+             SDL_Texture* tailTexure, SDL_Texture* angledTexture,
+             float x, float y, float speed,
              Vector2f direction, int segments)
-: m_pHead(nullptr), m_pTail(nullptr), m_bodyTexture(bodyTexture),
+: m_pHead(nullptr), m_pTail(nullptr), m_bodyTexture(bodyTexture), m_angledTexture(angledTexture),
  m_headTexture(headTexture), m_tailTexture(tailTexure), m_speed(speed),
  m_initSegments(segments), m_initPosition{x, y}, m_initDirection{direction}
 {   
     for (int i = 0; i < m_initSegments; i++){
-        addSegment( { m_initPosition.x, m_initPosition.y } );
+        addSegment( m_initPosition, m_initDirection );
     } 
 
     m_pHead->buffdirection = m_initDirection; // initial direction of the snake
+
+    m_pHead->direction = m_initDirection;
 
     m_score = 0;
 
 }
 
-// 💀💀💀
-void Snake::updatePosition( int grid_size ){ // FIXME: переписать
+/*
+💀💀💀
+TODO:
+Голова может поварачивать вокруг точки тела (шеи)
+
+В ранних поворотах, голова начинает вращаться сразу,
+но достигает 90° только когда шея выровнена по сетке,
+поскольку тело змеи от шеи до хвоста продолжает двигаться в том же направлении.
+
+Для поздних повортах почти тоже самое. Кончик головы (рот) проходит пересечение, но не шея.
+Таким образом, голова может быстро поворачиваться на 90°, когда шея достигает пересечения.
+
+---------- ЕСЛИ РАННИЙ ПОВОРТ
+если buffdirection и direction головы не совпадают, то голова поворачивает
+каждый тик, пока не станет равна buffdirection
+
+достигает 90° когда шея выровнена по сетке, до этоого тело продолжает двигатся
+в том же направлении
+
+--------- ЕСЛИ ПОЗДНИЙ ПОВОРОТ
+если buffdirection и direction головы не совпадают, то голова резко поварачивает
+на 90°
+
+примечания: 
+голова рендерится сверху, а в точке поворта текстура заменяется на текстурку поворота
+*/
+
+void Snake::updatePosition( int grid_size ){ 
+
+    // if ( m_pHead->direction != m_pHead->buffdirection ){
+    //     m_pHead->direction.x += 0.2 * m_pHead->buffdirection.x;
+    //     m_pHead->direction.y += 0.2 * m_pHead->buffdirection.y;                 
+    // }
+    // m_pHead->direction.normalize();
+
+    // m_pHead->angle = m_pHead->direction.getAngle();
+
+    // m_pHead->position.x += m_speed * m_pHead->direction.x; 
+    // m_pHead->position.y += m_speed * m_pHead->direction.y;   
 
     for (SnakeSegment* pIter = m_pHead; pIter != nullptr; pIter = pIter->pNext){
 
-        // MOVE 
         pIter->position.x += m_speed * pIter->direction.x; 
         pIter->position.y += m_speed * pIter->direction.y;   
 
         if ( int( pIter->position.x ) % grid_size == 0 && int( pIter->position.y ) % grid_size == 0){
             if ( pIter->pNext != nullptr ){
                 pIter->pNext->buffdirection = pIter->direction;
-
-            if ( m_pHead->position.x == pIter->position.x && m_pHead->position.y == pIter->position.y &&
-                m_pHead != pIter ){
-                // if snake collides itself
-                reset();
-                break;
-                }
             }
             pIter->direction = pIter->buffdirection;
-            pIter->angle = pIter->direction.getAngle();
         }
-    updateTextures();
     }
+
+    updateTextures();
 }
 
 void Snake::updateTextures(){
     for (SnakeSegment* pIter = m_pHead; pIter != nullptr; pIter = pIter->pNext){
-        if ( pIter == m_pTail ){
-            pIter->texture = m_tailTexture;
-        } else if ( pIter == m_pHead ){
+        if ( pIter == m_pHead ){
             pIter->texture = m_headTexture;
+        } else if ( pIter == m_pTail ){
+            pIter->texture = m_tailTexture;
         } else if ( pIter != nullptr ){
             pIter->texture = m_bodyTexture;
-        }        
+        }
+        pIter->angle = pIter->direction.getAngle();
     }
 }
 
@@ -64,17 +97,18 @@ void Snake::reset(){
     }
 
     for (int i = 0; i < m_initSegments; i++){
-        addSegment( { m_initPosition.x, m_initPosition.y } );
+        addSegment( m_initPosition, m_initDirection );
     }
 
     m_pHead->buffdirection = m_initDirection;
+    m_pHead->direction  = m_initDirection;
 
     m_score = 0; // reset the score
 }
 
 void Snake::addScore(){
     // add new segment from the end
-    addSegment( m_pTail->position );
+    addSegment( m_pTail->position, m_pTail->direction);
     m_score++;
 }
 
@@ -92,7 +126,7 @@ std::string Snake::getScore() const{
 }
 
 // add new segment
-void Snake::addSegment(Vector2f position){ 
+void Snake::addSegment(Vector2f position, Vector2f direction){ 
 
     SnakeSegment* pNewSegment = new SnakeSegment();
 
@@ -105,11 +139,12 @@ void Snake::addSegment(Vector2f position){
     }
     pNewSegment->texture = m_bodyTexture;
     pNewSegment->position = position;
+    
 }
 
-void Snake::setDirection(Vector2f direction){
-    if ( m_pHead->direction.y != (direction.y * -1) || m_pHead->direction.x != (direction.x * -1) ){
-        m_pHead->buffdirection = direction;
+void Snake::setDirection(float x, float y){
+    if ( m_pHead->direction.y != (y * -1) || m_pHead->direction.x != (x * -1) ){
+        m_pHead->buffdirection = {x, y};
     }
 }
 
@@ -142,5 +177,6 @@ Snake::~Snake(){
     SDL_DestroyTexture( m_headTexture );
     SDL_DestroyTexture( m_bodyTexture );
     SDL_DestroyTexture( m_tailTexture );
+    SDL_DestroyTexture( m_angledTexture );
 }
 

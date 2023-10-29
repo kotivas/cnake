@@ -43,6 +43,16 @@ TTF_Font* RenderWindow::loadFont(std::string path, int size){
     return pNewFont;
 }
 
+Mix_Chunk* RenderWindow::loadSound(std::string path){
+    Mix_Chunk* pNewSound = Mix_LoadWAV( path.c_str() );
+
+    if ( !pNewSound ){
+        std::cout << "Failed to load wav. Error: " << SDL_GetError() << std::endl;
+    }
+
+    return pNewSound;
+}
+
 // render a sprite 
 void RenderWindow::render(SDL_Texture* texture, int w, int h, Vector2f position, float angle){
 	SDL_Rect src; 

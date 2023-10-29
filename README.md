@@ -9,7 +9,7 @@ later
 ## 🛠️ Compiling
 
 ### 🐧 Unix-like
-After installing SDL2, SDL2_TTF and SDL2_Image, execute the following commands
+After installing SDL2, SDL2_mixer, SDL2_ttf and SDL2_Image, execute the following commands
 ```bash
 git clone https://github.com/kotivas/Cnake
 cd cnake

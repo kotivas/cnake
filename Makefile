@@ -3,7 +3,7 @@ TARGET = ./bin/cnake
 CC = g++
 
 CFLAG = -g -Wall
-LIBS = -lSDL2 -lSDL2_image -lSDL2_ttf
+LIBS = -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 
 PREF_SRC = ./src/
 PREF_OBJ = ./obj/

@@ -15,7 +15,7 @@ public:
     Text(SDL_Color color, TTF_Font* font, std::string text, float x, float y, int width, int height);
 
     bool            isVisible() const;
-    void            setVisible(bool visible);
+    void            setVisibility(bool visible);
 
     float           x;
     float           y;

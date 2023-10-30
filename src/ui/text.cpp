@@ -24,7 +24,7 @@ bool Text::isVisible() const{
     return m_isVisible;
 }
 
-void Text::setVisible(bool visible){
+void Text::setVisibility(bool visible){
     m_isVisible = visible;
 }
 

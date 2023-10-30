@@ -11,6 +11,8 @@
 #include "snake.hpp"
 #include "apple.hpp"
 
+#include "ui/interface.hpp"
+
 #include "config.h"
 
 class Game{
@@ -33,6 +35,10 @@ private:
     SDL_Texture*    m_bodyTexture;
     SDL_Texture*    m_tailTexture; 
     SDL_Texture*    m_angledTexture;
+
+    Interface*      m_interface;
+
+    Text*           m_scoreText;
 
     TTF_Font*       m_font;
 

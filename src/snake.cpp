@@ -4,9 +4,9 @@ Snake::Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture,
              SDL_Texture* tailTexure, SDL_Texture* angledTexture,
              float x, float y, float speed,
              Vector2f direction, int segments)
-: m_pHead(nullptr), m_pTail(nullptr), m_bodyTexture(bodyTexture), m_angledTexture(angledTexture),
- m_headTexture(headTexture), m_tailTexture(tailTexure), m_speed(speed),
- m_initSegments(segments), m_initPosition{x, y}, m_initDirection{direction}
+: m_pHead(nullptr), m_pTail(nullptr), m_bodyTexture(bodyTexture),
+ m_headTexture(headTexture), m_tailTexture(tailTexure),m_angledTexture(angledTexture),
+ m_speed(speed), m_initSegments(segments), m_initPosition{x, y}, m_initDirection{direction}
 {   
     for (int i = 0; i < m_initSegments; i++){
         addSegment( m_initPosition, m_initDirection );

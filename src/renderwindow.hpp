@@ -6,7 +6,9 @@
 
 #include <iostream>
 #include <string>
-#include "vector2f.h"
+
+#include "ui/interface.hpp"
+#include "ui/text.hpp"
 
 class RenderWindow {
 private:
@@ -15,8 +17,9 @@ private:
 public:
     RenderWindow(std::string title, int screen_width, int screen_lenght);
 
-    void            render(SDL_Texture* texture, int w, int h, Vector2f position, float angle = 0);
-    void            render(TTF_Font* font, std::string text, SDL_Color color, int w, int h, Vector2f position);
+    void            render(SDL_Texture* texture, int w, int h, float x,float y, float angle = 0);
+    void            render(TTF_Font* font, std::string text, SDL_Color color, int w, int h, float x, float y);
+    void            render(Text* text);
 
     void            update();
     void            clear();

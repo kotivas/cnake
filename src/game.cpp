@@ -9,17 +9,21 @@ Game::Game()
     /* --------------------=LOADING ASSETS=--------------------- */
     m_font = m_window->loadFont("./assets/atariclassic.ttf", 24);
 
+ 
+    m_scoreText = m_interface->createText({75, 105, 47}, m_font, "000", BORDER_SIZE*2, 0, 90, BORDER_SIZE);
+
     m_fieldTexture = m_window->loadTexture("./assets/field.png");
     m_appleTexture = m_window->loadTexture("./assets/apple.png");
 
     m_headTexture = m_window->loadTexture("./assets/head.png");
     m_bodyTexture = m_window->loadTexture("./assets/body.png");
     m_tailTexture = m_window->loadTexture("./assets/tail.png");
-    m_angledTexture = m_window->loadTexture("./assets/rotate.png");
+    //m_angledTexture = m_window->loadTexture("./assets/rotate.png");
 
     m_turnSound = m_window->loadSound("./assets/turn.wav");
     m_eatSound = m_window->loadSound("./assets/eat.wav");
     m_hitSound = m_window->loadSound("./assets/hit.wav");
+
     /* --------------------------------------------------------- */
 
     m_snake = new Snake( m_headTexture, m_bodyTexture, m_tailTexture, m_angledTexture,
@@ -79,7 +83,7 @@ void Game::handleEvents(){
 }
 
 // reset al game
-void Game::reset(){
+void Game::reset(){ 
     m_apple->reset();
     m_snake->reset();
 }
@@ -140,6 +144,8 @@ void Game::update(){
 
     m_window->update();
 
+    m_scoreText->setString( m_snake->getScore() );
+
     checkCollision();    
 
     render();
@@ -148,25 +154,27 @@ void Game::update(){
 // render all objects
 void Game::render(){
     m_window->clear();
+
     //               texture,      width,        height,        position
-    m_window->render(m_fieldTexture, SCREEN_WIDTH, SCREEN_LENGHT, {0.f, 0.f});
+    m_window->render(m_fieldTexture, SCREEN_WIDTH, SCREEN_LENGHT, 0.f, 0.f);
     //               texture,               width,        texture,      position
-    m_window->render(m_apple->getTexture(), TEXTURE_SIZE, TEXTURE_SIZE, {BORDER_SIZE, 0} );
+    m_window->render(m_apple->getTexture(), TEXTURE_SIZE, TEXTURE_SIZE, BORDER_SIZE, 0 );
     //               font,   text,                color RGB   width, height,      position       
-    m_window->render(m_font, m_snake->getScore(), {75, 105, 47}, 90, BORDER_SIZE, {BORDER_SIZE*2, 0});
+    //m_window->render(m_font, m_snake->getScore(), {75, 105, 47}, 90, BORDER_SIZE, BORDER_SIZE*2, 0);
+    m_window->render(m_scoreText);
     //               texture,               width,        height,       position
-    m_window->render(m_apple->getTexture(), TEXTURE_SIZE, TEXTURE_SIZE, m_apple->getPosition());
+    m_window->render(m_apple->getTexture(), TEXTURE_SIZE, TEXTURE_SIZE, m_apple->getPosition().x, m_apple->getPosition().y);
 
     // render body
     SnakeSegment* pIter = m_snake->getHead()->pNext;
     while ( pIter != nullptr ){
         //               texture,        width,        height,       position,        angle
-        m_window->render(pIter->texture, TEXTURE_SIZE, TEXTURE_SIZE, pIter->position, pIter->angle);
+        m_window->render(pIter->texture, TEXTURE_SIZE, TEXTURE_SIZE, pIter->position.x, pIter->position.y, pIter->angle);
         pIter = pIter->pNext;
     }
 
     // render head
-    m_window->render(m_snake->getHead()->texture, TEXTURE_SIZE, TEXTURE_SIZE, m_snake->getHead()->position, m_snake->getHead()->angle);
+    m_window->render(m_snake->getHead()->texture, TEXTURE_SIZE, TEXTURE_SIZE, m_snake->getHead()->position.x, m_snake->getHead()->position.y, m_snake->getHead()->angle);
 
     m_window->update();
 }
@@ -183,11 +191,13 @@ Game::~Game(){
     delete m_window;
     delete m_snake;
     delete m_apple;
+    delete m_interface;
 
     m_window        = nullptr;
     m_snake         = nullptr;
     m_fieldTexture  = nullptr;
     m_apple         = nullptr;
+
 
     IMG_Quit();
     SDL_Quit();

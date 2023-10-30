@@ -54,7 +54,7 @@ Mix_Chunk* RenderWindow::loadSound(std::string path){
 }
 
 // render a sprite 
-void RenderWindow::render(SDL_Texture* texture, int w, int h, Vector2f position, float angle){
+void RenderWindow::render(SDL_Texture* texture, int w, int h, float x, float y, float angle){
 	SDL_Rect src; 
 	src.x = 0;
 	src.y = 0;
@@ -64,8 +64,8 @@ void RenderWindow::render(SDL_Texture* texture, int w, int h, Vector2f position,
     SDL_QueryTexture(texture, NULL, NULL, &src.w, &src.h);
 
     SDL_Rect dst;
-	dst.x = position.x;
-	dst.y = position.y;
+	dst.x = x;
+	dst.y = y;
 	dst.w = w; //src.w;
 	dst.h = h; //src.h;
 
@@ -73,7 +73,7 @@ void RenderWindow::render(SDL_Texture* texture, int w, int h, Vector2f position,
 }
 
 // render a text
-void RenderWindow::render(TTF_Font* font, std::string text, SDL_Color color, int w, int h, Vector2f position){
+void RenderWindow::render(TTF_Font* font, std::string text, SDL_Color color, int w, int h, float x, float y){
 
     // create a surface text
     SDL_Surface* pSurfaceText = TTF_RenderText_Solid(font, text.c_str(), color); 
@@ -81,8 +81,8 @@ void RenderWindow::render(TTF_Font* font, std::string text, SDL_Color color, int
     SDL_Texture* pText = SDL_CreateTextureFromSurface(m_renderer, pSurfaceText);
 
     SDL_Rect rect; //create a rect
-    rect.x = position.x;  //controls the rect's x coordinate 
-    rect.y = position.y; // controls the rect's y coordinte
+    rect.x = x;  //controls the rect's x coordinate 
+    rect.y = y; // controls the rect's y coordinte
     rect.w = w; // controls the width of the rect
     rect.h = h; // controls the height of the rect
 
@@ -90,7 +90,10 @@ void RenderWindow::render(TTF_Font* font, std::string text, SDL_Color color, int
 
     SDL_FreeSurface(pSurfaceText); // free surface 
     SDL_DestroyTexture(pText); // destroy texture
+}
 
+void RenderWindow::render(Text* text){
+    render(text->getFont(), text->getString(), text->getColor(), text->width, text->height, text->x, text->y);
 }
 
 void RenderWindow::clear(){

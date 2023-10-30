@@ -12,6 +12,14 @@ void Text::setString(std::string text){
     m_text = text;
 }
 
+void Text::setColor(SDL_Color color){
+    m_color = color;
+}
+
+void Text::setFont(TTF_Font* font){
+    m_font = font;
+}
+
 bool Text::isVisible() const{
     return m_isVisible;
 }

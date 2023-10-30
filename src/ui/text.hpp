@@ -27,6 +27,9 @@ public:
     std::string     getString() const;
 
     void            setString(std::string text);
+    void            setFont(TTF_Font* font);
+    void            setColor(SDL_Color color);
+
 
     ~Text();
 };

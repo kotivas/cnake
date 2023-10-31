@@ -9,8 +9,10 @@ Game::Game()
     /* --------------------=LOADING ASSETS=--------------------- */
     m_font = m_window->loadFont("./assets/atariclassic.ttf", 24);
 
+    //m_buttonTexture = m_appleTexture;//m_window->loadTexture("./assets/button.png");
  
     m_scoreText = m_interface->createText({75, 105, 47}, m_font, "000", BORDER_SIZE*2, 0, 90, BORDER_SIZE);
+    //m_startButton = m_interface->createButton({255, 255, 255}, m_font, "button", 320, 0, 100, 100, m_appleTexture);
 
     m_fieldTexture = m_window->loadTexture("./assets/field.png");
     m_appleTexture = m_window->loadTexture("./assets/apple.png");
@@ -153,15 +155,22 @@ void Game::update(){
 
 // render all objects
 void Game::render(){
+
     m_window->clear();
 
     //               texture,      width,        height,        position
     m_window->render(m_fieldTexture, SCREEN_WIDTH, SCREEN_LENGHT, 0.f, 0.f);
     //               texture,               width,        texture,      position
-    m_window->render(m_apple->getTexture(), TEXTURE_SIZE, TEXTURE_SIZE, BORDER_SIZE, 0 );
-    //               font,   text,                color RGB   width, height,      position       
-    //m_window->render(m_font, m_snake->getScore(), {75, 105, 47}, 90, BORDER_SIZE, BORDER_SIZE*2, 0);
-    m_window->render(m_scoreText);
+
+    if ( m_scoreText->isVisible() ){
+         m_window->render(m_apple->getTexture(), TEXTURE_SIZE, TEXTURE_SIZE, BORDER_SIZE, 0 );
+         m_window->render(m_scoreText);
+    }
+
+    // if ( m_startButton->isVisible() ){
+    //     m_window->render(m_startButton);
+    // }
+
     //               texture,               width,        height,       position
     m_window->render(m_apple->getTexture(), TEXTURE_SIZE, TEXTURE_SIZE, m_apple->getPosition().x, m_apple->getPosition().y);
 
@@ -187,6 +196,8 @@ Game::~Game(){
     Mix_FreeChunk( m_eatSound );
     Mix_FreeChunk( m_turnSound );
     Mix_FreeChunk( m_hitSound );
+    
+    delete m_scoreText;
 
     delete m_window;
     delete m_snake;

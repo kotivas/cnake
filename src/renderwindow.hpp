@@ -8,7 +8,6 @@
 #include <string>
 
 #include "ui/interface.hpp"
-#include "ui/text.hpp"
 
 class RenderWindow {
 private:
@@ -20,6 +19,7 @@ public:
     void            render(SDL_Texture* texture, int w, int h, float x,float y, float angle = 0);
     void            render(TTF_Font* font, std::string text, SDL_Color color, int w, int h, float x, float y);
     void            render(Text* text);
+    void            render(Button* button);
 
     void            update();
     void            clear();

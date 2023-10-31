@@ -39,6 +39,8 @@ private:
     Interface*      m_interface;
 
     Text*           m_scoreText;
+    //Button*         m_startButton;
+    //SDL_Texture*    m_buttonTexture;
 
     TTF_Font*       m_font;
 

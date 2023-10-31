@@ -39,7 +39,3 @@ std::string Text::getString() const{
 TTF_Font* Text::getFont() const{
     return m_font;
 }
-
-Text::~Text(){
-    delete this;
-}

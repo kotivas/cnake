@@ -15,6 +15,18 @@ Text* Interface::createText(SDL_Color color, TTF_Font* font, std::string text, f
     return pNewText;
 }
 
-Interface::~Interface(){
-    delete this;
+Button* Interface::createButton(SDL_Color color, TTF_Font* font, std::string text, float x, float y, int width, int height, SDL_Texture* texture){
+    Button* pNewButton = new Button(color, font, text, x, y, width, height, texture);
+
+    return pNewButton;
 }
+
+// void Interface::destroyText(Text* text){
+//     delete text;
+//     text = nullptr;
+// }
+
+// void Interface::destroyButton(Button* button){
+//     delete button;
+//     button = nullptr;
+// }

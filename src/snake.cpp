@@ -116,9 +116,7 @@ void Snake::addSegment(Vector2f position, Vector2f direction){
 }
 
 void Snake::setDirection(float x, float y){
-    if ( m_pHead->direction.y != (y * -1) || m_pHead->direction.x != (x * -1) ){
-        m_pHead->buffdirection = {x, y};
-    }
+    m_pHead->buffdirection = {x, y};
 }
 
 // delete segment from beginning

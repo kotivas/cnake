@@ -54,23 +54,31 @@ void Game::handleEvents(){
                 switch ( m_event.key.keysym.sym ){ // get key code
                     case SDLK_RIGHT: // d or arrow right
                     case SDLK_d:
-                        m_snake->setDirection(1, 0);
-                        Mix_PlayChannel( -1, m_turnSound, 0 );
+                        if ( m_snake->getHead()->direction != Vector2f(-1, 0) ){
+                            Mix_PlayChannel( -1, m_turnSound, 0 );
+                            m_snake->setDirection(1, 0);
+                        }
                         break;
                     case SDLK_a: // a or arrow left
                     case SDLK_LEFT:
-                        m_snake->setDirection(-1, 0);
-                        Mix_PlayChannel( -1, m_turnSound, 0 );
+                        if ( m_snake->getHead()->direction != Vector2f(1, 0) ){
+                            Mix_PlayChannel( -1, m_turnSound, 0 );
+                            m_snake->setDirection(-1, 0);
+                        }
                         break;
                     case SDLK_s: // s or arrow down
                     case SDLK_DOWN:
-                        m_snake->setDirection(0, 1);
-                        Mix_PlayChannel( -1, m_turnSound, 0 );
+                        if ( m_snake->getHead()->direction != Vector2f(0, -1) ){
+                            Mix_PlayChannel( -1, m_turnSound, 0 );
+                            m_snake->setDirection(0, 1);
+                        }
                         break;
                     case SDLK_w: // w or arrow up
                     case SDLK_UP:
-                        m_snake->setDirection(0, -1);
-                        Mix_PlayChannel( -1, m_turnSound, 0 );
+                        if ( m_snake->getHead()->direction != Vector2f(0, 1) ){
+                            Mix_PlayChannel( -1, m_turnSound, 0 );
+                            m_snake->setDirection(0, -1);
+                        }
                         break;
                     case SDLK_ESCAPE:
                         m_isRunning = false;

@@ -20,6 +20,8 @@ Game::Game()
     m_eatSound = m_window->loadSound("./assets/eat.wav");
     m_hitSound = m_window->loadSound("./assets/hit.wav");
 
+    m_window->setWindowIcon("./assets/icon.png");
+
     /* --------------------------------------------------------- */
 
     m_snake = new Snake( m_headTexture, m_bodyTexture, m_tailTexture, m_angledTexture,
@@ -127,9 +129,7 @@ void Game::checkCollision(){ // OPTIMIZE
     if ( m_snake->getHead()->position == m_apple->getPosition() ){
         
         m_snake->addScore();
-
         Mix_PlayChannel( -1, m_eatSound, 0 ); // play eat sound
-
         spawnFood();
     }    
 }
@@ -159,11 +159,6 @@ void Game::render(){
 
     m_window->render(m_apple->getTexture(), BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, 0 );
     m_window->render(m_font, m_snake->getScore(), {75, 105, 47}, 90, BLOCK_SIZE, BLOCK_SIZE*2, 0);
-
-
-    // if ( m_startButton->isVisible() ){
-    //     m_window->render(m_startButton);
-    // }
 
     //               texture,               width,        height,       position
     m_window->render(m_apple->getTexture(), BLOCK_SIZE, BLOCK_SIZE, m_apple->getPosition().x, m_apple->getPosition().y);

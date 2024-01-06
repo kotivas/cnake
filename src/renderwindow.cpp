@@ -5,20 +5,26 @@ is responsible for show window, render things and load textures
 #include "renderwindow.hpp"
 
 RenderWindow::RenderWindow(std::string title, int screen_width, int screen_lenght)
-: m_screen(nullptr), m_renderer(nullptr)
+: m_window(nullptr), m_renderer(nullptr)
 {
-    m_screen = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen_width, screen_lenght, SDL_WINDOW_SHOWN);
-	if (m_screen == nullptr){
+    m_window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen_width, screen_lenght, SDL_WINDOW_SHOWN);
+	if (m_window == nullptr){
 		std::cout << "Failed to create window. Error: " << SDL_GetError() << std::endl;
 	}
 
-    m_renderer = SDL_CreateRenderer(m_screen, -1, SDL_RENDERER_ACCELERATED);
+    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
     if (m_renderer == nullptr){
         std::cout << "Failed to create renderer. Error: " << SDL_GetError() << std::endl;
     }
 
     // AntiAliasing
     // SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" );
+}
+
+void RenderWindow::setWindowIcon(std::string path){
+    SDL_Surface* icon = IMG_Load( path.c_str() );
+    SDL_SetWindowIcon(m_window, icon);
+    SDL_FreeSurface(icon); // ?
 }
 
 SDL_Texture* RenderWindow::loadTexture(std::string path){
@@ -111,8 +117,8 @@ void RenderWindow::update(){
 
 RenderWindow::~RenderWindow(){
     SDL_DestroyRenderer( m_renderer );
-    SDL_DestroyWindow( m_screen );
+    SDL_DestroyWindow( m_window );
 
     m_renderer = nullptr;
-    m_screen = nullptr;
+    m_window = nullptr;
 }

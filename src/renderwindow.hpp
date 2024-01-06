@@ -9,7 +9,7 @@
 
 class RenderWindow {
 private:
-    SDL_Window*     m_screen;
+    SDL_Window*     m_window;
     SDL_Renderer*   m_renderer;
 public:
     RenderWindow(std::string title, int screen_width, int screen_lenght);
@@ -22,6 +22,8 @@ public:
     SDL_Texture*    loadTexture(std::string path);
     TTF_Font*       loadFont(std::string path, int size);
     Mix_Chunk*      loadSound(std::string path);
+
+    void            setWindowIcon(std::string path);
 
     ~RenderWindow();
 };

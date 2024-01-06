@@ -3,6 +3,8 @@
 #include "vector2f.h"
 #include "snakesegment.h"
 
+#include "config.h"
+
 #include <iostream>
 
 class Snake {
@@ -30,10 +32,9 @@ private:
 public:    
     Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture,
           SDL_Texture* tailTexure, SDL_Texture* angledTexture,
-          float x, float y, float speed,
-          Vector2f direction, int segments);
+          float x, float y, float speed);
 
-    void            updatePosition( int GRID_SIZE );
+    void            updatePosition();
     void            setDirection(float x, float y);
 
     Vector2f        getPosition() const;
@@ -41,10 +42,8 @@ public:
 
     void            addScore();
     std::string     getScore() const;
-
-    void            start();
  
-    void reset();
+    void            reset();
 
     ~Snake();
 };

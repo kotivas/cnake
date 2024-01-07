@@ -18,8 +18,14 @@ make
 ```
 The compiled executable file will be located in ``./bin/``
 
-Be sure to run with `./bin/cnake` **out of the bin directory** of the repository. 
-Otherwise the game will not be able to find assets.
+> [!WARNING]
+> Be sure to run with `./bin/cnake` **out of the bin directory** of the repository. 
+> Otherwise the game will not be able to find assets.
 
 ### 🪟 Windows
 windows moment ☕
+
+## 💜 Thanks
+I express special gratitude to my friends,
+GrayCircle and VaneZ, who supported and helped develop
+the game all throughout its development

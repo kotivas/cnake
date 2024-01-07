@@ -33,7 +33,7 @@ private:
     SDL_Texture*    m_bodyTexture;
     SDL_Texture*    m_tailTexture; 
     SDL_Texture*    m_angledTexture;
-    
+
     TTF_Font*       m_font;
 
     void            checkCollision();    

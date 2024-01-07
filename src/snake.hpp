@@ -5,13 +5,11 @@
 
 #include "config.h"
 
+#include <list>
 #include <iostream>
 
 class Snake {
 private:
-    SnakeSegment*   m_pHead;
-    SnakeSegment*   m_pTail;
-
     SDL_Texture*    m_bodyTexture;
     SDL_Texture*    m_headTexture;
     SDL_Texture*    m_tailTexture;
@@ -27,7 +25,9 @@ private:
 
     void            addSegment(Vector2f position, Vector2f direction);
     void            removeSegment();
-    void            updateTextures();    
+    void            updateTextures();   
+
+    std::list<SnakeSegment*> m_segments; 
 
 public:    
     Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture,
@@ -38,6 +38,7 @@ public:
     void            setDirection(float x, float y);
 
     Vector2f        getPosition() const;
+    std::list<SnakeSegment*>   getSegments();
     SnakeSegment*   getHead();
 
     void            addScore();

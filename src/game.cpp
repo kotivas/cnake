@@ -75,7 +75,7 @@ void Game::handleEvents(){
                         }
                         break;
                     case SDLK_ESCAPE:
-                        m_isRunning = false;
+                        //m_isRunning = false;
                         break;
                     case SDLK_SPACE:
                         m_snake->reset();
@@ -105,16 +105,12 @@ void Game::spawnFood(){
 // check for collisions and some logic
 void Game::checkCollision(){ // OPTIMIZE
     // check for collision snake with itself
-    SnakeSegment* pIter = m_snake->getHead()->pNext;
-    while ( pIter != nullptr ){
-        if ( m_snake->getHead()->position == pIter->position){
+    for (auto segment : m_snake->getSegments() ){
+        if ( m_snake->getHead()->position == segment->position &&
+             m_snake->getHead() != segment){
             Mix_PlayChannel( -1, m_hitSound, 0 ); // play hit sound
             reset();           
         }
-        if ( pIter->position == m_apple->getPosition() ){
-            spawnFood();
-        }
-        pIter = pIter->pNext;
     }
     // check for collsion with border
     if ( m_snake->getHead()->position.x > (SCREEN_WIDTH - BLOCK_SIZE*2) ||
@@ -126,8 +122,7 @@ void Game::checkCollision(){ // OPTIMIZE
             reset();
     }
     // check for collision snake with apple
-    if ( m_snake->getHead()->position == m_apple->getPosition() ){
-        
+    if ( m_snake->getHead()->position == m_apple->getPosition() ){     
         m_snake->addScore();
         Mix_PlayChannel( -1, m_eatSound, 0 ); // play eat sound
         spawnFood();
@@ -164,11 +159,11 @@ void Game::render(){
     m_window->render(m_apple->getTexture(), BLOCK_SIZE, BLOCK_SIZE, m_apple->getPosition().x, m_apple->getPosition().y);
 
     // render body
-    SnakeSegment* pIter = m_snake->getHead()->pNext;
-    while ( pIter != nullptr ){
+    for ( const auto segment : m_snake->getSegments() ){
         //               texture,        width,        height,       position,        angle
-        m_window->render(pIter->texture, BLOCK_SIZE, BLOCK_SIZE, pIter->position.x, pIter->position.y, pIter->angle);
-        pIter = pIter->pNext;
+        if ( segment != m_snake->getHead() ){
+            m_window->render(segment->texture, BLOCK_SIZE, BLOCK_SIZE, segment->position.x, segment->position.y, segment->angle);
+        }
     }
 
     // render head

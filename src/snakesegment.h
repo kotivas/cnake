@@ -4,11 +4,10 @@
 
 struct SnakeSegment {
 	SnakeSegment()
-	: pNext(nullptr), angle{0.f}
+	: angle{0.f}
 	{}
 
 	Vector2f 		position;
-    SnakeSegment* 	pNext;
 	SDL_Texture* 	texture;
 	float 			angle;
 	Vector2f 		direction;

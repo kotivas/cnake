@@ -7,30 +7,23 @@ Snake::Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture,
  m_headTexture(headTexture), m_tailTexture(tailTexure),m_angledTexture(angledTexture),
  m_speed(speed), m_initPosition{x, y}
 {   
-
-    m_initSegments = 3;
+    m_initSegments = 4;
     m_initDirection = {1, 0};
 
-    for (int i = 0; i < m_initSegments; i++){
-       addSegment( {m_initPosition.x - ( BLOCK_SIZE * i), m_initPosition.y}, m_initDirection);
-    } 
-
-    m_segments.front()->buffdirection = m_initDirection; // initial direction of the snake
-
-    m_score = 0;
+    reset();
 
 }
 
 void Snake::updatePosition(){ // FIXME: I'M GONNA KILL MY SELF 💀💀💀
 
-    for (auto iter = m_segments.begin(); iter != m_segments.end(); iter++){ // OPTIMIZE:-------------------------------
+    for (auto iter = m_segments.begin(); iter != m_segments.end(); iter++){
 
         SnakeSegment* segment = *iter;
 
         segment->position.x += m_speed * segment->direction.x; 
         segment->position.y += m_speed * segment->direction.y;   
 
-        if ( int( segment->position.x ) % BLOCK_SIZE == 0 && int( segment->position.y ) % BLOCK_SIZE   == 0){
+        if ( int( segment->position.x ) % (BLOCK_SIZE/2) == 0 && int( segment->position.y ) % (BLOCK_SIZE/2) == 0){
             if ( segment != m_segments.back() ){
                 (*std::next(iter))->buffdirection = segment->direction;
             }
@@ -40,6 +33,7 @@ void Snake::updatePosition(){ // FIXME: I'M GONNA KILL MY SELF 💀💀💀
     updateTextures();
 }
 
+// update textures for all snake segments
 void Snake::updateTextures(){
 
     for (auto segment : m_segments){
@@ -60,7 +54,7 @@ void Snake::reset(){
     m_segments.clear();
 
     for (int i = 0; i < m_initSegments; i++){
-       addSegment( {m_initPosition.x - (48 * i), m_initPosition.y}, m_initDirection);
+       addSegment( {m_initPosition.x - ((BLOCK_SIZE/2) * i), m_initPosition.y}, m_initDirection);
     } 
 
     m_segments.front()->buffdirection = m_initDirection;
@@ -71,7 +65,7 @@ void Snake::reset(){
 
 void Snake::addScore(){
     // add new segment from the end
-    addSegment( m_segments.back()->position, m_segments.back()->direction); // OPTIMIZE: remove arguments
+    addSegment( m_segments.back()->position, m_segments.back()->direction);
     m_score++;
 }
 
@@ -91,60 +85,43 @@ std::string Snake::getScore() const{
 // add new segment
 void Snake::addSegment(Vector2f position, Vector2f direction){ 
 
+    // memory allocate for new segment
     SnakeSegment* pNewSegment = new SnakeSegment();
 
-    if (direction == Vector2f{1, 0}){
-        position.x -= BLOCK_SIZE;
-    } else if (direction == Vector2f{-1, 0}){
-        position.x += BLOCK_SIZE;
-    } else if (direction == Vector2f{0, 1}){
-        position.y -= BLOCK_SIZE;
-    } else if (direction == Vector2f{0, -1}){
-        position.y += BLOCK_SIZE;
-    }
+    // calculating the indent from the last segment
+    position.x += (BLOCK_SIZE/2) * -direction.x;
+    position.y += (BLOCK_SIZE/2) * -direction.y;
 
-    // if (m_pHead == nullptr){
-    //     m_pTail = pNewSegment;
-    //     m_pHead = pNewSegment;
-    // } else {
-    //     m_pTail->pNext = pNewSegment;
-    //     m_pTail = m_pTail->pNext;
-    // }
-    pNewSegment->texture = m_bodyTexture;
     pNewSegment->position = position;
-
     pNewSegment->direction = direction;
 
+    pNewSegment->texture = m_tailTexture;
+    pNewSegment->angle = direction.getAngle();
+
     m_segments.push_back(pNewSegment);
-    
 }
 
 void Snake::setDirection(float x, float y){
     m_segments.front()->buffdirection = {x, y};
 }
 
-// delete segment from beginning
+// deleting a front segment
 void Snake::removeSegment(){
-    // if (m_pHead != nullptr){
-    //     SnakeSegment* pRemove = m_pHead;
-    //     m_pHead = m_pHead->pNext;
-
-    //     delete pRemove;
-    // }
     delete m_segments.front();
     m_segments.pop_front();
 }
 
-// get position
+// get head position
 Vector2f Snake::getPosition() const{
     return m_segments.front()->position;
 }
 
-// get pointer to the object of head
+// get list of the snake segments
 std::list<SnakeSegment*> Snake::getSegments(){
     return m_segments;
 }
 
+// get pointer to the object of head
 SnakeSegment* Snake::getHead(){
     return m_segments.front();
 }

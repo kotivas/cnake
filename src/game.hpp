@@ -16,6 +16,8 @@
 class Game{
 private:
     bool            m_isRunning;
+    bool            m_paused;
+
     Snake*          m_snake;
     Apple*          m_apple;
     RenderWindow*   m_window;

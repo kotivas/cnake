@@ -1,7 +1,7 @@
 #include "game.hpp"
 
 Game::Game()
-: m_isRunning(true)
+: m_isRunning(true), m_paused(false)
 {
     m_window = new RenderWindow("CNAKE (dev build)", SCREEN_WIDTH, SCREEN_LENGHT);
     //                                       title,  screen width, screen lenght
@@ -48,38 +48,37 @@ void Game::handleEvents(){
                 switch ( m_event.key.keysym.sym ){ // get key code
                     case SDLK_RIGHT: // d or arrow right
                     case SDLK_d:
-                        if ( m_snake->getHead()->direction != Vector2f(-1, 0) ){
+                        if ( m_snake->getHead()->direction != Vector2f(-1, 0) && !m_paused ){
                             Mix_PlayChannel( -1, m_turnSound, 0 );
                             m_snake->setDirection(1, 0);
                         }
                         break;
                     case SDLK_a: // a or arrow left
                     case SDLK_LEFT:
-                        if ( m_snake->getHead()->direction != Vector2f(1, 0) ){
+                        if ( m_snake->getHead()->direction != Vector2f(1, 0) && !m_paused){
                             Mix_PlayChannel( -1, m_turnSound, 0 );
                             m_snake->setDirection(-1, 0);
                         }
                         break;
                     case SDLK_s: // s or arrow down
                     case SDLK_DOWN:
-                        if ( m_snake->getHead()->direction != Vector2f(0, -1) ){
+                        if ( m_snake->getHead()->direction != Vector2f(0, -1) && !m_paused){
                             Mix_PlayChannel( -1, m_turnSound, 0 );
                             m_snake->setDirection(0, 1);
                         }
                         break;
                     case SDLK_w: // w or arrow up
                     case SDLK_UP:
-                        if ( m_snake->getHead()->direction != Vector2f(0, 1) ){
+                        if ( m_snake->getHead()->direction != Vector2f(0, 1) && !m_paused){
                             Mix_PlayChannel( -1, m_turnSound, 0 );
                             m_snake->setDirection(0, -1);
                         }
                         break;
                     case SDLK_ESCAPE:
-                        //m_isRunning = false;
+                        m_paused = !m_paused;
                         break;
-                    case SDLK_SPACE:
+                    case SDLK_r:
                         m_snake->reset();
-                        Mix_PlayChannel( -1, m_hitSound, 0 );
                         break;
                 }
         }
@@ -134,12 +133,13 @@ void Game::update(){
 
     handleEvents();
 
-    m_snake->updatePosition();
+    // if game not paused
+    if ( !m_paused ){
+        m_snake->updatePosition();
+        checkCollision();
+    }
 
     m_window->update();
-
-    checkCollision();    
-
     render();
 }
 
@@ -160,14 +160,18 @@ void Game::render(){
 
     // render body
     for ( const auto segment : m_snake->getSegments() ){
-        //               texture,        width,        height,       position,        angle
         if ( segment != m_snake->getHead() ){
+            //               texture,          width,      height,     position,                                 angle
             m_window->render(segment->texture, BLOCK_SIZE, BLOCK_SIZE, segment->position.x, segment->position.y, segment->angle);
         }
     }
 
     // render head
     m_window->render(m_snake->getHead()->texture, BLOCK_SIZE, BLOCK_SIZE, m_snake->getHead()->position.x, m_snake->getHead()->position.y, m_snake->getHead()->angle);
+
+    if ( m_paused ){
+        m_window->render(m_font, "PAUSED", {255, 255, 255}, 250, 100, SCREEN_LENGHT/2, SCREEN_WIDTH/3.5);
+    }
 
     m_window->update();
 }

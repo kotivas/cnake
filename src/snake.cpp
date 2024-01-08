@@ -27,6 +27,8 @@ void Snake::updatePosition(){ // FIXME: I'M GONNA KILL MY SELF 💀💀💀
             if ( segment != m_segments.back() ){
                 (*std::next(iter))->buffdirection = segment->direction;
             }
+        }
+        if ( int( segment->position.x ) % (BLOCK_SIZE) == 0 && int( segment->position.y ) % (BLOCK_SIZE) == 0){
             segment->direction = segment->buffdirection;
         }
     }

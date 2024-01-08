@@ -5,7 +5,7 @@ Snake::Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture,
 : m_bodyTexture(bodyTexture), m_headTexture(headTexture),
  m_tailTexture(tailTexure), m_speed(speed), m_initPosition{x, y}
 {   
-    m_initSegments = 4*2;
+    m_initSegments = 8*2;
     m_initDirection = {1, 0};
 
     reset();
@@ -63,7 +63,7 @@ void Snake::reset(){
 
 void Snake::addScore(){ // FIXME   REMOVE?
     // add new segment from the end
-    for (int i = 0; i < 4; i++){
+    for (int i = 0; i < 6; i++){
         addSegment( m_segments.back()->position, m_segments.back()->direction);
     }
 }

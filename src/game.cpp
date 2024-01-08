@@ -181,7 +181,7 @@ void Game::render(){
     m_window->render(m_apple->texture, BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, 0 );
     m_window->render(m_font, getScore(m_score), {75, 105, 47}, 90, BLOCK_SIZE, BLOCK_SIZE*2, 0);
 
-    //m_window->render(m_bestScoreTexture, BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE*4, 0);
+    m_window->render(m_bestScoreTexture, BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE*4, 0);
     m_window->render(m_font, getScore(m_bestScore), {75, 105, 47}, 90, BLOCK_SIZE, BLOCK_SIZE*5, 0);
 
     //               texture,               width,        height,       position

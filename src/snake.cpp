@@ -7,15 +7,16 @@ Snake::Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture,
  m_headTexture(headTexture), m_tailTexture(tailTexure),m_angledTexture(angledTexture),
  m_speed(speed), m_initPosition{x, y}
 {   
-    m_initSegments = 4;
+    m_initSegments = 4*2;
     m_initDirection = {1, 0};
 
     reset();
 
 }
 
-void Snake::updatePosition(){ // FIXME: I'M GONNA KILL MY SELF 💀💀💀
-
+// update snake position 
+void Snake::updatePosition(){
+    // MOST BADASS FUNCTION IN THE ENTIRE GAME
     for (auto iter = m_segments.begin(); iter != m_segments.end(); iter++){
 
         SnakeSegment* segment = *iter;
@@ -23,12 +24,12 @@ void Snake::updatePosition(){ // FIXME: I'M GONNA KILL MY SELF 💀💀💀
         segment->position.x += m_speed * segment->direction.x; 
         segment->position.y += m_speed * segment->direction.y;   
 
-        if ( int( segment->position.x ) % (BLOCK_SIZE/2) == 0 && int( segment->position.y ) % (BLOCK_SIZE/2) == 0){
+        if ( int( segment->position.x ) % SEGMENT_INDENT == 0 && int( segment->position.y ) % SEGMENT_INDENT == 0){
             if ( segment != m_segments.back() ){
                 (*std::next(iter))->buffdirection = segment->direction;
             }
         }
-        if ( int( segment->position.x ) % (BLOCK_SIZE) == 0 && int( segment->position.y ) % (BLOCK_SIZE) == 0){
+        if ( int( segment->position.x ) % BLOCK_SIZE == 0 && int( segment->position.y ) % BLOCK_SIZE == 0){
             segment->direction = segment->buffdirection;
         }
     }
@@ -56,7 +57,7 @@ void Snake::reset(){
     m_segments.clear();
 
     for (int i = 0; i < m_initSegments; i++){
-       addSegment( {m_initPosition.x - ((BLOCK_SIZE/2) * i), m_initPosition.y}, m_initDirection);
+       addSegment( {m_initPosition.x - (SEGMENT_INDENT * i), m_initPosition.y}, m_initDirection);
     } 
 
     m_segments.front()->buffdirection = m_initDirection;
@@ -67,7 +68,11 @@ void Snake::reset(){
 
 void Snake::addScore(){
     // add new segment from the end
-    addSegment( m_segments.back()->position, m_segments.back()->direction);
+    for (int i = 0; i < 4; i++){
+        addSegment( m_segments.back()->position, m_segments.back()->direction);
+    }
+    
+    
     m_score++;
 }
 
@@ -91,8 +96,8 @@ void Snake::addSegment(Vector2f position, Vector2f direction){
     SnakeSegment* pNewSegment = new SnakeSegment();
 
     // calculating the indent from the last segment
-    position.x += (BLOCK_SIZE/2) * -direction.x;
-    position.y += (BLOCK_SIZE/2) * -direction.y;
+    position.x += SEGMENT_INDENT * -direction.x;
+    position.y += SEGMENT_INDENT * -direction.y;
 
     pNewSegment->position = position;
     pNewSegment->direction = direction;

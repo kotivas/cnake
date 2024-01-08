@@ -49,28 +49,28 @@ void Game::handleEvents(){
                     case SDLK_RIGHT: // d or arrow right
                     case SDLK_d:
                         if ( m_snake->getHead()->direction != Vector2f(-1, 0) && !m_paused ){
-                            Mix_PlayChannel( -1, m_turnSound, 0 );
+                            if (SOUND) Mix_PlayChannel( -1, m_turnSound, 0 );
                             m_snake->setDirection(1, 0);
                         }
                         break;
                     case SDLK_a: // a or arrow left
                     case SDLK_LEFT:
                         if ( m_snake->getHead()->direction != Vector2f(1, 0) && !m_paused){
-                            Mix_PlayChannel( -1, m_turnSound, 0 );
+                            if (SOUND) Mix_PlayChannel( -1, m_turnSound, 0 );
                             m_snake->setDirection(-1, 0);
                         }
                         break;
                     case SDLK_s: // s or arrow down
                     case SDLK_DOWN:
                         if ( m_snake->getHead()->direction != Vector2f(0, -1) && !m_paused){
-                            Mix_PlayChannel( -1, m_turnSound, 0 );
+                            if (SOUND) Mix_PlayChannel( -1, m_turnSound, 0 );
                             m_snake->setDirection(0, 1);
                         }
                         break;
                     case SDLK_w: // w or arrow up
                     case SDLK_UP:
                         if ( m_snake->getHead()->direction != Vector2f(0, 1) && !m_paused){
-                            Mix_PlayChannel( -1, m_turnSound, 0 );
+                            if (SOUND) Mix_PlayChannel( -1, m_turnSound, 0 );
                             m_snake->setDirection(0, -1);
                         }
                         break;
@@ -107,7 +107,7 @@ void Game::checkCollision(){ // OPTIMIZE
     for (auto segment : m_snake->getSegments() ){
         if ( m_snake->getHead()->position == segment->position &&
              m_snake->getHead() != segment){
-            Mix_PlayChannel( -1, m_hitSound, 0 ); // play hit sound
+            if (SOUND) Mix_PlayChannel( -1, m_hitSound, 0 ); // play hit sound
             reset();           
         }
     }
@@ -117,13 +117,13 @@ void Game::checkCollision(){ // OPTIMIZE
          m_snake->getHead()->position.y > (SCREEN_LENGHT - BLOCK_SIZE*2) ||
          m_snake->getHead()->position.y < BLOCK_SIZE
          ){
-            Mix_PlayChannel( -1, m_hitSound, 0 ); // play hit sound
+            if (SOUND) Mix_PlayChannel( -1, m_hitSound, 0 ); // play hit sound
             reset();
     }
     // check for collision snake with apple
     if ( m_snake->getHead()->position == m_apple->getPosition() ){     
         m_snake->addScore();
-        Mix_PlayChannel( -1, m_eatSound, 0 ); // play eat sound
+        if (SOUND) Mix_PlayChannel( -1, m_eatSound, 0 ); // play eat sound
         spawnFood();
     }    
 }

@@ -11,9 +11,9 @@ later
 ### 🐧 Unix-like
 After installing **SDL2**, **SDL2_mixer**, **SDL2_ttf** and **SDL2_Image**, execute the following commands
 ```bash
-git clone https://github.com/kotivas/Cnake
+git clone https://github.com/kotivas/cnake
 cd cnake
-mkdir obj obj/ui bin
+mkdir obj bin
 make
 ```
 The compiled executable file will be located in ``./bin/``

@@ -16,6 +16,8 @@ Game::Game()
     m_bodyTexture = m_window->loadTexture("./assets/body.png");
     m_tailTexture = m_window->loadTexture("./assets/tail.png");
 
+    m_bestScoreTexture = m_window->loadTexture("./assets/bestscore.png");
+
     m_turnSound = m_window->loadSound("./assets/turn.wav");
     m_eatSound = m_window->loadSound("./assets/eat.wav");
     m_hitSound = m_window->loadSound("./assets/hit.wav");
@@ -24,13 +26,17 @@ Game::Game()
 
     /* --------------------------------------------------------- */
 
-    m_snake = new Snake( m_headTexture, m_bodyTexture, m_tailTexture, m_angledTexture,
+    m_snake = new Snake( m_headTexture, m_bodyTexture, m_tailTexture,
                               BLOCK_SIZE*6, BLOCK_SIZE*7, 4.0f );
     //                        Xpos,        Ypos,        Speed 
 
     m_apple = new Apple( m_appleTexture , BLOCK_SIZE*12, BLOCK_SIZE*7 );
     //                   texture          Xpos,         Ypos,      
+
+    m_score = 0;
+    m_bestScore = 0;
 }
+
 
 // return boolean game status
 bool Game::isRunning() const{
@@ -78,7 +84,7 @@ void Game::handleEvents(){
                         m_paused = !m_paused;
                         break;
                     case SDLK_r:
-                        m_snake->reset();
+                        reset();
                         break;
                 }
         }
@@ -87,18 +93,19 @@ void Game::handleEvents(){
 
 // reset al game
 void Game::reset(){ 
-    m_apple->reset();
+    m_apple->position = m_apple->initPosition;
     m_snake->reset();
+    m_score = 0;
 }
 
 // random food spawn
 void Game::spawnFood(){
     std::srand(std::time(nullptr));
 
-    int random_x = ( BLOCK_SIZE + std::rand() % ( SCREEN_WIDTH - BLOCK_SIZE*2 ) ) / BLOCK_SIZE;
-    int random_y = ( BLOCK_SIZE + std::rand() % ( SCREEN_LENGHT - BLOCK_SIZE*2 ) ) / BLOCK_SIZE;
+    float random_x = ( BLOCK_SIZE + std::rand() % ( SCREEN_WIDTH - BLOCK_SIZE*2 ) ) / BLOCK_SIZE;
+    float random_y = ( BLOCK_SIZE + std::rand() % ( SCREEN_LENGHT - BLOCK_SIZE*2 ) ) / BLOCK_SIZE;
 
-    m_apple->setPosition(random_x * BLOCK_SIZE, random_y * BLOCK_SIZE);
+    m_apple->position = {random_x * BLOCK_SIZE, random_y * BLOCK_SIZE};
 }
 
 // check for collisions and some logic
@@ -121,8 +128,14 @@ void Game::checkCollision(){ // OPTIMIZE
             reset();
     }
     // check for collision snake with apple
-    if ( m_snake->getHead()->position == m_apple->getPosition() ){     
+    if ( m_snake->getHead()->position == m_apple->position ){     
         m_snake->addScore();
+
+        m_score++;
+        if ( m_score >= m_bestScore ){
+            m_bestScore = m_score;
+        }
+
         if (SOUND) Mix_PlayChannel( -1, m_eatSound, 0 ); // play eat sound
         spawnFood();
     }    
@@ -143,6 +156,19 @@ void Game::update(){
     render();
 }
 
+// get formatted score string
+std::string Game::getScore(int score) const{
+    if ( score == 0 ){
+        return "000";
+    } else if (  score <= 9 ){
+        return "00" + std::to_string( score );
+    } else if ( score <= 99 ){ 
+        return "0" + std::to_string( score );
+    } else {
+        return std::to_string( score );
+    }
+}
+
 // render all objects
 void Game::render(){
 
@@ -152,11 +178,14 @@ void Game::render(){
     m_window->render(m_fieldTexture, SCREEN_WIDTH, SCREEN_LENGHT, 0.f, 0.f);
     //               texture,               width,        texture,      position
 
-    m_window->render(m_apple->getTexture(), BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, 0 );
-    m_window->render(m_font, m_snake->getScore(), {75, 105, 47}, 90, BLOCK_SIZE, BLOCK_SIZE*2, 0);
+    m_window->render(m_apple->texture, BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, 0 );
+    m_window->render(m_font, getScore(m_score), {75, 105, 47}, 90, BLOCK_SIZE, BLOCK_SIZE*2, 0);
+
+    //m_window->render(m_bestScoreTexture, BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE*4, 0);
+    m_window->render(m_font, getScore(m_bestScore), {75, 105, 47}, 90, BLOCK_SIZE, BLOCK_SIZE*5, 0);
 
     //               texture,               width,        height,       position
-    m_window->render(m_apple->getTexture(), BLOCK_SIZE, BLOCK_SIZE, m_apple->getPosition().x, m_apple->getPosition().y);
+    m_window->render(m_apple->texture, BLOCK_SIZE, BLOCK_SIZE, m_apple->position.x, m_apple->position.y);
 
     // render body
     for ( const auto segment : m_snake->getSegments() ){
@@ -180,6 +209,12 @@ void Game::render(){
 Game::~Game(){
 
     SDL_DestroyTexture( m_fieldTexture );
+    SDL_DestroyTexture( m_appleTexture );
+    SDL_DestroyTexture( m_bestScoreTexture );
+
+    SDL_DestroyTexture( m_headTexture );
+    SDL_DestroyTexture( m_bodyTexture );
+    SDL_DestroyTexture( m_tailTexture );
 
     Mix_FreeChunk( m_eatSound );
     Mix_FreeChunk( m_turnSound );
@@ -187,11 +222,12 @@ Game::~Game(){
 
     delete m_window;
     delete m_snake;
-    delete m_apple;
+    delete m_apple; 
 
     m_window        = nullptr;
     m_snake         = nullptr;
     m_fieldTexture  = nullptr;
+    m_bestScoreTexture = nullptr;
     m_apple         = nullptr;
 
 

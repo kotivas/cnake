@@ -1,17 +1,14 @@
 #include "snake.hpp"
 
 Snake::Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture,
-             SDL_Texture* tailTexure, SDL_Texture* angledTexture,
-             float x, float y, float speed)
-: m_bodyTexture(bodyTexture),
- m_headTexture(headTexture), m_tailTexture(tailTexure),m_angledTexture(angledTexture),
- m_speed(speed), m_initPosition{x, y}
+             SDL_Texture* tailTexure, float x, float y, float speed)
+: m_bodyTexture(bodyTexture), m_headTexture(headTexture),
+ m_tailTexture(tailTexure), m_speed(speed), m_initPosition{x, y}
 {   
     m_initSegments = 4*2;
     m_initDirection = {1, 0};
 
     reset();
-
 }
 
 // update snake position 
@@ -62,30 +59,12 @@ void Snake::reset(){
 
     m_segments.front()->buffdirection = m_initDirection;
     m_segments.front()->direction  = m_initDirection;
-
-    m_score = 0; // reset the score
 }
 
-void Snake::addScore(){
+void Snake::addScore(){ // FIXME   REMOVE?
     // add new segment from the end
     for (int i = 0; i < 4; i++){
         addSegment( m_segments.back()->position, m_segments.back()->direction);
-    }
-    
-    
-    m_score++;
-}
-
-// get formatted score string
-std::string Snake::getScore() const{
-    if ( m_score == 0 ){
-        return "000";
-    } else if (  m_score <= 9 ){
-        return "00" + std::to_string(  m_score );
-    } else if ( m_score <= 99 ){ 
-        return "0" + std::to_string( m_score );
-    } else {
-        return std::to_string( m_score );
     }
 }
 
@@ -136,9 +115,5 @@ SnakeSegment* Snake::getHead(){
 // destructor
 Snake::~Snake(){
     m_segments.clear(); 
-
-    SDL_DestroyTexture( m_headTexture );
-    SDL_DestroyTexture( m_bodyTexture );
-    SDL_DestroyTexture( m_tailTexture );
 }
 

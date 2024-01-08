@@ -2,20 +2,13 @@
 #include <SDL2/SDL.h>
 #include "vector2f.h"
 
-class Apple {
-private:
-    SDL_Texture*    m_texture;
-    Vector2f        m_position;
+struct Apple{
 
-    Vector2f        m_initPosition;
-public:
-    Apple(SDL_Texture* texture, float x, float y);
-    
-    void            setPosition(int x, int y);
-    Vector2f        getPosition() const;
-    SDL_Texture*    getTexture() const;
+    Apple(SDL_Texture* textur, float x, float y)
+    : texture(textur), position(x, y), initPosition(x ,y)
+    {}
 
-    void            reset();
-
-    ~Apple();
+    SDL_Texture*    texture;
+    Vector2f        position;
+    Vector2f        initPosition;
 };

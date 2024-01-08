@@ -13,11 +13,8 @@ private:
     SDL_Texture*    m_bodyTexture;
     SDL_Texture*    m_headTexture;
     SDL_Texture*    m_tailTexture;
-    SDL_Texture*    m_angledTexture;    
 
     float           m_speed; // pixels per frame
-
-    Uint8           m_score; // max 255
 
     int             m_initSegments;
     Vector2f        m_initPosition;
@@ -31,8 +28,7 @@ private:
 
 public:    
     Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture,
-          SDL_Texture* tailTexure, SDL_Texture* angledTexture,
-          float x, float y, float speed);
+          SDL_Texture* tailTexure, float x, float y, float speed);
 
     void            updatePosition();
     void            setDirection(float x, float y);
@@ -42,7 +38,6 @@ public:
     SnakeSegment*   getHead();
 
     void            addScore();
-    std::string     getScore() const;
  
     void            reset();
 

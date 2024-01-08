@@ -98,15 +98,6 @@ void RenderWindow::render(TTF_Font* font, std::string text, SDL_Color color, int
     SDL_DestroyTexture(pText); // destroy texture
 }
 
-// void RenderWindow::render(Text* text){
-//     render(text->getFont(), text->getString(), text->getColor(), text->width, text->height, text->x, text->y);
-// }
-
-// // void RenderWindow::render(Button* button){
-// //     render(button->getText()->getFont(), button->getText()->getString(), button->getText()->getColor(), button->width, button->height, button->x, button->y);
-// //     render(button->getTexture(), button->width, button->height, button->x, button->y);
-// // }
-
 void RenderWindow::clear(){
     SDL_RenderClear( m_renderer );
 }

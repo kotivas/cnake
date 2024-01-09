@@ -24,6 +24,8 @@ private:
     Apple*          m_apple;
     RenderWindow*   m_window;
     
+    // contains milliseconds since the start of the step
+    Uint32          m_stepStart;
     SDL_Event       m_event;
 
     // gui

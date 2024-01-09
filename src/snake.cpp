@@ -1,25 +1,26 @@
 #include "snake.hpp"
 
-Snake::Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture,
-             SDL_Texture* tailTexure, float x, float y, float speed)
+Snake::Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture, SDL_Texture* tailTexure)
 : m_bodyTexture(bodyTexture), m_headTexture(headTexture),
- m_tailTexture(tailTexure), m_speed(speed), m_initPosition{x, y}
+ m_tailTexture(tailTexure)
 {   
-    m_initSegments = 8*2;
+    m_initSegments = 16;
     m_initDirection = {1, 0};
+    m_initPosition = {BLOCK_SIZE*6, BLOCK_SIZE*7};
+    m_speed = 4.f;
 
     reset();
 }
 
 // update snake position 
-void Snake::updatePosition(){
+void Snake::updatePosition( float timeStep ){
     // MOST BADASS FUNCTION IN THE ENTIRE GAME
     for (auto iter = m_segments.begin(); iter != m_segments.end(); iter++){
 
         SnakeSegment* segment = *iter;
 
-        segment->position.x += m_speed * segment->direction.x; 
-        segment->position.y += m_speed * segment->direction.y;   
+        segment->position.x += (m_speed * segment->direction.x);// * timeStep; 
+        segment->position.y += (m_speed * segment->direction.y);// * timeStep;   
 
         if ( int( segment->position.x ) % SEGMENT_INDENT == 0 && int( segment->position.y ) % SEGMENT_INDENT == 0){
             if ( segment != m_segments.back() ){

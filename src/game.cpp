@@ -26,15 +26,14 @@ Game::Game()
 
     /* --------------------------------------------------------- */
 
-    m_snake = new Snake( m_headTexture, m_bodyTexture, m_tailTexture,
-                              BLOCK_SIZE*6, BLOCK_SIZE*7, 4.0f );
-    //                        Xpos,        Ypos,        Speed 
+    m_snake = new Snake( m_headTexture, m_bodyTexture, m_tailTexture );
 
     m_apple = new Apple( m_appleTexture , BLOCK_SIZE*12, BLOCK_SIZE*7 );
     //                   texture          Xpos,         Ypos,      
 
     m_score = 0;
     m_bestScore = 0;
+    m_stepStart = SDL_GetTicks();
 }
 
 
@@ -146,13 +145,19 @@ void Game::update(){
 
     handleEvents();
 
+    // calculate time step in seconds
+    float timeStep = (SDL_GetTicks() - m_stepStart) / 1000.f;
+
     // if game not paused
     if ( !m_paused ){
-        m_snake->updatePosition();
+        m_snake->updatePosition( timeStep );
         checkCollision();
     }
 
+    m_stepStart = SDL_GetTicks(); // restart timer
+
     m_window->update();
+
     render();
 }
 

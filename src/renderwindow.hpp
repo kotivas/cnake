@@ -9,8 +9,8 @@
 
 class RenderWindow {
 private:
-    SDL_Window*     m_window;
-    SDL_Renderer*   m_renderer;
+    SDL_Window*     _window;
+    SDL_Renderer*   _renderer;
 public:
     RenderWindow(std::string title, int screen_width, int screen_lenght);
 

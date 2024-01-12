@@ -4,8 +4,9 @@
 #include <SDL2/SDL_mixer.h>
 
 #include <iostream>
-#include <ctime>
+#include <random>
 #include <string>
+#include <stack>
 
 #include "renderwindow.hpp"
 #include "snake.hpp"
@@ -15,50 +16,61 @@
 
 class Game{
 private:
-    bool            m_isRunning;
-    bool            m_paused;
-    int             m_score;
-    int             m_bestScore;
+    bool            isRunning;
+    int             score;
+    int             bestScore;
+    int             volume;
 
-    Snake*          m_snake;
-    Apple*          m_apple;
-    RenderWindow*   m_window;
-    
-    // contains milliseconds since the start of the step
-    Uint32          m_stepStart;
-    SDL_Event       m_event;
+    Snake*          snake;
+    Apple*          apple;
+    RenderWindow*   window;
+
+    enum            overlayType{
+        Menu ,
+        Settings
+    };
+
+    std::stack<overlayType> overlayStack;
+
+    SDL_Event       event;
+
+    // random generator
+    std::mt19937*   randomGenerator;
 
     // gui
-    SDL_Texture*    m_fieldTexture;
-    SDL_Texture*    m_appleTexture;
-    SDL_Texture*    m_bestScoreTexture;
+    SDL_Texture*    fieldTexture;
+    SDL_Texture*    appleTexture;
+    SDL_Texture*    bestScoreTexture;
+    SDL_Texture*    menuTexture;
 
     // snake sfx
-    Mix_Chunk*      m_turnSound;
-    Mix_Chunk*      m_eatSound;
-    Mix_Chunk*      m_hitSound;
+    Mix_Chunk*      turnSound;
+    Mix_Chunk*      eatSound;
+    Mix_Chunk*      hitSound;
 
     // snake gfx
-    SDL_Texture*    m_headTexture;
-    SDL_Texture*    m_bodyTexture;
-    SDL_Texture*    m_tailTexture; 
+    SDL_Texture*    headTexture;
+    SDL_Texture*    bodyTexture;
+    SDL_Texture*    tailTexture; 
 
-    TTF_Font*       m_font;
+    TTF_Font*       font;
 
     void            checkCollision();    
     void            handleEvents();
-    void            render();    
+    void            drawSnake();    
+    void            drawUI();
+    void            drawMenu();
 
     void            reset();
 
     std::string     getScore(int score) const;
 
-    void            spawnFood();
+    void            repawnFood();
 
 public:
     Game();
 
-    bool            isRunning() const;
+    bool            isActive() const;
     void            update();
 
     ~Game();

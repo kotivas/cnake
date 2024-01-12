@@ -5,15 +5,15 @@ is responsible for show window, render things and load textures
 #include "renderwindow.hpp"
 
 RenderWindow::RenderWindow(std::string title, int screen_width, int screen_lenght)
-: m_window(nullptr), m_renderer(nullptr)
+: _window(nullptr), _renderer(nullptr)
 {
-    m_window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen_width, screen_lenght, SDL_WINDOW_SHOWN);
-	if (m_window == nullptr){
+    _window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen_width, screen_lenght, SDL_WINDOW_SHOWN);
+	if (_window == nullptr){
 		std::cout << "Failed to create window. Error: " << SDL_GetError() << std::endl;
 	}
 
-    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
-    if (m_renderer == nullptr){
+    _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);
+    if (_renderer == nullptr){
         std::cout << "Failed to create renderer. Error: " << SDL_GetError() << std::endl;
     }
 
@@ -23,14 +23,14 @@ RenderWindow::RenderWindow(std::string title, int screen_width, int screen_lengh
 
 void RenderWindow::setWindowIcon(std::string path){
     SDL_Surface* icon = IMG_Load( path.c_str() );
-    SDL_SetWindowIcon(m_window, icon);
+    SDL_SetWindowIcon(_window, icon);
     SDL_FreeSurface(icon); // ?
 }
 
 SDL_Texture* RenderWindow::loadTexture(std::string path){
     SDL_Texture* pNewTexture = nullptr;
 
-	pNewTexture = IMG_LoadTexture( m_renderer, path.c_str() );
+	pNewTexture = IMG_LoadTexture( _renderer, path.c_str() );
 
 	if ( pNewTexture == nullptr )
 		std::cout << "Failed to load texture. Error: "<< SDL_GetError() << std::endl;
@@ -75,7 +75,7 @@ void RenderWindow::render(SDL_Texture* texture, int w, int h, float x, float y, 
 	dst.w = w; //src.w;
 	dst.h = h; //src.h;
 
-    SDL_RenderCopyEx( m_renderer, texture, &src, &dst, angle, NULL, SDL_FLIP_NONE);
+    SDL_RenderCopyEx( _renderer, texture, &src, &dst, angle, NULL, SDL_FLIP_NONE);
 }
 
 // render a text
@@ -84,7 +84,7 @@ void RenderWindow::render(TTF_Font* font, std::string text, SDL_Color color, int
     // create a surface text
     SDL_Surface* pSurfaceText = TTF_RenderText_Solid(font, text.c_str(), color); 
     // convert surface into a texture
-    SDL_Texture* pText = SDL_CreateTextureFromSurface(m_renderer, pSurfaceText);
+    SDL_Texture* pText = SDL_CreateTextureFromSurface(_renderer, pSurfaceText);
 
     SDL_Rect rect; //create a rect
     rect.x = x;  //controls the rect's x coordinate 
@@ -92,24 +92,21 @@ void RenderWindow::render(TTF_Font* font, std::string text, SDL_Color color, int
     rect.w = w; // controls the width of the rect
     rect.h = h; // controls the height of the rect
 
-    SDL_RenderCopy(m_renderer, pText, NULL, &rect); // render
+    SDL_RenderCopy(_renderer, pText, NULL, &rect); // render
 
     SDL_FreeSurface(pSurfaceText); // free surface 
     SDL_DestroyTexture(pText); // destroy texture
 }
 
 void RenderWindow::clear(){
-    SDL_RenderClear( m_renderer );
+    SDL_RenderClear( _renderer );
 }
 
 void RenderWindow::update(){
-    SDL_RenderPresent( m_renderer );
+    SDL_RenderPresent( _renderer );
 }
 
 RenderWindow::~RenderWindow(){
-    SDL_DestroyRenderer( m_renderer );
-    SDL_DestroyWindow( m_window );
-
-    m_renderer = nullptr;
-    m_window = nullptr;
+    SDL_DestroyRenderer( _renderer );
+    SDL_DestroyWindow( _window );
 }

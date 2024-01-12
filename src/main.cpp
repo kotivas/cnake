@@ -44,7 +44,7 @@ int main(){
 
     Game* game = new Game();
 
-    while ( game->isRunning() ){
+    while ( game->isActive() ){
         frameStart = SDL_GetTicks(); // get start frame ticks
 
         game->update();

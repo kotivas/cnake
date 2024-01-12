@@ -1,29 +1,35 @@
 #include "snake.hpp"
 
 Snake::Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture, SDL_Texture* tailTexure)
-: m_bodyTexture(bodyTexture), m_headTexture(headTexture),
- m_tailTexture(tailTexure)
+: _bodyTexture(bodyTexture), _headTexture(headTexture),
+ _tailTexture(tailTexure)
 {   
-    m_initSegments = 16;
-    m_initDirection = {1, 0};
-    m_initPosition = {BLOCK_SIZE*6, BLOCK_SIZE*7};
-    m_speed = 4.f;
+    _initSegments = 16;
+    _initDirection = {1, 0};
+    _initPosition = {BLOCK_SIZE*6, BLOCK_SIZE*7};
+    _speed = 4.f;
 
     reset();
+
 }
 
 // update snake position 
-void Snake::updatePosition( float timeStep ){
+void Snake::updatePosition(){
     // MOST BADASS FUNCTION IN THE ENTIRE GAME
-    for (auto iter = m_segments.begin(); iter != m_segments.end(); iter++){
+    for (auto iter = _segments.begin(); iter != _segments.end(); iter++){
 
         SnakeSegment* segment = *iter;
 
-        segment->position.x += (m_speed * segment->direction.x);// * timeStep; 
-        segment->position.y += (m_speed * segment->direction.y);// * timeStep;   
+        /* movement is NOT tied to frame time
+        actually i tried to do it, but due to the inconsistent value of the pixels by which the snake moves,
+        it simply skips the rotation due to the fact
+        that the rotation algorithm is built on checking whether the position is completely divisible by the block size
+        */
+        segment->position.x += (_speed * segment->direction.x);
+        segment->position.y += (_speed * segment->direction.y);
 
         if ( int( segment->position.x ) % SEGMENT_INDENT == 0 && int( segment->position.y ) % SEGMENT_INDENT == 0){
-            if ( segment != m_segments.back() ){
+            if ( segment != _segments.back() ){
                 (*std::next(iter))->buffdirection = segment->direction;
             }
         }
@@ -37,13 +43,13 @@ void Snake::updatePosition( float timeStep ){
 // update textures for all snake segments
 void Snake::updateTextures(){
 
-    for (auto segment : m_segments){
-        if ( segment == m_segments.front() ){
-            segment->texture = m_headTexture;
-        } else if ( segment == m_segments.back() ){
-            segment->texture = m_tailTexture;
+    for (auto segment : _segments){
+        if ( segment == _segments.front() ){
+            segment->texture = _headTexture;
+        } else if ( segment == _segments.back() ){
+            segment->texture = _tailTexture;
         } else {
-            segment->texture = m_bodyTexture;
+            segment->texture = _bodyTexture;
         }
         segment->angle = segment->direction.getAngle();
     }
@@ -52,20 +58,20 @@ void Snake::updateTextures(){
 // reset snake position and lenght
 void Snake::reset(){
 
-    m_segments.clear();
+    _segments.clear();
 
-    for (int i = 0; i < m_initSegments; i++){
-       addSegment( {m_initPosition.x - (SEGMENT_INDENT * i), m_initPosition.y}, m_initDirection);
+    for (int i = 0; i < _initSegments; i++){
+       addSegment( {_initPosition.x - (SEGMENT_INDENT * i), _initPosition.y}, _initDirection);
     } 
 
-    m_segments.front()->buffdirection = m_initDirection;
-    m_segments.front()->direction  = m_initDirection;
+    _segments.front()->buffdirection = _initDirection;
+    _segments.front()->direction  = _initDirection;
 }
 
 void Snake::addScore(){ // FIXME   REMOVE?
     // add new segment from the end
     for (int i = 0; i < 6; i++){
-        addSegment( m_segments.back()->position, m_segments.back()->direction);
+        addSegment( _segments.back()->position, _segments.back()->direction);
     }
 }
 
@@ -82,39 +88,39 @@ void Snake::addSegment(Vector2f position, Vector2f direction){
     pNewSegment->position = position;
     pNewSegment->direction = direction;
 
-    pNewSegment->texture = m_tailTexture;
+    pNewSegment->texture = _tailTexture;
     pNewSegment->angle = direction.getAngle();
 
-    m_segments.push_back(pNewSegment);
+    _segments.push_back(pNewSegment);
 }
 
 void Snake::setDirection(float x, float y){
-    m_segments.front()->buffdirection = {x, y};
+    _segments.front()->buffdirection = {x, y};
 }
 
 // deleting a front segment
 void Snake::removeSegment(){
-    delete m_segments.front();
-    m_segments.pop_front();
+    delete _segments.front();
+    _segments.pop_front();
 }
 
 // get head position
 Vector2f Snake::getPosition() const{
-    return m_segments.front()->position;
+    return _segments.front()->position;
 }
 
 // get list of the snake segments
 std::list<SnakeSegment*> Snake::getSegments(){
-    return m_segments;
+    return _segments;
 }
 
 // get pointer to the object of head
 SnakeSegment* Snake::getHead(){
-    return m_segments.front();
+    return _segments.front();
 }
 
 // destructor
 Snake::~Snake(){
-    m_segments.clear(); 
+    _segments.clear(); 
 }
 

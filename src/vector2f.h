@@ -10,26 +10,20 @@ struct Vector2f {
 	:x(p_x), y(p_y)
 	{}
 
-	float 		getAngle();
-	void		normalize();
+	float 		getAngle(){	return atan2( -x , y ) * ( 180 / M_PI ); }
 
-	bool 		operator==(const Vector2f& rhs) const;
-	bool 		operator!=(const Vector2f& rhs) const;
-
-	// Vector2f    operator+(const Vector2f& rhs) const;
-	// Vector2f    operator-(const Vector2f& rhs) const;
-	// Vector2f    operator*(const Vector2f& rhs) const;
-	// Vector2f    operator/(const Vector2f& rhs) const;
-
-	// Vector2f    operator+(const float& rhs) const;
-	// Vector2f    operator-(const float& rhs) const;
-	// Vector2f    operator*(const float& rhs) const;
-	// Vector2f    operator/(const float& rhs) const;
-
-
-	// Vector2f    operator+=(const Vector2f& rhs);
-	// Vector2f    operator-=(const Vector2f& rhs);
+	bool 		operator==(const Vector2f& rhs) const { return (rhs.x == this->x && this->y == rhs.y); }
+	bool 		operator!=(const Vector2f& rhs) const { return (rhs.x != this->x && this->y != rhs.y); }
 
 	float 		x;
 	float 		y;
 };
+
+// // normalization of a vector
+// void Vector2f::normalize(){
+// 	float magnitude = sqrt(x*x+y*y);
+// 	if(magnitude > 0) {
+// 		x /= magnitude;
+// 		y /= magnitude;
+// 	}
+// }

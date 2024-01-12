@@ -1,89 +1,95 @@
 #include "game.hpp"
 
 Game::Game()
-: m_isRunning(true), m_paused(false)
+: isRunning(true), score(0), bestScore(0)
 {
-    m_window = new RenderWindow("CNAKE (dev build)", SCREEN_WIDTH, SCREEN_LENGHT);
-    //                                       title,  screen width, screen lenght
+
+    window = new RenderWindow("CNAKE (dev build)", SCREEN_WIDTH, SCREEN_HEIGHT);
 
     /* --------------------=LOADING ASSETS=--------------------- */
-    m_font = m_window->loadFont("./assets/atariclassic.ttf", 24);
+    font = window->loadFont("./assets/atariclassic.ttf", 24);
 
-    m_fieldTexture = m_window->loadTexture("./assets/field.png");
-    m_appleTexture = m_window->loadTexture("./assets/apple.png");
+    fieldTexture = window->loadTexture("./assets/field.png");
+    appleTexture = window->loadTexture("./assets/apple.png");
 
-    m_headTexture = m_window->loadTexture("./assets/head.png");
-    m_bodyTexture = m_window->loadTexture("./assets/body.png");
-    m_tailTexture = m_window->loadTexture("./assets/tail.png");
+    headTexture = window->loadTexture("./assets/head.png");
+    bodyTexture = window->loadTexture("./assets/body.png");
+    tailTexture = window->loadTexture("./assets/tail.png");
 
-    m_bestScoreTexture = m_window->loadTexture("./assets/bestscore.png");
+    bestScoreTexture = window->loadTexture("./assets/bestscore.png");
 
-    m_turnSound = m_window->loadSound("./assets/turn.wav");
-    m_eatSound = m_window->loadSound("./assets/eat.wav");
-    m_hitSound = m_window->loadSound("./assets/hit.wav");
+    menuTexture = window->loadTexture("./assets/menu.png");
 
-    m_window->setWindowIcon("./assets/icon.png");
+    turnSound = window->loadSound("./assets/turn.wav");
+    eatSound = window->loadSound("./assets/eat.wav");
+    hitSound = window->loadSound("./assets/hit.wav");
+
+    window->setWindowIcon("./assets/icon.png");
 
     /* --------------------------------------------------------- */
 
-    m_snake = new Snake( m_headTexture, m_bodyTexture, m_tailTexture );
+    snake = new Snake( headTexture, bodyTexture, tailTexture );
 
-    m_apple = new Apple( m_appleTexture , BLOCK_SIZE*12, BLOCK_SIZE*7 );
-    //                   texture          Xpos,         Ypos,      
+    apple = new Apple( appleTexture , BLOCK_SIZE*12, BLOCK_SIZE*7 ); 
 
-    m_score = 0;
-    m_bestScore = 0;
-    m_stepStart = SDL_GetTicks();
+
+    std::random_device randDev;
+    randomGenerator = new std::mt19937(randDev());
+
+    volume = 10;
+    // overlayStack.push(overlayType::Menu); // main menu on start
 }
 
 
 // return boolean game status
-bool Game::isRunning() const{
-    return m_isRunning;
+bool Game::isActive() const{
+    return isRunning;
 }
 
 // handle window events
 void Game::handleEvents(){
-	while (SDL_PollEvent(&m_event)){  
-		switch(m_event.type){
+	while (SDL_PollEvent(&event)){  
+		switch(event.type){
 		    case SDL_QUIT:     // if close button pressed
-			    m_isRunning = false;
+			    isRunning = false;
 			    break;
             case SDL_KEYDOWN: // if key pressed down
-                switch ( m_event.key.keysym.sym ){ // get key code
+                switch ( event.key.keysym.sym ){ // get key code
                     case SDLK_RIGHT: // d or arrow right
                     case SDLK_d:
-                        if ( m_snake->getHead()->direction != Vector2f(-1, 0) && !m_paused ){
-                            if (SOUND) Mix_PlayChannel( -1, m_turnSound, 0 );
-                            m_snake->setDirection(1, 0);
+                        if ( snake->getHead()->direction != Vector2f(-1, 0) && overlayStack.empty() ){
+                            Mix_PlayChannel( -1, turnSound, 0 );
+                            snake->setDirection(1, 0);
                         }
                         break;
                     case SDLK_a: // a or arrow left
                     case SDLK_LEFT:
-                        if ( m_snake->getHead()->direction != Vector2f(1, 0) && !m_paused){
-                            if (SOUND) Mix_PlayChannel( -1, m_turnSound, 0 );
-                            m_snake->setDirection(-1, 0);
+                        if ( snake->getHead()->direction != Vector2f(1, 0) && overlayStack.empty()){
+                            Mix_PlayChannel( -1, turnSound, 0 );
+                            snake->setDirection(-1, 0);
                         }
                         break;
                     case SDLK_s: // s or arrow down
                     case SDLK_DOWN:
-                        if ( m_snake->getHead()->direction != Vector2f(0, -1) && !m_paused){
-                            if (SOUND) Mix_PlayChannel( -1, m_turnSound, 0 );
-                            m_snake->setDirection(0, 1);
+                        if ( snake->getHead()->direction != Vector2f(0, -1) && overlayStack.empty()){
+                            Mix_PlayChannel( -1, turnSound, 0 );
+                            snake->setDirection(0, 1);
                         }
                         break;
                     case SDLK_w: // w or arrow up
                     case SDLK_UP:
-                        if ( m_snake->getHead()->direction != Vector2f(0, 1) && !m_paused){
-                            if (SOUND) Mix_PlayChannel( -1, m_turnSound, 0 );
-                            m_snake->setDirection(0, -1);
+                        if ( snake->getHead()->direction != Vector2f(0, 1) && overlayStack.empty()){
+                            Mix_PlayChannel( -1, turnSound, 0 );
+                            snake->setDirection(0, -1);
                         }
                         break;
                     case SDLK_ESCAPE:
-                        m_paused = !m_paused;
-                        break;
-                    case SDLK_r:
-                        reset();
+                        if ( overlayStack.empty() ){
+                            overlayStack.push( overlayType::Menu );
+                        } else {    
+                            reset();
+                            overlayStack.pop();
+                        }
                         break;
                 }
         }
@@ -92,73 +98,92 @@ void Game::handleEvents(){
 
 // reset al game
 void Game::reset(){ 
-    m_apple->position = m_apple->initPosition;
-    m_snake->reset();
-    m_score = 0;
+    apple->position = apple->initPosition;
+    snake->reset();
+    score = 0;
 }
 
 // random food spawn
-void Game::spawnFood(){
-    std::srand(std::time(nullptr));
+void Game::repawnFood(){
 
-    float random_x = ( BLOCK_SIZE + std::rand() % ( SCREEN_WIDTH - BLOCK_SIZE*2 ) ) / BLOCK_SIZE;
-    float random_y = ( BLOCK_SIZE + std::rand() % ( SCREEN_LENGHT - BLOCK_SIZE*2 ) ) / BLOCK_SIZE;
+    // set range for x and y
+    std::uniform_int_distribution<> generateX(BLOCK_SIZE, SCREEN_WIDTH-BLOCK_SIZE);
+    std::uniform_int_distribution<> generateY(BLOCK_SIZE, SCREEN_HEIGHT-BLOCK_SIZE);
 
-    m_apple->position = {random_x * BLOCK_SIZE, random_y * BLOCK_SIZE};
+    // get random x and y
+    float random_x = ( generateX(*randomGenerator) / BLOCK_SIZE ) * BLOCK_SIZE;
+    float random_y = ( generateY(*randomGenerator) / BLOCK_SIZE ) * BLOCK_SIZE;
+
+    // set random position
+    apple->position = {random_x, random_y};
 }
 
 // check for collisions and some logic
 void Game::checkCollision(){ // OPTIMIZE
     // check for collision snake with itself
-    for (auto segment : m_snake->getSegments() ){
-        if ( m_snake->getHead()->position == segment->position &&
-             m_snake->getHead() != segment){
-            if (SOUND) Mix_PlayChannel( -1, m_hitSound, 0 ); // play hit sound
-            reset();           
+    for (auto segment : snake->getSegments() ){
+        if ( snake->getHead() != segment ){
+            if ( snake->getHead()->position == segment->position){
+                Mix_PlayChannel( -1, hitSound, 0 ); // play hit sound
+                overlayStack.push( overlayType::Menu ); 
+            } else if ( segment->position == apple->position){
+                repawnFood();
+            }
         }
     }
     // check for collsion with border
-    if ( m_snake->getHead()->position.x > (SCREEN_WIDTH - BLOCK_SIZE*2) ||
-         m_snake->getHead()->position.x < BLOCK_SIZE ||
-         m_snake->getHead()->position.y > (SCREEN_LENGHT - BLOCK_SIZE*2) ||
-         m_snake->getHead()->position.y < BLOCK_SIZE
+    if ( snake->getHead()->position.x > (SCREEN_WIDTH - BLOCK_SIZE*2) ||
+         snake->getHead()->position.x < BLOCK_SIZE ||
+         snake->getHead()->position.y > (SCREEN_HEIGHT - BLOCK_SIZE*2) ||
+         snake->getHead()->position.y < BLOCK_SIZE
          ){
-            if (SOUND) Mix_PlayChannel( -1, m_hitSound, 0 ); // play hit sound
-            reset();
+            Mix_PlayChannel( -1, hitSound, 0 ); // play hit sound
+            overlayStack.push( overlayType::Menu ); 
     }
     // check for collision snake with apple
-    if ( m_snake->getHead()->position == m_apple->position ){     
-        m_snake->addScore();
+    if ( snake->getHead()->position == apple->position ){     
+        snake->addScore();
 
-        m_score++;
-        if ( m_score >= m_bestScore ){
-            m_bestScore = m_score;
+        score++;
+        if ( score >= bestScore ){
+            bestScore = score;
         }
 
-        if (SOUND) Mix_PlayChannel( -1, m_eatSound, 0 ); // play eat sound
-        spawnFood();
+        Mix_PlayChannel( -1, eatSound, 0 ); // play eat sound
+        repawnFood();
     }    
 }
 
 // update all game objects
 void Game::update(){
+    /* Frame Independent Movement (NOT CURRENTLY IN USE)
+    1. Uint32 m_stepStart = SDL_GetTicks() // declare a step start
+    2. float timeStep = (SDL_GetTicks() - m_stepStart) / 1000.f; // calculate the time step
+    3. multiply snake position at time step
+    4. m_stepStart = SDL_GetTicks(); // restart timer
+    */
+
+    window->clear();
 
     handleEvents();
+    Mix_Volume(-1, volume); // update the volume
 
-    // calculate time step in seconds
-    float timeStep = (SDL_GetTicks() - m_stepStart) / 1000.f;
+    drawUI();
+    drawSnake();
 
-    // if game not paused
-    if ( !m_paused ){
-        m_snake->updatePosition( timeStep );
+    // if overlay stack is empty (no overlay)
+    if ( overlayStack.empty() ){
+        snake->updatePosition();
         checkCollision();
+    } else if ( overlayStack.top() == overlayType::Menu ) {
+        /* smth like 
+        overlayStack.top().draw()
+        overlayStack.top().doSmth()
+        */
+       drawMenu();
     }
-
-    m_stepStart = SDL_GetTicks(); // restart timer
-
-    m_window->update();
-
-    render();
+    
+    window->update();
 }
 
 // get formatted score string
@@ -174,67 +199,64 @@ std::string Game::getScore(int score) const{
     }
 }
 
-// render all objects
-void Game::render(){
+void Game::drawMenu(){
+    window->render(menuTexture, SCREEN_WIDTH, SCREEN_HEIGHT, 0.f, 0.f);
+}
 
-    m_window->clear();
-
-    //               texture,      width,        height,        position
-    m_window->render(m_fieldTexture, SCREEN_WIDTH, SCREEN_LENGHT, 0.f, 0.f);
-    //               texture,               width,        texture,      position
-
-    m_window->render(m_apple->texture, BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, 0 );
-    m_window->render(m_font, getScore(m_score), {75, 105, 47}, 90, BLOCK_SIZE, BLOCK_SIZE*2, 0);
-
-    m_window->render(m_bestScoreTexture, BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE*4, 0);
-    m_window->render(m_font, getScore(m_bestScore), {75, 105, 47}, 90, BLOCK_SIZE, BLOCK_SIZE*5, 0);
-
+// draws snake and apple
+void Game::drawSnake(){
     //               texture,               width,        height,       position
-    m_window->render(m_apple->texture, BLOCK_SIZE, BLOCK_SIZE, m_apple->position.x, m_apple->position.y);
+    window->render(apple->texture, BLOCK_SIZE, BLOCK_SIZE, apple->position.x, apple->position.y);
 
     // render body
-    for ( const auto segment : m_snake->getSegments() ){
-        if ( segment != m_snake->getHead() ){
+    for ( const auto segment : snake->getSegments() ){
+        if ( segment != snake->getHead() ){
             //               texture,          width,      height,     position,                                 angle
-            m_window->render(segment->texture, BLOCK_SIZE, BLOCK_SIZE, segment->position.x, segment->position.y, segment->angle);
+            window->render(segment->texture, BLOCK_SIZE, BLOCK_SIZE, segment->position.x, segment->position.y, segment->angle);
         }
     }
 
     // render head
-    m_window->render(m_snake->getHead()->texture, BLOCK_SIZE, BLOCK_SIZE, m_snake->getHead()->position.x, m_snake->getHead()->position.y, m_snake->getHead()->angle);
+    window->render(snake->getHead()->texture, BLOCK_SIZE, BLOCK_SIZE, snake->getHead()->position.x, snake->getHead()->position.y, snake->getHead()->angle);
+}
 
-    if ( m_paused ){
-        m_window->render(m_font, "PAUSED", {255, 255, 255}, 250, 100, SCREEN_LENGHT/2, SCREEN_WIDTH/3.5);
-    }
+void Game::drawUI(){
+    window->render(fieldTexture, SCREEN_WIDTH, SCREEN_HEIGHT, 0.f, 0.f);
+    window->render(apple->texture, BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, 0 );
+    window->render(font, getScore(score), {75, 105, 47}, 90, BLOCK_SIZE, BLOCK_SIZE*2, 0);
 
-    m_window->update();
+    window->render(bestScoreTexture, BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE*4, 0);
+    window->render(font, getScore(bestScore), {75, 105, 47}, 90, BLOCK_SIZE, BLOCK_SIZE*5, 0);
 }
 
 // destructor
 Game::~Game(){
 
-    SDL_DestroyTexture( m_fieldTexture );
-    SDL_DestroyTexture( m_appleTexture );
-    SDL_DestroyTexture( m_bestScoreTexture );
+    SDL_DestroyTexture( fieldTexture );
+    SDL_DestroyTexture( appleTexture );
+    SDL_DestroyTexture( bestScoreTexture );
+    SDL_DestroyTexture( menuTexture );
 
-    SDL_DestroyTexture( m_headTexture );
-    SDL_DestroyTexture( m_bodyTexture );
-    SDL_DestroyTexture( m_tailTexture );
+    SDL_DestroyTexture( headTexture );
+    SDL_DestroyTexture( bodyTexture );
+    SDL_DestroyTexture( tailTexture );
 
-    Mix_FreeChunk( m_eatSound );
-    Mix_FreeChunk( m_turnSound );
-    Mix_FreeChunk( m_hitSound );
+    Mix_FreeChunk( eatSound );
+    Mix_FreeChunk( turnSound );
+    Mix_FreeChunk( hitSound );
 
-    delete m_window;
-    delete m_snake;
-    delete m_apple; 
+    TTF_CloseFont(font);
 
-    m_window        = nullptr;
-    m_snake         = nullptr;
-    m_fieldTexture  = nullptr;
-    m_bestScoreTexture = nullptr;
-    m_apple         = nullptr;
+    delete window;
+    delete snake;
+    delete apple; 
+    delete randomGenerator;
 
+    // m_window        = nullptr;
+    // snake         = nullptr;
+    // fieldTexture  = nullptr;
+    // bestScoreTexture = nullptr;
+    // apple         = nullptr;
 
     IMG_Quit();
     SDL_Quit();

@@ -18,9 +18,10 @@ Game::Game()
 
     bestScoreTexture = window->loadTexture("./assets/bestscore.png");
 
-    menuTexture = window->loadTexture("./assets/menu.png");
+    gameOverTexture = window->loadTexture("./assets/gameover.png");
+    pauseScreenTexture = window->loadTexture("./assets/pausescreen.png");
+    controlsTexture = window->loadTexture("./assets/controls.png");
 
-    turnSound = window->loadSound("./assets/turn.wav");
     eatSound = window->loadSound("./assets/eat.wav");
     hitSound = window->loadSound("./assets/hit.wav");
 
@@ -36,10 +37,10 @@ Game::Game()
     std::random_device randDev;
     randomGenerator = new std::mt19937(randDev());
 
-    volume = 10;
-    // overlayStack.push(overlayType::Menu); // main menu on start
+    volume = 50;
+    snake->updatePosition();
+    overlayStack.push(overlayType::Controls);
 }
-
 
 // return boolean game status
 bool Game::isActive() const{
@@ -57,40 +58,58 @@ void Game::handleEvents(){
                 switch ( event.key.keysym.sym ){ // get key code
                     case SDLK_RIGHT: // d or arrow right
                     case SDLK_d:
-                        if ( snake->getHead()->direction != Vector2f(-1, 0) && overlayStack.empty() ){
-                            Mix_PlayChannel( -1, turnSound, 0 );
+                        if ( overlayStack.empty() ){
+                            snake->setDirection(1, 0);
+                        } else if ( overlayStack.top() == overlayType::Controls ){
+                            overlayStack.pop();
                             snake->setDirection(1, 0);
                         }
                         break;
                     case SDLK_a: // a or arrow left
                     case SDLK_LEFT:
-                        if ( snake->getHead()->direction != Vector2f(1, 0) && overlayStack.empty()){
-                            Mix_PlayChannel( -1, turnSound, 0 );
+                        if ( overlayStack.empty() ){
+                            snake->setDirection(-1, 0);
+                        } else if ( overlayStack.top() == overlayType::Controls ){
+                            overlayStack.pop();
                             snake->setDirection(-1, 0);
                         }
                         break;
                     case SDLK_s: // s or arrow down
                     case SDLK_DOWN:
-                        if ( snake->getHead()->direction != Vector2f(0, -1) && overlayStack.empty()){
-                            Mix_PlayChannel( -1, turnSound, 0 );
+                        if ( overlayStack.empty() ){
+                            snake->setDirection(0, 1);
+                        } else if ( overlayStack.top() == overlayType::Controls ){
+                            overlayStack.pop();
                             snake->setDirection(0, 1);
                         }
                         break;
                     case SDLK_w: // w or arrow up
                     case SDLK_UP:
-                        if ( snake->getHead()->direction != Vector2f(0, 1) && overlayStack.empty()){
-                            Mix_PlayChannel( -1, turnSound, 0 );
+                        if ( overlayStack.empty() ){
+                            snake->setDirection(0, -1);
+                        } else if ( overlayStack.top() == overlayType::Controls ){
+                            overlayStack.pop();
                             snake->setDirection(0, -1);
                         }
                         break;
                     case SDLK_ESCAPE:
                         if ( overlayStack.empty() ){
-                            overlayStack.push( overlayType::Menu );
-                        } else {    
-                            reset();
+                            overlayStack.push( overlayType::PauseScreen );
+                        } else if ( overlayStack.top() == overlayType::PauseScreen  ) {    
                             overlayStack.pop();
                         }
                         break;
+                }
+            case SDL_MOUSEBUTTONDOWN: // if mouse button pressed down
+                switch ( event.button.button ){
+                case SDL_BUTTON_LEFT:
+                    if ( !overlayStack.empty() && overlayStack.top() == overlayType::GameOver ){
+                        reset();
+                        snake->updatePosition();
+                        overlayStack.pop();
+                        overlayStack.push( overlayType::Controls );
+                    }
+                    break;
                 }
         }
     }
@@ -125,7 +144,7 @@ void Game::checkCollision(){ // OPTIMIZE
         if ( snake->getHead() != segment ){
             if ( snake->getHead()->position == segment->position){
                 Mix_PlayChannel( -1, hitSound, 0 ); // play hit sound
-                overlayStack.push( overlayType::Menu ); 
+                overlayStack.push( overlayType::GameOver ); 
             } else if ( segment->position == apple->position){
                 repawnFood();
             }
@@ -138,7 +157,7 @@ void Game::checkCollision(){ // OPTIMIZE
          snake->getHead()->position.y < BLOCK_SIZE
          ){
             Mix_PlayChannel( -1, hitSound, 0 ); // play hit sound
-            overlayStack.push( overlayType::Menu ); 
+            overlayStack.push( overlayType::GameOver ); 
     }
     // check for collision snake with apple
     if ( snake->getHead()->position == apple->position ){     
@@ -175,12 +194,12 @@ void Game::update(){
     if ( overlayStack.empty() ){
         snake->updatePosition();
         checkCollision();
-    } else if ( overlayStack.top() == overlayType::Menu ) {
-        /* smth like 
-        overlayStack.top().draw()
-        overlayStack.top().doSmth()
-        */
-       drawMenu();
+    } else if ( overlayStack.top() == overlayType::GameOver ) {
+       window->render(gameOverTexture, SCREEN_WIDTH, SCREEN_HEIGHT, 0.f, 0.f);
+    } else if ( overlayStack.top() == overlayType::PauseScreen ){
+        window->render(pauseScreenTexture, SCREEN_WIDTH, SCREEN_HEIGHT, 0.f, 0.f);
+    } else if ( overlayStack.top() == overlayType::Controls ){
+        window->render(controlsTexture, 103, 69, BLOCK_SIZE*6, BLOCK_SIZE*5);
     }
     
     window->update();
@@ -197,10 +216,6 @@ std::string Game::getScore(int score) const{
     } else {
         return std::to_string( score );
     }
-}
-
-void Game::drawMenu(){
-    window->render(menuTexture, SCREEN_WIDTH, SCREEN_HEIGHT, 0.f, 0.f);
 }
 
 // draws snake and apple
@@ -235,14 +250,15 @@ Game::~Game(){
     SDL_DestroyTexture( fieldTexture );
     SDL_DestroyTexture( appleTexture );
     SDL_DestroyTexture( bestScoreTexture );
-    SDL_DestroyTexture( menuTexture );
+    SDL_DestroyTexture( gameOverTexture );
+    SDL_DestroyTexture( pauseScreenTexture );
+    SDL_DestroyTexture( controlsTexture );
 
     SDL_DestroyTexture( headTexture );
     SDL_DestroyTexture( bodyTexture );
     SDL_DestroyTexture( tailTexture );
 
     Mix_FreeChunk( eatSound );
-    Mix_FreeChunk( turnSound );
     Mix_FreeChunk( hitSound );
 
     TTF_CloseFont(font);

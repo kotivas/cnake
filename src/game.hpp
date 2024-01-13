@@ -26,8 +26,9 @@ private:
     RenderWindow*   window;
 
     enum            overlayType{
-        Menu ,
-        Settings
+        PauseScreen,
+        Controls,
+        GameOver
     };
 
     std::stack<overlayType> overlayStack;
@@ -41,10 +42,11 @@ private:
     SDL_Texture*    fieldTexture;
     SDL_Texture*    appleTexture;
     SDL_Texture*    bestScoreTexture;
-    SDL_Texture*    menuTexture;
+    SDL_Texture*    gameOverTexture;
+    SDL_Texture*    pauseScreenTexture;
+    SDL_Texture*    controlsTexture;
 
     // snake sfx
-    Mix_Chunk*      turnSound;
     Mix_Chunk*      eatSound;
     Mix_Chunk*      hitSound;
 
@@ -57,10 +59,9 @@ private:
 
     void            checkCollision();    
     void            handleEvents();
+
     void            drawSnake();    
     void            drawUI();
-    void            drawMenu();
-
     void            reset();
 
     std::string     getScore(int score) const;

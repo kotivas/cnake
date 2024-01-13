@@ -95,7 +95,10 @@ void Snake::addSegment(Vector2f position, Vector2f direction){
 }
 
 void Snake::setDirection(float x, float y){
-    _segments.front()->buffdirection = {x, y};
+    // check if this direction is legal
+    if ( _segments.front()->direction.x != (x*-1) && _segments.front()->direction.y != (y*-1)){ 
+        _segments.front()->buffdirection = {x, y};
+    }
 }
 
 // deleting a front segment

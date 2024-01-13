@@ -66,7 +66,7 @@ private:
 
     std::string     getScore(int score) const;
 
-    void            repawnFood();
+    void            respawnFood();
 
 public:
     Game();

@@ -99,6 +99,9 @@ void Game::handleEvents(){
                             overlayStack.pop();
                         }
                         break;
+                    case SDLK_r:
+                        respawnFood();
+                        break;
                 }
             case SDL_MOUSEBUTTONDOWN: // if mouse button pressed down
                 switch ( event.button.button ){
@@ -123,11 +126,11 @@ void Game::reset(){
 }
 
 // random food spawn
-void Game::repawnFood(){
+void Game::respawnFood(){
 
     // set range for x and y
-    std::uniform_int_distribution<> generateX(BLOCK_SIZE, SCREEN_WIDTH-BLOCK_SIZE);
-    std::uniform_int_distribution<> generateY(BLOCK_SIZE, SCREEN_HEIGHT-BLOCK_SIZE);
+    std::uniform_int_distribution<> generateX(BLOCK_SIZE, SCREEN_WIDTH-BLOCK_SIZE*2);
+    std::uniform_int_distribution<> generateY(BLOCK_SIZE, SCREEN_HEIGHT-BLOCK_SIZE*2);
 
     // get random x and y
     float random_x = ( generateX(*randomGenerator) / BLOCK_SIZE ) * BLOCK_SIZE;
@@ -146,7 +149,7 @@ void Game::checkCollision(){ // OPTIMIZE
                 Mix_PlayChannel( -1, hitSound, 0 ); // play hit sound
                 overlayStack.push( overlayType::GameOver ); 
             } else if ( segment->position == apple->position){
-                repawnFood();
+                respawnFood();
             }
         }
     }
@@ -169,7 +172,7 @@ void Game::checkCollision(){ // OPTIMIZE
         }
 
         Mix_PlayChannel( -1, eatSound, 0 ); // play eat sound
-        repawnFood();
+        respawnFood();
     }    
 }
 

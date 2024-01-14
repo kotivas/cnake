@@ -27,6 +27,7 @@ private:
 
     enum            overlayType{
         PauseScreen,
+        Cretids,
         Controls,
         GameOver
     };
@@ -43,8 +44,9 @@ private:
     SDL_Texture*    appleTexture;
     SDL_Texture*    bestScoreTexture;
     SDL_Texture*    gameOverTexture;
-    SDL_Texture*    pauseScreenTexture;
+    SDL_Texture*    vignetteTexture;
     SDL_Texture*    controlsTexture;
+    SDL_Texture*    creditsTexture;
 
     // snake sfx
     Mix_Chunk*      eatSound;

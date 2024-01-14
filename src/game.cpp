@@ -14,13 +14,14 @@ Game::Game()
 
     headTexture = window->loadTexture("./assets/head.png");
     bodyTexture = window->loadTexture("./assets/body.png");
-    tailTexture = window->loadTexture("./assets/tail.png");
+    tailTexture = bodyTexture;
 
     bestScoreTexture = window->loadTexture("./assets/bestscore.png");
 
     gameOverTexture = window->loadTexture("./assets/gameover.png");
-    pauseScreenTexture = window->loadTexture("./assets/pausescreen.png");
+    vignetteTexture = window->loadTexture("./assets/pausescreen.png");
     controlsTexture = window->loadTexture("./assets/controls.png");
+    creditsTexture = window->loadTexture("./assets/credits.png");
 
     eatSound = window->loadSound("./assets/eat.wav");
     hitSound = window->loadSound("./assets/hit.wav");
@@ -99,8 +100,12 @@ void Game::handleEvents(){
                             overlayStack.pop();
                         }
                         break;
-                    case SDLK_r:
-                        respawnFood();
+                    case SDLK_F1:
+                        if ( overlayStack.empty() || overlayStack.top() != overlayType::Cretids ){
+                            overlayStack.push( overlayType::Cretids );
+                        } else if ( overlayStack.top() == overlayType::Cretids ){
+                            overlayStack.pop();
+                        }
                         break;
                 }
             case SDL_MOUSEBUTTONDOWN: // if mouse button pressed down
@@ -198,19 +203,21 @@ void Game::update(){
         snake->updatePosition();
         checkCollision();
     } else if ( overlayStack.top() == overlayType::GameOver ) {
-        window->render(pauseScreenTexture, SCREEN_WIDTH, SCREEN_HEIGHT, 0.f, 0.f);
-        window->render(gameOverTexture, SCREEN_WIDTH, SCREEN_HEIGHT, 0.f, 0.f);
+        window->render(vignetteTexture, SCREEN_WIDTH, SCREEN_HEIGHT, 0.f, 0.f); // darkened overlay
+        window->render(gameOverTexture, SCREEN_WIDTH, SCREEN_HEIGHT, 0.f, 0.f); // menu overlay
 
-        window->render(apple->texture, 64, 64, 320, 244, 0);
-        window->render(font, getScore(score), {233, 249, 217}, 90, BLOCK_SIZE, 384, 255);
+        window->render(apple->texture, 64, 64, 320, 244, 0); // apple icon
+        window->render(font, getScore(score), {233, 249, 217}, 90, BLOCK_SIZE, 384, 255); // current score text
 
-        window->render(bestScoreTexture, 64, 64, 480, 244, 0);
-        window->render(font, getScore(bestScore), {233, 249, 217}, 90, BLOCK_SIZE, 480+64, 255);
-
+        window->render(bestScoreTexture, 64, 64, 480, 244, 0); // best icon
+        window->render(font, getScore(bestScore), {233, 249, 217}, 90, BLOCK_SIZE, 480+64, 255); // best score text
     } else if ( overlayStack.top() == overlayType::PauseScreen ){
-        window->render(pauseScreenTexture, SCREEN_WIDTH, SCREEN_HEIGHT, 0.f, 0.f);
+        window->render(vignetteTexture, SCREEN_WIDTH, SCREEN_HEIGHT, 0.f, 0.f);
     } else if ( overlayStack.top() == overlayType::Controls ){
         window->render(controlsTexture, 256, 128, SCREEN_WIDTH/3, BLOCK_SIZE*3);
+    } else if ( overlayStack.top() == overlayType::Cretids ){
+        window->render(vignetteTexture, SCREEN_WIDTH, SCREEN_HEIGHT, 0.f, 0.f);
+        window->render(creditsTexture, SCREEN_WIDTH, SCREEN_HEIGHT, 0.f, 0.f);
     }
     
     window->update();
@@ -262,8 +269,9 @@ Game::~Game(){
     SDL_DestroyTexture( appleTexture );
     SDL_DestroyTexture( bestScoreTexture );
     SDL_DestroyTexture( gameOverTexture );
-    SDL_DestroyTexture( pauseScreenTexture );
+    SDL_DestroyTexture( vignetteTexture );
     SDL_DestroyTexture( controlsTexture );
+    SDL_DestroyTexture( creditsTexture );
 
     SDL_DestroyTexture( headTexture );
     SDL_DestroyTexture( bodyTexture );

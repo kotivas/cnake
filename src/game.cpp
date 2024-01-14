@@ -198,11 +198,19 @@ void Game::update(){
         snake->updatePosition();
         checkCollision();
     } else if ( overlayStack.top() == overlayType::GameOver ) {
-       window->render(gameOverTexture, SCREEN_WIDTH, SCREEN_HEIGHT, 0.f, 0.f);
+        window->render(pauseScreenTexture, SCREEN_WIDTH, SCREEN_HEIGHT, 0.f, 0.f);
+        window->render(gameOverTexture, SCREEN_WIDTH, SCREEN_HEIGHT, 0.f, 0.f);
+
+        window->render(apple->texture, 64, 64, 320, 244, 0);
+        window->render(font, getScore(score), {233, 249, 217}, 90, BLOCK_SIZE, 384, 255);
+
+        window->render(bestScoreTexture, 64, 64, 480, 244, 0);
+        window->render(font, getScore(bestScore), {233, 249, 217}, 90, BLOCK_SIZE, 480+64, 255);
+
     } else if ( overlayStack.top() == overlayType::PauseScreen ){
         window->render(pauseScreenTexture, SCREEN_WIDTH, SCREEN_HEIGHT, 0.f, 0.f);
     } else if ( overlayStack.top() == overlayType::Controls ){
-        window->render(controlsTexture, 103, 69, BLOCK_SIZE*6, BLOCK_SIZE*5);
+        window->render(controlsTexture, 256, 128, SCREEN_WIDTH/3, BLOCK_SIZE*3);
     }
     
     window->update();

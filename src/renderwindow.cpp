@@ -16,18 +16,17 @@ RenderWindow::RenderWindow(std::string title, int screen_width, int screen_lengh
     if (_renderer == nullptr){
         std::cout << "Failed to create renderer. Error: " << SDL_GetError() << std::endl;
     }
-
-    // AntiAliasing
-    // SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" );
 }
 
+// recive path to the png file, and returns nothing
 void RenderWindow::setWindowIcon(std::string path){
     SDL_Surface* icon = IMG_Load( path.c_str() );
     SDL_SetWindowIcon(_window, icon);
     SDL_FreeSurface(icon); // ?
 }
 
-SDL_Texture* RenderWindow::loadTexture(std::string path){
+// recive path to the png file, and returns SDL_Texture*
+SDL_Texture* RenderWindow::loadPNG(std::string path){
     SDL_Texture* pNewTexture = nullptr;
 
 	pNewTexture = IMG_LoadTexture( _renderer, path.c_str() );
@@ -38,7 +37,8 @@ SDL_Texture* RenderWindow::loadTexture(std::string path){
 	return pNewTexture;
 }
 
-TTF_Font* RenderWindow::loadFont(std::string path, int size){
+// recive path to the ttf file, and returns TTF_Font*
+TTF_Font* RenderWindow::loadTTF(std::string path, int size){
 
     TTF_Font* pNewFont = TTF_OpenFont(path.c_str(), size);
 
@@ -49,7 +49,8 @@ TTF_Font* RenderWindow::loadFont(std::string path, int size){
     return pNewFont;
 }
 
-Mix_Chunk* RenderWindow::loadSound(std::string path){
+// recive path to the wav file, and returns Mix_Chunk*
+Mix_Chunk* RenderWindow::loadWAV(std::string path){
     Mix_Chunk* pNewSound = Mix_LoadWAV( path.c_str() );
 
     if ( !pNewSound ){

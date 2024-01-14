@@ -6,7 +6,6 @@
 #include "config.h"
 
 #include <list>
-#include <iostream>
 
 class Snake {
 private:

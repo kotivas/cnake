@@ -1,29 +1,29 @@
 /* Cnake by kotivas
 snake game with using SDL2 library
 DISTRIBUTED WITH MIT license
-October 2023 */
+October 2023 - January 2024 */
 
 #include "game.hpp"
 
 bool init(){ 
 
     if ( SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0 ) { 
-		std::cerr << "SDL_Init failed to init. SDL_ERROR: " << SDL_GetError() << std::endl;
+		std::cerr << "SDL failed to init. Error: " << SDL_GetError() << std::endl;
         return false;
     }
 
 	if ( !(IMG_Init(IMG_INIT_PNG)) ) {
-		std::cerr << "IMG_init failed to init. Error: " << SDL_GetError() << std::endl;
+		std::cerr << "SDL_image failed to init. Error: " << SDL_GetError() << std::endl;
         return false;
     }
 
     if ( TTF_Init() < 0 ){
-        std::cerr << "TTF_init failed to init. Error: " << SDL_GetError() << std::endl;
+        std::cerr << "SDL_ttf failed to init. Error: " << SDL_GetError() << std::endl;
         return false;
     }
 
     if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 ){
-        std::cerr << "TTF_mixer failed to init. Error: " << Mix_GetError() << std::endl;
+        std::cerr << "SDL_mixer failed to init. Error: " << Mix_GetError() << std::endl;
         return false;
     }
 

@@ -19,9 +19,10 @@ public:
 
     void            update();
     void            clear();
-    SDL_Texture*    loadTexture(std::string path);
-    TTF_Font*       loadFont(std::string path, int size);
-    Mix_Chunk*      loadSound(std::string path);
+
+    SDL_Texture*    loadPNG(std::string path);
+    TTF_Font*       loadTTF(std::string path, int size);
+    Mix_Chunk*      loadWAV(std::string path);
 
     void            setWindowIcon(std::string path);
 

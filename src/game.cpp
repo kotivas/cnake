@@ -4,27 +4,27 @@ Game::Game()
 : isRunning(true), score(0), bestScore(0)
 {
 
-    window = new RenderWindow("CNAKE (dev build)", SCREEN_WIDTH, SCREEN_HEIGHT);
+    window = new RenderWindow("CNAKE (dev build)", WINDOW_WIDTH, WINDOW_HEIGHT);
 
     /* --------------------=LOADING ASSETS=--------------------- */
-    font = window->loadFont("./assets/atariclassic.ttf", 24);
+    font = window->loadTTF("./assets/atariclassic.ttf", 32);
 
-    fieldTexture = window->loadTexture("./assets/field.png");
-    appleTexture = window->loadTexture("./assets/apple.png");
+    fieldTexture = window->loadPNG("./assets/field.png");
+    appleTexture = window->loadPNG("./assets/apple.png");
 
-    headTexture = window->loadTexture("./assets/head.png");
-    bodyTexture = window->loadTexture("./assets/body.png");
+    headTexture = window->loadPNG("./assets/head.png");
+    bodyTexture = window->loadPNG("./assets/body.png");
     tailTexture = bodyTexture;
 
-    bestScoreTexture = window->loadTexture("./assets/bestscore.png");
+    bestScoreTexture = window->loadPNG("./assets/bestscore.png");
 
-    gameOverTexture = window->loadTexture("./assets/gameover.png");
-    vignetteTexture = window->loadTexture("./assets/pausescreen.png");
-    controlsTexture = window->loadTexture("./assets/controls.png");
-    creditsTexture = window->loadTexture("./assets/credits.png");
+    gameOverTexture = window->loadPNG("./assets/gameover.png");
+    vignetteTexture = window->loadPNG("./assets/pausescreen.png");
+    controlsTexture = window->loadPNG("./assets/controls.png");
+    creditsTexture = window->loadPNG("./assets/credits.png");
 
-    eatSound = window->loadSound("./assets/eat.wav");
-    hitSound = window->loadSound("./assets/hit.wav");
+    eatSound = window->loadWAV("./assets/eat.wav");
+    hitSound = window->loadWAV("./assets/hit.wav");
 
     window->setWindowIcon("./assets/icon.png");
 
@@ -38,7 +38,7 @@ Game::Game()
     std::random_device randDev;
     randomGenerator = new std::mt19937(randDev());
 
-    volume = 50;
+    volume = 20;
     snake->updatePosition();
     overlayStack.push(overlayType::Controls);
 }
@@ -134,8 +134,8 @@ void Game::reset(){
 void Game::respawnFood(){
 
     // set range for x and y
-    std::uniform_int_distribution<> generateX(BLOCK_SIZE, SCREEN_WIDTH-BLOCK_SIZE*2);
-    std::uniform_int_distribution<> generateY(BLOCK_SIZE, SCREEN_HEIGHT-BLOCK_SIZE*2);
+    std::uniform_int_distribution<> generateX(BLOCK_SIZE, WINDOW_WIDTH-BLOCK_SIZE*2);
+    std::uniform_int_distribution<> generateY(BLOCK_SIZE, WINDOW_HEIGHT-BLOCK_SIZE*2);
 
     // get random x and y
     float random_x = ( generateX(*randomGenerator) / BLOCK_SIZE ) * BLOCK_SIZE;
@@ -159,9 +159,9 @@ void Game::checkCollision(){ // OPTIMIZE
         }
     }
     // check for collsion with border
-    if ( snake->getHead()->position.x > (SCREEN_WIDTH - BLOCK_SIZE*2) ||
+    if ( snake->getHead()->position.x > (WINDOW_WIDTH - BLOCK_SIZE*2) ||
          snake->getHead()->position.x < BLOCK_SIZE ||
-         snake->getHead()->position.y > (SCREEN_HEIGHT - BLOCK_SIZE*2) ||
+         snake->getHead()->position.y > (WINDOW_HEIGHT - BLOCK_SIZE*2) ||
          snake->getHead()->position.y < BLOCK_SIZE
          ){
             Mix_PlayChannel( -1, hitSound, 0 ); // play hit sound
@@ -203,8 +203,8 @@ void Game::update(){
         snake->updatePosition();
         checkCollision();
     } else if ( overlayStack.top() == overlayType::GameOver ) {
-        window->render(vignetteTexture, SCREEN_WIDTH, SCREEN_HEIGHT, 0.f, 0.f); // darkened overlay
-        window->render(gameOverTexture, SCREEN_WIDTH, SCREEN_HEIGHT, 0.f, 0.f); // menu overlay
+        window->render(vignetteTexture, WINDOW_WIDTH, WINDOW_HEIGHT, 0.f, 0.f); // darkened overlay
+        window->render(gameOverTexture, WINDOW_WIDTH, WINDOW_HEIGHT, 0.f, 0.f); // menu overlay
 
         window->render(apple->texture, 64, 64, 320, 244, 0); // apple icon
         window->render(font, getScore(score), {233, 249, 217}, 90, BLOCK_SIZE, 384, 255); // current score text
@@ -212,12 +212,12 @@ void Game::update(){
         window->render(bestScoreTexture, 64, 64, 480, 244, 0); // best icon
         window->render(font, getScore(bestScore), {233, 249, 217}, 90, BLOCK_SIZE, 480+64, 255); // best score text
     } else if ( overlayStack.top() == overlayType::PauseScreen ){
-        window->render(vignetteTexture, SCREEN_WIDTH, SCREEN_HEIGHT, 0.f, 0.f);
+        window->render(vignetteTexture, WINDOW_WIDTH, WINDOW_HEIGHT, 0.f, 0.f);
     } else if ( overlayStack.top() == overlayType::Controls ){
-        window->render(controlsTexture, 256, 128, SCREEN_WIDTH/3, BLOCK_SIZE*3);
+        window->render(controlsTexture, 256, 128, WINDOW_WIDTH/3, BLOCK_SIZE*3);
     } else if ( overlayStack.top() == overlayType::Cretids ){
-        window->render(vignetteTexture, SCREEN_WIDTH, SCREEN_HEIGHT, 0.f, 0.f);
-        window->render(creditsTexture, SCREEN_WIDTH, SCREEN_HEIGHT, 0.f, 0.f);
+        window->render(vignetteTexture, WINDOW_WIDTH, WINDOW_HEIGHT, 0.f, 0.f);
+        window->render(creditsTexture, WINDOW_WIDTH, WINDOW_HEIGHT, 0.f, 0.f);
     }
     
     window->update();
@@ -254,7 +254,7 @@ void Game::drawSnake(){
 }
 
 void Game::drawUI(){
-    window->render(fieldTexture, SCREEN_WIDTH, SCREEN_HEIGHT, 0.f, 0.f);
+    window->render(fieldTexture, WINDOW_WIDTH, WINDOW_HEIGHT, 0.f, 0.f);
     window->render(apple->texture, BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, 0 );
     window->render(font, getScore(score), {75, 105, 47}, 90, BLOCK_SIZE, BLOCK_SIZE*2, 0);
 

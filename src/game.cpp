@@ -214,7 +214,7 @@ void Game::update(){
     } else if ( overlayStack.top() == overlayType::PauseScreen ){
         window->render(vignetteTexture, WINDOW_WIDTH, WINDOW_HEIGHT, 0.f, 0.f);
     } else if ( overlayStack.top() == overlayType::Controls ){
-        window->render(controlsTexture, 256, 128, WINDOW_WIDTH/3, BLOCK_SIZE*3);
+        window->render(controlsTexture, 256, 163, WINDOW_WIDTH/3, BLOCK_SIZE*3);
     } else if ( overlayStack.top() == overlayType::Credits ){
         window->render(vignetteTexture, WINDOW_WIDTH, WINDOW_HEIGHT, 0.f, 0.f);
         window->render(creditsTexture, WINDOW_WIDTH, WINDOW_HEIGHT, 0.f, 0.f);

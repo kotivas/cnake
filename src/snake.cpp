@@ -14,7 +14,7 @@ Snake::Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture, SDL_Texture* ta
 }
 
 // update snake position 
-void Snake::updatePosition(){
+void Snake::step(){
     // MOST BADASS FUNCTION IN THE ENTIRE GAME
     for (auto iter = _segments.begin(); iter != _segments.end(); iter++){
 

@@ -29,7 +29,7 @@ private:
 public:    
     Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture, SDL_Texture* tailTexure);
 
-    void            updatePosition();
+    void            step();
     void            setDirection(float x, float y);
 
     Vector2f        getPosition() const;

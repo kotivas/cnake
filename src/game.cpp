@@ -39,7 +39,7 @@ Game::Game()
     randomGenerator = new std::mt19937(randDev());
 
     volume = 20;
-    snake->updatePosition();
+    snake->step();
     overlayStack.push(overlayType::Controls);
 }
 
@@ -113,7 +113,7 @@ void Game::handleEvents(){
                 case SDL_BUTTON_LEFT:
                     if ( !overlayStack.empty() && overlayStack.top() == overlayType::GameOver ){
                         reset();
-                        snake->updatePosition();
+                        snake->step();
                         overlayStack.pop();
                         overlayStack.push( overlayType::Controls );
                     }
@@ -200,7 +200,7 @@ void Game::update(){
 
     // if overlay stack is empty (no overlay)
     if ( overlayStack.empty() ){
-        snake->updatePosition();
+        snake->step();
         checkCollision();
     } else if ( overlayStack.top() == overlayType::GameOver ) {
         window->render(vignetteTexture, WINDOW_WIDTH, WINDOW_HEIGHT, 0.f, 0.f); // darkened overlay
@@ -286,12 +286,6 @@ Game::~Game(){
     delete snake;
     delete apple; 
     delete randomGenerator;
-
-    // m_window        = nullptr;
-    // snake         = nullptr;
-    // fieldTexture  = nullptr;
-    // bestScoreTexture = nullptr;
-    // apple         = nullptr;
 
     IMG_Quit();
     SDL_Quit();

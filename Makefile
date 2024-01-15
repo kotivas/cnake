@@ -2,6 +2,9 @@ TARGET = ./bin/cnake
 
 CC = g++
 
+COLOR_BLUE=\033[0;34m
+COLOR_END=\033[0m
+
 CFLAG = -g -Wall
 LIBS = -lSDL2 -lSDL2main -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 
@@ -18,13 +21,13 @@ OBJ = $(patsubst $(PREF_SRC)%.cpp, $(PREF_OBJ)%.o, $(SRC))
 $(TARGET) : $(OBJ)
 	$(CC) $(CVER) $(OBJ) -o $(TARGET) $(CFLAG) $(LIBS)
 
-	@echo "Done!"
-
 $(PREF_OBJ)%.o : $(PREF_SRC)%.cpp
-	$(CC) $(CVER) -c $< -o $@ $(CFLAG)
+	@echo -e "- $(COLOR_BLUE)Building $<...$(COLOR_END)"
+
+	@$(CC) $(CVER) -c $< -o $@ $(CFLAG)
 
 clean :
-	rm $(TARGET) $(PREF_OBJ)*.o
+	@rm $(TARGET) $(PREF_OBJ)*.o
 	
-	@echo "Done!"
+	@echo -e "- $(COLOR_BLUE)Done!$(COLOR_END)"
 	

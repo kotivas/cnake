@@ -19,7 +19,8 @@ private:
     bool            isRunning;
     int             score;
     int             bestScore;
-    int             volume;
+    // unsigned int 0 - 100
+    uint            volume;
 
     Snake*          snake;
     Apple*          apple;
@@ -27,7 +28,7 @@ private:
 
     enum            overlayType{
         PauseScreen,
-        Cretids,
+        Credits,
         Controls,
         GameOver
     };

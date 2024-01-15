@@ -101,9 +101,9 @@ void Game::handleEvents(){
                         }
                         break;
                     case SDLK_F1:
-                        if ( overlayStack.empty() || overlayStack.top() != overlayType::Cretids ){
-                            overlayStack.push( overlayType::Cretids );
-                        } else if ( overlayStack.top() == overlayType::Cretids ){
+                        if ( overlayStack.empty() || overlayStack.top() != overlayType::Credits ){
+                            overlayStack.push( overlayType::Credits );
+                        } else if ( overlayStack.top() == overlayType::Credits ){
                             overlayStack.pop();
                         }
                         break;
@@ -215,7 +215,7 @@ void Game::update(){
         window->render(vignetteTexture, WINDOW_WIDTH, WINDOW_HEIGHT, 0.f, 0.f);
     } else if ( overlayStack.top() == overlayType::Controls ){
         window->render(controlsTexture, 256, 128, WINDOW_WIDTH/3, BLOCK_SIZE*3);
-    } else if ( overlayStack.top() == overlayType::Cretids ){
+    } else if ( overlayStack.top() == overlayType::Credits ){
         window->render(vignetteTexture, WINDOW_WIDTH, WINDOW_HEIGHT, 0.f, 0.f);
         window->render(creditsTexture, WINDOW_WIDTH, WINDOW_HEIGHT, 0.f, 0.f);
     }

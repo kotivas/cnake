@@ -2,7 +2,7 @@ TARGET = ./bin/cnake
 
 CC = g++
 
-CFLAG = -g -Wall
+CFLAG = -g -Wall -std=c++17 -O3
 LIBS = -lSDL2 -lSDL2main -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 
 ifeq ($(OS),Windows_NT)

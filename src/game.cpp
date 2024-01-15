@@ -204,20 +204,20 @@ void Game::update(){
         checkCollision();
     } else if ( overlayStack.top() == overlayType::GameOver ) {
         window->render(vignetteTexture, WINDOW_WIDTH, WINDOW_HEIGHT, 0.f, 0.f); // darkened overlay
-        window->render(gameOverTexture, WINDOW_WIDTH, WINDOW_HEIGHT, 0.f, 0.f); // menu overlay
+        window->render(gameOverTexture, 403, 235, 279, 184); // menu overlay
 
         window->render(apple->texture, 64, 64, 320, 244, 0); // apple icon
-        window->render(font, getScore(score), {233, 249, 217}, 90, BLOCK_SIZE, 384, 255); // current score text
+        window->render(font, getScore(score), {233, 249, 217}, 90, BLOCK_SIZE, 384, 256); // current score text
 
-        window->render(bestScoreTexture, 64, 64, 480, 244, 0); // best icon
-        window->render(font, getScore(bestScore), {233, 249, 217}, 90, BLOCK_SIZE, 480+64, 255); // best score text
+        window->render(bestScoreTexture, 64, 64, 480, 244); // best icon
+        window->render(font, getScore(bestScore), {233, 249, 217}, 90, BLOCK_SIZE, 480+64, 256); // best score text
     } else if ( overlayStack.top() == overlayType::PauseScreen ){
         window->render(vignetteTexture, WINDOW_WIDTH, WINDOW_HEIGHT, 0.f, 0.f);
     } else if ( overlayStack.top() == overlayType::Controls ){
         window->render(controlsTexture, 256, 163, WINDOW_WIDTH/3, BLOCK_SIZE*3);
     } else if ( overlayStack.top() == overlayType::Credits ){
         window->render(vignetteTexture, WINDOW_WIDTH, WINDOW_HEIGHT, 0.f, 0.f);
-        window->render(creditsTexture, WINDOW_WIDTH, WINDOW_HEIGHT, 0.f, 0.f);
+        window->render(creditsTexture, 647, 383, 148, 63);
     }
     
     window->update();

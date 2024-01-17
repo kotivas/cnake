@@ -23,8 +23,8 @@ Game::Game()
     controlsTexture = window->loadPNG("./assets/controls.png");
     creditsTexture = window->loadPNG("./assets/credits.png");
 
-    S_eat = window->loadWAV("./assets/eat.wav");
-    S_hit = window->loadWAV("./assets/hit.wav");
+    eatSound = window->loadWAV("./assets/eat.wav");
+    hitSound = window->loadWAV("./assets/hit.wav");
 
     window->setWindowIcon("./assets/icon.png");
 
@@ -107,6 +107,14 @@ void Game::handleEvents(){
                             overlayStack.pop();
                         }
                         break;
+                    case SDLK_SPACE:
+                        if ( !overlayStack.empty() && overlayStack.top() == overlayType::GameOver ){
+                            reset();
+                            snake->step();
+                            overlayStack.pop();
+                            overlayStack.push( overlayType::Controls );
+                        }
+                        break;
                 }
             case SDL_MOUSEBUTTONDOWN: // if mouse button pressed down
                 switch ( event.button.button ){
@@ -159,7 +167,7 @@ void Game::checkCollision(){
             
             // if snake head collide with it segment
             if ( snake->getHead()->position == segment->position ){
-                Mix_PlayChannel( -1, S_hit, 0 ); // play hit sound
+                Mix_PlayChannel( -1, hitSound, 0 ); // play hit sound
                 overlayStack.push( overlayType::GameOver ); 
 
             // if food spawned in snake
@@ -175,7 +183,7 @@ void Game::checkCollision(){
          snake->getHead()->position.y > (WINDOW_HEIGHT - BLOCK_SIZE*2) ||
          snake->getHead()->position.y < BLOCK_SIZE
          ){
-            Mix_PlayChannel( -1, S_hit, 0 ); // play hit sound
+            Mix_PlayChannel( -1, hitSound, 0 ); // play hit sound
             overlayStack.push( overlayType::GameOver ); 
     }   
 
@@ -188,7 +196,7 @@ void Game::checkCollision(){
             bestScore = score;
         }
 
-        Mix_PlayChannel( -1, S_eat, 0 ); // play eat sound
+        Mix_PlayChannel( -1, eatSound, 0 ); // play eat sound
         respawnFood();
     }    
 }
@@ -289,8 +297,8 @@ Game::~Game(){
     SDL_DestroyTexture( bodyTexture );
     SDL_DestroyTexture( tailTexture );
 
-    Mix_FreeChunk( S_eat );
-    Mix_FreeChunk( S_hit );
+    Mix_FreeChunk( eatSound );
+    Mix_FreeChunk( hitSound );
 
     TTF_CloseFont(font);
 

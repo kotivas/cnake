@@ -50,8 +50,8 @@ private:
     SDL_Texture*    creditsTexture;
 
     // snake sfx
-    Mix_Chunk*      S_eat;
-    Mix_Chunk*      S_hit;
+    Mix_Chunk*      eatSound;
+    Mix_Chunk*      hitSound;
 
     // snake gfx
     SDL_Texture*    headTexture;

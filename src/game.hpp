@@ -10,7 +10,7 @@
 
 #include "renderwindow.hpp"
 #include "snake.hpp"
-#include "apple.hpp"
+#include "food.hpp"
 
 #include "config.h"
 
@@ -23,7 +23,7 @@ private:
     uint            volume;
 
     Snake*          snake;
-    Apple*          apple;
+    Apple*          food;
     RenderWindow*   window;
 
     enum            overlayType{
@@ -41,8 +41,8 @@ private:
     std::mt19937*   randomGenerator;
 
     // gui
-    SDL_Texture*    fieldTexture;
-    SDL_Texture*    appleTexture;
+    SDL_Texture*    T_field;
+    SDL_Texture*    foodTexture;
     SDL_Texture*    bestScoreTexture;
     SDL_Texture*    gameOverTexture;
     SDL_Texture*    vignetteTexture;
@@ -50,8 +50,8 @@ private:
     SDL_Texture*    creditsTexture;
 
     // snake sfx
-    Mix_Chunk*      eatSound;
-    Mix_Chunk*      hitSound;
+    Mix_Chunk*      S_eat;
+    Mix_Chunk*      S_hit;
 
     // snake gfx
     SDL_Texture*    headTexture;

@@ -26,7 +26,7 @@ The compiled executable file will be located in ``./bin/``
 > Otherwise the game will not be able to find assets.
 
 ### 🪟 Windows
-After installing **[Mingw64](https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/8.1.0/threads-win32/seh/x86_64-8.1.0-release-win32-seh-rt_v6-rev0.7z/download)**, follow these steps
+After installing **[Mingw32](https://gnutoolchains.com/mingw32/)**, follow these steps
 
 1. Download source code
 

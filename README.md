@@ -30,7 +30,7 @@ After installing **[Mingw32](https://gnutoolchains.com/mingw32/)**, follow these
 
 1. Download source code
 
-2. Create folder ``sdl2``
+2. Create folders ``sdl2`` ``obj`` ``bin``
 
 3. Download **[SDL2-devel-mingw](https://github.com/libsdl-org/SDL/releases/download/release-2.28.5/SDL2-devel-2.28.5-mingw.zip)**, **[SDL2_mixer-devel-mingw](https://github.com/libsdl-org/SDL_mixer/releases/download/release-2.6.3/SDL2_mixer-devel-2.6.3-mingw.zip)**, **[SDL2_tff-devel-mingw](https://github.com/libsdl-org/SDL_ttf/releases/download/release-2.20.2/SDL2_ttf-devel-2.20.2-mingw.zip)**, **[SDL2_image-devel-mingw](https://github.com/libsdl-org/SDL_image/releases/download/release-2.8.2/SDL2_image-devel-2.8.2-mingw.zip)** and extract folder ``i686-w64-mingw32`` from all this archives into the ``sdl2`` folder
 

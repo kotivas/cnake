@@ -20,7 +20,7 @@ private:
     int             score;
     int             bestScore;
     // unsigned int 0 - 100
-    uint            volume;
+    unsigned int    volume;
 
     Snake*          snake;
     Apple*          food;

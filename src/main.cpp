@@ -3,6 +3,13 @@ snake game with using SDL2 library
 DISTRIBUTED WITH MIT license
 October 2023 - January 2024 */
 
+// I HATE WINDOWS
+#ifdef _WIN32
+    #define MAIN_FUNC WinMain
+#else
+    #define MAIN_FUNC main
+#endif
+
 #include "game.hpp"
 
 bool init(){ 
@@ -30,7 +37,7 @@ bool init(){
     return true;
 }
 
-int main(){
+int MAIN_FUNC(){
 
     if ( !init() ){
         std::cerr << "Exiting..." << std::endl;

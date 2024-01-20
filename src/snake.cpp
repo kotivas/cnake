@@ -4,10 +4,13 @@ Snake::Snake(SDL_Texture* headTexture, SDL_Texture* bodyTexture, SDL_Texture* ta
 : _bodyTexture(bodyTexture), _headTexture(headTexture),
  _tailTexture(tailTexure)
 {   
-    _initSegments = 16;
-    _initDirection = {1, 0};
-    _initPosition = {BLOCK_SIZE*6, BLOCK_SIZE*7};
+    _segmentIndent = 4;
+    _segmentsPerScore = 6;
     _speed = 4.f;
+
+    _initSegments = _segmentsPerScore * 3;
+    _initDirection = {1, 0};
+    _initPosition = {288, 336};
 
     reset();
 
@@ -28,7 +31,7 @@ void Snake::step(){
         segment->position.x += (_speed * segment->direction.x);
         segment->position.y += (_speed * segment->direction.y);
 
-        if ( int( segment->position.x ) % SEGMENT_INDENT == 0 && int( segment->position.y ) % SEGMENT_INDENT == 0){
+        if ( int( segment->position.x ) % _segmentIndent == 0 && int( segment->position.y ) % _segmentIndent == 0){
             if ( segment != _segments.back() ){
                 (*std::next(iter))->buffdirection = segment->direction;
             }
@@ -61,7 +64,7 @@ void Snake::reset(){
     _segments.clear();
 
     for (int i = 0; i < _initSegments; i++){
-       addSegment( {_initPosition.x - (SEGMENT_INDENT * i), _initPosition.y}, _initDirection);
+       addSegment( {_initPosition.x - (_segmentIndent * i), _initPosition.y}, _initDirection);
     } 
 
     _segments.front()->buffdirection = _initDirection;
@@ -70,7 +73,7 @@ void Snake::reset(){
 
 void Snake::addScore(){ // FIXME   REMOVE?
     // add new segment from the end
-    for (int i = 0; i < 6; i++){
+    for (int i = 0; i < _segmentsPerScore; i++){
         addSegment( _segments.back()->position, _segments.back()->direction);
     }
 }
@@ -82,8 +85,8 @@ void Snake::addSegment(Vector2f position, Vector2f direction){
     SnakeSegment* pNewSegment = new SnakeSegment();
 
     // calculating the indent from the last segment
-    position.x += SEGMENT_INDENT * -direction.x;
-    position.y += SEGMENT_INDENT * -direction.y;
+    position.x += _segmentIndent * -direction.x;
+    position.y += _segmentIndent * -direction.y;
 
     pNewSegment->position = position;
     pNewSegment->direction = direction;

@@ -15,6 +15,10 @@ private:
 
     // measured in pixels per second
     float           _speed;
+    // indent in pixels between segments
+    int             _segmentIndent;
+    // how many segments are added per score
+    int             _segmentsPerScore;
 
     int             _initSegments;
     Vector2f        _initPosition;

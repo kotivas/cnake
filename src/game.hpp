@@ -7,6 +7,7 @@
 #include <random>
 #include <string>
 #include <stack>
+#include <queue>
 
 #include "renderwindow.hpp"
 #include "snake.hpp"
@@ -25,6 +26,9 @@ private:
     Snake*          snake;
     Apple*          food;
     RenderWindow*   window;
+
+    // std::queue< SDL_keysym > keysBuffer;
+    const Uint8     *keys = SDL_GetKeyboardState(NULL);
 
     enum            overlayType{
         PauseScreen,
@@ -62,6 +66,7 @@ private:
 
     void            checkCollision();    
     void            handleEvents();
+    void            handleControl();
 
     void            drawSnake();    
     void            drawUI();

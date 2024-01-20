@@ -4,7 +4,7 @@ Game::Game()
 : isRunning(true), score(0), bestScore(0)
 {
 
-    window = new RenderWindow("CNAKE (dev build)", WINDOW_WIDTH, WINDOW_HEIGHT);
+    window = new RenderWindow("Cnake", WINDOW_WIDTH, WINDOW_HEIGHT);
 
     /* --------------------=LOADING ASSETS=--------------------- */
     font = window->loadTTF("./assets/atariclassic.ttf", 32);
@@ -48,6 +48,46 @@ bool Game::isActive() const{
     return isRunning;
 }
 
+// handle the control keys
+void Game::handleControl(){
+
+    if ( keys[SDL_SCANCODE_RIGHT] ){
+        if ( overlayStack.empty() ){
+            snake->setDirection(1, 0);
+        } else if ( overlayStack.top() == overlayType::Controls ){
+            overlayStack.pop();
+            snake->setDirection(1, 0);
+        }
+    }
+
+    if ( keys[SDL_SCANCODE_LEFT] ){
+        if ( overlayStack.empty() ){
+            snake->setDirection(-1, 0);
+        } else if ( overlayStack.top() == overlayType::Controls ){
+            overlayStack.pop();
+            snake->setDirection(-1, 0);
+        }
+    }
+
+    if ( keys[SDL_SCANCODE_DOWN] ){
+        if ( overlayStack.empty() ){
+            snake->setDirection(0, 1);
+        } else if ( overlayStack.top() == overlayType::Controls ){
+            overlayStack.pop();
+            snake->setDirection(0, 1);
+        }
+    }
+
+    if ( keys[SDL_SCANCODE_UP] ){
+        if ( overlayStack.empty() ){
+            snake->setDirection(0, -1);
+        } else if ( overlayStack.top() == overlayType::Controls ){
+            overlayStack.pop();
+            snake->setDirection(0, -1);
+        }
+    }
+}
+
 // handle window events
 void Game::handleEvents(){
 	while (SDL_PollEvent(&event)){  
@@ -55,66 +95,32 @@ void Game::handleEvents(){
 		    case SDL_QUIT:     // if close button pressed
 			    isRunning = false;
 			    break;
-            case SDL_KEYDOWN: // if key pressed down
-                switch ( event.key.keysym.sym ){ // get key code
-                    case SDLK_RIGHT: // d or arrow right
-                    case SDLK_d:
-                        if ( overlayStack.empty() ){
-                            snake->setDirection(1, 0);
-                        } else if ( overlayStack.top() == overlayType::Controls ){
-                            overlayStack.pop();
-                            snake->setDirection(1, 0);
-                        }
-                        break;
-                    case SDLK_a: // a or arrow left
-                    case SDLK_LEFT:
-                        if ( overlayStack.empty() ){
-                            snake->setDirection(-1, 0);
-                        } else if ( overlayStack.top() == overlayType::Controls ){
-                            overlayStack.pop();
-                            snake->setDirection(-1, 0);
-                        }
-                        break;
-                    case SDLK_s: // s or arrow down
-                    case SDLK_DOWN:
-                        if ( overlayStack.empty() ){
-                            snake->setDirection(0, 1);
-                        } else if ( overlayStack.top() == overlayType::Controls ){
-                            overlayStack.pop();
-                            snake->setDirection(0, 1);
-                        }
-                        break;
-                    case SDLK_w: // w or arrow up
-                    case SDLK_UP:
-                        if ( overlayStack.empty() ){
-                            snake->setDirection(0, -1);
-                        } else if ( overlayStack.top() == overlayType::Controls ){
-                            overlayStack.pop();
-                            snake->setDirection(0, -1);
-                        }
-                        break;
-                    case SDLK_ESCAPE:
-                        if ( overlayStack.empty() ){
-                            overlayStack.push( overlayType::PauseScreen );
-                        } else if ( overlayStack.top() == overlayType::PauseScreen  ) {    
-                            overlayStack.pop();
-                        }
-                        break;
-                    case SDLK_F1:
-                        if ( overlayStack.empty() || overlayStack.top() != overlayType::Credits ){
-                            overlayStack.push( overlayType::Credits );
-                        } else if ( overlayStack.top() == overlayType::Credits ){
-                            overlayStack.pop();
-                        }
-                        break;
-                    case SDLK_SPACE:
-                        if ( !overlayStack.empty() && overlayStack.top() == overlayType::GameOver ){
-                            reset();
-                            snake->step();
-                            overlayStack.pop();
-                            overlayStack.push( overlayType::Controls );
-                        }
-                        break;
+            case SDL_KEYDOWN:
+                switch ( event.key.keysym.sym ){
+                case SDLK_ESCAPE:
+                    if ( overlayStack.empty() ){
+                        overlayStack.push( overlayType::PauseScreen );
+                    } else if ( overlayStack.top() == overlayType::PauseScreen  ) {    
+                        overlayStack.pop();
+                    }
+                    break;
+
+                case SDLK_F1:
+                    if ( overlayStack.empty() || overlayStack.top() != overlayType::Credits ){
+                        overlayStack.push( overlayType::Credits );
+                    } else if ( overlayStack.top() == overlayType::Credits ){
+                        overlayStack.pop();
+                    }
+                    break;
+                
+                case SDLK_SPACE:
+                    if ( !overlayStack.empty() && overlayStack.top() == overlayType::GameOver ){
+                        reset();
+                        snake->step();
+                        overlayStack.pop();
+                        overlayStack.push( overlayType::Controls );
+                    }
+                    break; 
                 }
             case SDL_MOUSEBUTTONDOWN: // if mouse button pressed down
                 switch ( event.button.button ){
@@ -213,6 +219,9 @@ void Game::update(){
     window->clear();
 
     handleEvents();
+
+    handleControl();
+
     Mix_Volume(-1, volume); // update the volume
 
     drawUI();

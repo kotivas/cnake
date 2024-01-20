@@ -3,6 +3,8 @@ The snake game written in C++ using SDL2 library
 
 inspired by [Google Snake Game](https://g.co/kgs/BTjXHz)
 
+Also available [page on itch.io](https://kotivas.itch.io/cnake)
+
 ## 📷 Gameplay
 ![gameplay](https://github.com/kotivas/cnake/blob/main/gameplay.gif)
 
